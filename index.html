@@ -226,12 +226,12 @@
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
     </nav>
   </header>
-    <div id="globalStaffBanner" style="display: none; background: rgba(56, 189, 248, 0.12); border: 1px solid var(--accent); border-radius: 8px; padding: 8px 14px; margin-bottom: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-      <div style="font-size: 0.88rem; color: var(--text);">
-    🛡️ <span id="bannerStaffText" style="color: var(--accent); font-weight: 600;">Not logged in</span>
-        </div>
-      <button class="btn btn-secondary" style="margin-top: 0; padding: 4px 10px; font-size: 0.78rem;" onclick="logoutStaff()">Log Out Staff</button>
-    </div>
+    <div id="globalStaffBanner" style="display:none; background:rgba(56, 189, 248, 0.12); border:1px solid var(--accent); border-radius:8px; padding:8px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <div style="font-size:0.88rem; color:var(--text);">
+        🛡️ <span id="bannerStaffText" style="color:var(--accent); font-weight:600;">Not logged in</span>
+      </div>
+    <button class="btn btn-secondary" style="margin-top:0; padding:4px 10px; font-size:0.78rem;" onclick="logoutStaff()">Log Out Staff</button>
+  </div>
 
   <!-- 1. PUBLIC LEADERBOARD -->
   <section id="tab-leaderboard" class="panel active">
@@ -476,7 +476,7 @@
       <label>Staff Password</label>
       <input type="password" id="admStaffPass" placeholder="Enter your password" />
       <div class="flex-row" style="margin-top:12px;">
-        <button class="btn" onclick="()">Staff Login</button>
+        <button class="btn" onclick="loginStaff()">Staff Login</button>
         <button class="btn btn-secondary" onclick="registerStaff()">Register Staff Code</button>
       </div>
     </div>
@@ -1174,41 +1174,31 @@
   }
 
   async function loginStaff() {
-    const staffIdVal = document.getElementById("admStaffId").value.trim();
-    const staffPassVal = document.getElementById("admStaffPass").value.trim();
-    if (!staffIdVal || !staffPassVal) {
-      return alert("Please enter both your Staff ID code and password.");
-    }
-
     const res = await apiPost({
       action: "adminLogin",
-      staffId: staffIdVal,
-      password: staffPassVal
+      staffId: document.getElementById("admStaffId").value,
+      password: document.getElementById("admStaffPass").value
     }, "Authenticating Staff...");
     
-    if (!res) {
-      return alert("Connection locked or busy. Please try clicking Login again.");
-    }
-    if (res.status !== "ok") {
-      return alert(res.message || "Authentication failed.");
-    }
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
 
-    // Save session globally
+    // Save session globally in STATE
     STATE.currentStaff = res.staff;
 
-    // Update Admin badge and global banner text
+    // Update UI badges & global banner
     const badgeText = `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
     document.getElementById("currentStaffBadge").textContent = badgeText;
     document.getElementById("bannerStaffText").textContent = badgeText;
-    
-    // Explicitly show the global banner & unlock wiki editing
     document.getElementById("globalStaffBanner").style.display = "flex";
+
+    // UNLOCK THE WIKI EDIT BOX ON THE ARCHIVE TAB
     document.getElementById("archiveEditSection").style.display = "block";
 
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
     
-    alert("Staff session active globally across all tabs!");
+    alert("Staff session active! You can now edit and upload Enclave Archive pages.");
   }
 
   function logoutStaff() {
