@@ -1186,21 +1186,28 @@
     // Save session globally in STATE
     STATE.currentStaff = res.staff;
 
-    // Update both the Admin panel badge and the persistent global banner
+    // Update UI badges & global banner
     const badgeText = `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
     document.getElementById("currentStaffBadge").textContent = badgeText;
     document.getElementById("bannerStaffText").textContent = badgeText;
     document.getElementById("globalStaffBanner").style.display = "flex";
 
+    // UNLOCK THE WIKI EDIT BOX ON THE ARCHIVE TAB
+    document.getElementById("archiveEditSection").style.display = "block";
+
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
     
-    alert("Staff session active globally across all tabs!");
+    alert("Staff session active! You can now edit and upload Enclave Archive pages.");
   }
 
   function logoutStaff() {
     STATE.currentStaff = null;
     document.getElementById("globalStaffBanner").style.display = "none";
+    
+    // HIDE THE WIKI EDIT BOX AGAIN
+    document.getElementById("archiveEditSection").style.display = "none";
+
     document.getElementById("adminAuthGate").style.display = "block";
     document.getElementById("adminDashboard").style.display = "none";
     document.getElementById("admStaffPass").value = "";
