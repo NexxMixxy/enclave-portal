@@ -600,7 +600,7 @@
     document.getElementById("loadingOverlay").style.display = "none";
   }
 
-  async function initPortal() {
+   function initPortal() {
     renderArchiveSidebar();
     renderArchiveArticle(STATE.activeSlug);
     if (API_URL.includes("PASTE_YOUR")) return;
@@ -1174,31 +1174,37 @@
   }
 
   async function loginStaff() {
-    const staffIdInput = document.getElementById("admStaffId").value;
-    const passInput = document.getElementById("admStaffPass").value;
-
     const res = await apiPost({
       action: "adminLogin",
-      staffId: staffIdInput,
-      password: passInput
+      staffId: document.getElementById("admStaffId").value,
+      password: document.getElementById("admStaffPass").value
     }, "Authenticating Staff...");
-
+    
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
 
-    // Save globally across all tabs (Admin + Archive)
+    // Save session globally in STATE
     STATE.currentStaff = res.staff;
 
-    // Update UI badges in both Admin Console and Archive panel
+    // Update both the Admin panel badge and the persistent global banner
     const badgeText = `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
     document.getElementById("currentStaffBadge").textContent = badgeText;
-    
+    document.getElementById("bannerStaffText").textContent = badgeText;
+    document.getElementById("globalStaffBanner").style.display = "flex";
+
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
-    document.getElementById("currentStaffBadge").textContent =
-      `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
-  
-    alert("Staff session active globally! You can now publish and upload Enclave Archive pages.");
+    
+    alert("Staff session active globally across all tabs!");
+  }
+
+  function logoutStaff() {
+    STATE.currentStaff = null;
+    document.getElementById("globalStaffBanner").style.display = "none";
+    document.getElementById("adminAuthGate").style.display = "block";
+    document.getElementById("adminDashboard").style.display = "none";
+    document.getElementById("admStaffPass").value = "";
+    alert("Staff session closed.");
   }
 
   async function registerStaff() {
