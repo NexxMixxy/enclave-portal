@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enclave Portal</title>
+  <title>Enclave Portal | Character & Progression System</title>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
@@ -22,42 +22,91 @@
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     label { display: block; font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
     input, select, textarea { width: 100%; padding: 8px 10px; margin-top: 4px; border-radius: 6px; border: 1px solid var(--border); background: #0b1120; color: var(--text); }
-    button.btn { background: var(--accent); color: #0f172a; font-weight: 700; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px; }
+    button.btn { background: var(--accent); color: #0f172a; font-weight: 700; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px; transition: opacity 0.2s; }
+    button.btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
     button.btn-secondary { background: #334155; color: var(--text); }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
     th, td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; }
     th { color: var(--accent); background: #0b1120; }
     tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
     
-    /* Avatar Thumbnail */
     .avatar-thumb { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #0b1120; }
     .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-top: 8px; background: #0b1120; display: block; }
 
-    /* Status Pill with Tooltip */
-    .status-pill { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: help; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
-    .status-active { background: rgba(34,197,94,0.2); color: var(--success); }
-    .status-deceased { background: rgba(239,68,68,0.25); color: #fca5a5; }
-    .status-limbo { background: rgba(234,179,8,0.25); color: var(--gold); }
+    /* Boxed Status Pill with Hover Tooltip */
+    .status-pill {
+      display: inline-block; padding: 4px 10px; border-radius: 6px;
+      font-size: 0.75rem; font-weight: bold; cursor: help;
+      max-width: 110px; white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; text-align: center; border: 1px solid transparent;
+    }
+    .status-active { background: rgba(34,197,94,0.18); color: var(--success); border-color: rgba(34,197,94,0.4); }
+    .status-deceased { background: rgba(239,68,68,0.22); color: #fca5a5; border-color: rgba(239,68,68,0.45); }
+    .status-limbo { background: rgba(234,179,8,0.22); color: var(--gold); border-color: rgba(234,179,8,0.45); }
 
     .race-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .race-chip { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: #0b1120; }
     .race-chip.selected { border-color: var(--gold); color: var(--gold); }
     .tooltip-box { background: #0b1120; border: 1px solid var(--gold); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
     .stat-box { background: #0b1120; border: 1px solid var(--border); padding: 12px; border-radius: 8px; }
+
+    /* Loading Modal Popup */
+    #loadingOverlay {
+      position: fixed; inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .loading-modal-card {
+      background: var(--card); border: 1px solid var(--accent);
+      border-radius: 14px; padding: 24px 32px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+      max-width: 320px; text-align: center;
+    }
+    #loadingGif {
+      width: 110px; height: 110px; object-fit: contain;
+      border-radius: 10px; display: none;
+    }
+    .spinner-circle {
+      width: 46px; height: 46px;
+      border: 4px solid var(--border);
+      border-top: 4px solid var(--accent);
+      border-right: 4px solid var(--gold);
+      border-radius: 50%;
+      animation: enclaveSpin 0.75s linear infinite;
+    }
+    #loadingText {
+      font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: 0.5px;
+    }
+    @keyframes enclaveSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
 
+<!-- LOADING POPUP MODAL (Blocks extra clicks + displays GIF & Circular Spinner) -->
+<div id="loadingOverlay">
+  <div class="loading-modal-card">
+    <img id="loadingGif" src="" alt="Loading Animation" />
+    <div class="spinner-circle"></div>
+    <div id="loadingText">Updating...</div>
+  </div>
+</div>
+
 <header>
   <div>
     <h1>ENCLAVE PORTAL</h1>
-    <small style="color:var(--muted)">Live RP Character Registry</small>
+    <small style="color:var(--muted)">Live RPG Character Registry, Drive Pool & Admin Logs</small>
   </div>
   <nav id="topNav">
-    <button class="active" onclick="showTab('leaderboard')">Public Leaderboard</button>
-    <button onclick="showTab('create')">Create Character</button>
-    <button onclick="showTab('dashboard')">Player Portal</button>
-    <button id="adminToggleBtn" onclick="toggleAdminPanel()" style="background:#0f172a; border-color:var(--gold); color:var(--gold);">⚙️</button>
+    <button class="active" onclick="showTab('leaderboard', this)">Public Leaderboard</button>
+    <button onclick="showTab('create', this)">Create Character</button>
+    <button onclick="showTab('dashboard', this)">Player Portal</button>
+    <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); font-size:1rem;">⚙️</button>
   </nav>
 </header>
 
@@ -78,7 +127,7 @@
         <th>Class Lv (Tier)</th>
         <th>Total Stats</th>
         <th>Might / Spirit</th>
-        <th>Status</th>
+        <th>Status (Hover for Note)</th>
       </tr>
     </thead>
     <tbody id="leaderboardBody"></tbody>
@@ -113,7 +162,7 @@
       <div class="race-grid" id="raceSelector"></div>
       <input type="hidden" id="crRace" value="Human" />
       <div class="tooltip-box" id="raceTooltip">Hover over a Race above to inspect skills.</div>
-      <button class="btn" onclick="submitCreateCharacter()">Register Character & Claim Starter Kit</button>
+      <button id="createCharBtn" class="btn" onclick="submitCreateCharacter()">Register Character & Claim Starter Kit</button>
     </div>
   </div>
 </section>
@@ -139,7 +188,7 @@
           </div>
         </div>
         <hr style="border-color:var(--border); margin:12px 0;" />
-        <label>Avatar Image URL</label>
+        <label>Update Character Avatar URL</label>
         <div style="display:flex; gap:8px;">
           <input type="url" id="pAvatarInput" placeholder="https://..." />
           <button class="btn" style="margin-top:4px;" onclick="savePlayerAvatar()">Update Avatar</button>
@@ -204,27 +253,28 @@
   </div>
 </section>
 
-<!-- 4. ADMIN CONSOLE (Hidden by default, unlocked via Cogwheel) -->
+<!-- 4. ADMIN CONSOLE (Hidden until Cogwheel + ADMIN_KEY_2026 is entered) -->
 <section id="tab-admin" class="panel">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <h2 style="margin:0;">Enclave Admin Console</h2>
     <span id="currentStaffBadge" style="color:var(--accent); font-size:0.9rem;"></span>
   </div>
 
-  <!-- Staff Login / Signup Gate -->
   <div id="adminAuthGate" class="stat-box" style="margin-top:16px; max-width:480px;">
-    <h3 style="margin-top:0;">Staff Sign In / Register</h3>
-    <label>Staff ID (e.g. 0000 for Owner, or 0001+ for Staff)</label>
+    <h3 style="margin-top:0;">Staff Sign In / First-Time Registration</h3>
+    <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
+      Owner Login: Code <strong>0000</strong> | Staff Codes start from <strong>0001</strong>.
+    </p>
+    <label>Staff User Code (XXXX)</label>
     <input type="text" id="admStaffId" placeholder="0000 or 0001" />
-    <label>Password</label>
-    <input type="password" id="admStaffPass" placeholder="Staff Password" />
+    <label>Staff Password</label>
+    <input type="password" id="admStaffPass" placeholder="Enter your password" />
     <div style="display:flex; gap:10px; margin-top:12px;">
       <button class="btn" onclick="loginStaff()">Staff Login</button>
-      <button class="btn btn-secondary" onclick="registerStaff()">Register New Staff Code</button>
+      <button class="btn btn-secondary" onclick="registerStaff()">First Time? Register Staff Code</button>
     </div>
   </div>
 
-  <!-- Admin Logging Dashboard (Unlocked after Login) -->
   <div id="adminDashboard" style="display:none; margin-top:16px;">
     <div class="grid-2">
       <div class="stat-box">
@@ -244,25 +294,25 @@
         </div>
         <label>Notes</label>
         <input type="text" id="admNotes" placeholder="Raid victory..." />
-        <button class="btn" onclick="submitAdminLog()">Submit Log (Recorded with your Staff ID)</button>
+        <button class="btn" onclick="submitAdminLog()">Submit Log</button>
       </div>
 
       <div class="stat-box">
-        <h3 style="margin-top:0;">Owner / Admin Management</h3>
+        <h3 style="margin-top:0;">Character Status & Guild Pull-Up</h3>
         <label>Target Character ID</label>
         <input type="text" id="admStatusCharId" placeholder="00-000-001" />
         <label>Status</label>
         <select id="admStatusVal">
           <option value="Active">Active</option>
-          <option value="Deceased">Deceased (Grayed)</option>
+          <option value="Deceased">Deceased (Grayed on Leaderboard)</option>
           <option value="Limbo">Limbo (Banned)</option>
         </select>
-        <label>Status Note / Cause of Death</label>
-        <input type="text" id="admStatusNote" placeholder="Fell in battle..." />
+        <label>Cause of Death / Status Note (Shown on Hover)</label>
+        <input type="text" id="admStatusNote" placeholder="Fell in the Abyssal Raid..." />
         <button class="btn" onclick="submitStatusChange()">Update Character Status</button>
 
         <hr style="border-color:var(--border); margin:14px 0;" />
-        <label>Register New Guild</label>
+        <label>Register New Guild to Pull-Up Database</label>
         <div style="display:flex; gap:8px;">
           <input type="text" id="admNewGuild" placeholder="Guild Name" />
           <button class="btn" style="margin-top:4px;" onclick="submitNewGuild()">Add Guild</button>
@@ -273,37 +323,78 @@
 </section>
 
 <script>
+  // 1. PASTE  GOOGLE APPS SCRIPT WEB APP URL BELOW:
   const API_URL = "https://script.google.com/macros/s/AKfycbwpw85Gmj8aJihF9CJZ0b-xfax1WlYb2jye9Uh3T3YiRN4lci87pmSFToYsOQuriYB7WA/exec";
 
-  let STATE = { races: [], guilds: [], skills: [], staff: [], leaderboard: [], currentChar: null, currentStaff: null };
+  // 2. PASTE LOADING GIF LINK BELOW:
+  const LOADING_GIF_URL = "https://media.tenor.com/zTzHQQXcPh8AAAAM/anime-a-sign-of-affection.gif";
+
+  // 3. GATE KEY REQUIRED WHEN CLICKING THE COGWHEEL BUTTON:
+  const ADMIN_GATE_KEY = "ADMIN_KEY_2026";
+
+  let STATE = {
+    races: [], guilds: [], skills: [], staff: [],
+    leaderboard: [], currentChar: null, currentStaff: null,
+    adminGateUnlocked: false
+  };
+
+  // Global submission lock to prevent double/triple clicking
+  let isSubmitting = false;
+
+  function showLoading(message = "Updating...") {
+    const overlay = document.getElementById("loadingOverlay");
+    const gifEl = document.getElementById("loadingGif");
+    document.getElementById("loadingText").textContent = message;
+
+    if (LOADING_GIF_URL && !LOADING_GIF_URL.includes("PASTE_YOUR_GIF")) {
+      gifEl.src = LOADING_GIF_URL;
+      gifEl.style.display = "block";
+    } else {
+      gifEl.style.display = "none";
+    }
+    overlay.style.display = "flex";
+  }
+
+  function hideLoading() {
+    document.getElementById("loadingOverlay").style.display = "none";
+  }
 
   async function initPortal() {
     if (API_URL.includes("PASTE_YOUR")) return;
-    const res = await fetch(API_URL + "?action=init");
-    const data = await res.json();
-    if (data.status === "ok") {
-      STATE.races = data.races;
-      STATE.guilds = data.guilds;
-      STATE.skills = data.skills;
-      STATE.staff = data.staff;
-      STATE.leaderboard = data.leaderboard;
-      renderLeaderboard();
-      renderRaces();
+    try {
+      const res = await fetch(API_URL + "?action=init");
+      const data = await res.json();
+      if (data.status === "ok") {
+        STATE.races = data.races;
+        STATE.guilds = data.guilds;
+        STATE.skills = data.skills;
+        STATE.staff = data.staff;
+        STATE.leaderboard = data.leaderboard;
+        renderLeaderboard();
+        renderRaces();
+      }
+    } catch (e) {
+      console.error("Failed to initialize portal:", e);
     }
   }
 
-  function showTab(tab) {
+  function showTab(tab, btnEl) {
     document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-    document.querySelectorAll("nav button").forEach(b => {
-      if(b.id !== "adminToggleBtn") b.classList.remove("active");
-    });
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
     document.getElementById("tab-" + tab).classList.add("active");
-    if(tab !== "admin") event.target.classList.add("active");
+    if (btnEl) btnEl.classList.add("active");
   }
 
-  function toggleAdminPanel() {
-    showTab("admin");
-    document.getElementById("adminToggleBtn").classList.add("active");
+  function unlockAdminGate() {
+    if (!STATE.adminGateUnlocked) {
+      const entered = prompt("Enter Admin Access Key to open the Admin Console:");
+      if (entered !== ADMIN_GATE_KEY) {
+        alert("Access Denied: Invalid Admin Key.");
+        return;
+      }
+      STATE.adminGateUnlocked = true;
+    }
+    showTab("admin", document.getElementById("adminToggleBtn"));
   }
 
   function renderLeaderboard() {
@@ -316,7 +407,9 @@
         const isDead = c.Status === "Deceased";
         const isLimbo = c.Status === "Limbo";
         const statusClass = isDead ? "status-deceased" : (isLimbo ? "status-limbo" : "status-active");
-        const statusText = c.Status + (c.Status_Note ? ": " + c.Status_Note : "");
+        const hoverNote = c.Status_Note
+          ? `${c.Status} — ${c.Status_Note}`
+          : `${c.Status} (No additional status notes)`;
 
         const tr = document.createElement("tr");
         if (isDead || isLimbo) tr.className = "deceased";
@@ -333,7 +426,7 @@
           <td>${c.Total_Stats}</td>
           <td>${c.Might} / ${c.Spirit}</td>
           <td>
-            <span class="status-pill ${statusClass}" title="${statusText}">${c.Status}</span>
+            <span class="status-pill ${statusClass}" title="${hoverNote.replace(/"/g, '&quot;')}">${c.Status}</span>
           </td>
         `;
         tbody.appendChild(tr);
@@ -369,26 +462,58 @@
     `;
   }
 
-  async function apiPost(payload) {
-    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-    return await res.json();
+  // Centralized POST wrapper with single-flight lock + Loading Modal
+  async function apiPost(payload, loadingMessage = "Updating...") {
+    if (isSubmitting) return null; // Ignore extra taps while busy
+    isSubmitting = true;
+    showLoading(loadingMessage);
+
+    // Disable all action buttons while request is in flight
+    const buttons = document.querySelectorAll("button.btn");
+    buttons.forEach(b => b.disabled = true);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    } catch (err) {
+      return { status: "error", message: "Network error: " + err.message };
+    } finally {
+      isSubmitting = false;
+      hideLoading();
+      buttons.forEach(b => b.disabled = false);
+    }
   }
 
   async function submitCreateCharacter() {
+    const nameVal = document.getElementById("crName").value.trim();
+    const passVal = document.getElementById("crPass").value.trim();
+    if (!nameVal || !passVal) {
+      return alert("Please enter both a Character Name and a Password.");
+    }
+
     const res = await apiPost({
       action: "createCharacter",
-      name: document.getElementById("crName").value,
+      name: nameVal,
       gender: document.getElementById("crGender").value,
-      password: document.getElementById("crPass").value,
+      password: passVal,
       race: document.getElementById("crRace").value,
       class: document.getElementById("crClass").value,
       avatarUrl: document.getElementById("crAvatar").value,
       aboutMe: document.getElementById("crAbout").value
-    });
+    }, "Creating Character & Assigning ID...");
+
+    if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
+      // Clear form inputs so user doesn't accidentally submit same character again
+      document.getElementById("crName").value = "";
+      document.getElementById("crPass").value = "";
+      document.getElementById("crAbout").value = "";
       document.getElementById("loginId").value = res.charId;
-      initPortal();
+      await initPortal();
     }
   }
 
@@ -397,7 +522,8 @@
       action: "login",
       charId: document.getElementById("loginId").value,
       password: document.getElementById("loginPass").value
-    });
+    }, "Loading Character Profile...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
   }
@@ -457,11 +583,11 @@
       charId: document.getElementById("loginId").value,
       password: document.getElementById("loginPass").value,
       avatarUrl: document.getElementById("pAvatarInput").value
-    });
+    }, "Updating Avatar...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
-    initPortal();
-    alert("Avatar updated successfully!");
+    await initPortal();
   }
 
   async function submitAP() {
@@ -474,11 +600,12 @@
       Mobility: document.getElementById("addMob").value,
       Vitality: document.getElementById("addVit").value,
       Intelligence: document.getElementById("addInt").value
-    });
+    }, "Updating Attributes...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     ["addPow","addEnd","addMob","addVit","addInt"].forEach(id => document.getElementById(id).value = 0);
     renderPlayerDashboard(res);
-    initPortal();
+    await initPortal();
   }
 
   async function spendDriveXP(track) {
@@ -488,10 +615,11 @@
       password: document.getElementById("loginPass").value,
       track,
       amount: document.getElementById("xpSpendAmt").value
-    });
+    }, "Allocating Drive Pool XP...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
-    initPortal();
+    await initPortal();
   }
 
   async function triggerAscend(actionName) {
@@ -499,10 +627,11 @@
       action: actionName,
       charId: document.getElementById("loginId").value,
       password: document.getElementById("loginPass").value
-    });
+    }, "Processing Ascension...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
-    initPortal();
+    await initPortal();
   }
 
   async function savePlayerProfile() {
@@ -511,10 +640,11 @@
       charId: document.getElementById("loginId").value,
       password: document.getElementById("loginPass").value,
       guild: document.getElementById("pGuildSelect").value
-    });
+    }, "Updating Guild...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
-    initPortal();
+    await initPortal();
   }
 
   function downloadInventoryExcel() {
@@ -539,7 +669,8 @@
         charId: document.getElementById("loginId").value,
         password: document.getElementById("loginPass").value,
         items: rows
-      });
+      }, "Uploading Inventory Sheet...");
+      if (!res) return;
       if (res.status !== "ok") alert(res.message);
       else renderPlayerDashboard(res);
     };
@@ -552,31 +683,34 @@
       action: "adminLogin",
       staffId: document.getElementById("admStaffId").value,
       password: document.getElementById("admStaffPass").value
-    });
+    }, "Authenticating Staff...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     STATE.currentStaff = res.staff;
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
-    document.getElementById("currentStaffBadge").textContent = `Logged in as: ${res.staff.Staff_Name} [Staff ID: ${res.staff.Staff_ID}] (${res.staff.Role})`;
+    document.getElementById("currentStaffBadge").textContent =
+      `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
   }
 
   async function registerStaff() {
-    const name = prompt("Enter your Staff / Admin Name:");
+    const name = prompt("Enter your Staff / Admin Display Name:");
     if (!name) return;
     const pass = document.getElementById("admStaffPass").value;
-    if (!pass) return alert("Please enter a password in the password field first.");
+    if (!pass) return alert("Please enter your desired password in the Staff Password field first.");
     const res = await apiPost({
       action: "adminRegister",
       name,
       password: pass
-    });
+    }, "Generating Staff Code...");
+    if (!res) return;
     if (res.status !== "ok") return alert(res.message);
-    alert(`Staff Registered! Your assigned Staff ID is: ${res.staff.Staff_ID}. Please use it to log in.`);
+    alert(`Staff Registered! Your assigned Staff Code is: ${res.staff.Staff_ID}. Use it to log in.`);
     document.getElementById("admStaffId").value = res.staff.Staff_ID;
   }
 
   async function submitAdminLog() {
-    if (!STATE.currentStaff) return alert("Please log in as Staff first.");
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
     const res = await apiPost({
       action: "adminLog",
       staffId: STATE.currentStaff.Staff_ID,
@@ -587,13 +721,14 @@
       ap: document.getElementById("admAP").value,
       fp: document.getElementById("admFP").value,
       notes: document.getElementById("admNotes").value
-    });
+    }, "Logging Points & Updating Interactions...");
+    if (!res) return;
     alert(res.message || res.status);
-    initPortal();
+    await initPortal();
   }
 
   async function submitStatusChange() {
-    if (!STATE.currentStaff || STATE.currentStaff.Staff_ID !== "0000") return alert("Only Owner (Staff 0000) can update character status.");
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
     const res = await apiPost({
       action: "adminManage",
       subAction: "setStatus",
@@ -601,21 +736,23 @@
       charId: document.getElementById("admStatusCharId").value,
       status: document.getElementById("admStatusVal").value,
       statusNote: document.getElementById("admStatusNote").value
-    });
+    }, "Updating Character Status...");
+    if (!res) return;
     alert(res.message || res.status);
-    initPortal();
+    await initPortal();
   }
 
   async function submitNewGuild() {
-    if (!STATE.currentStaff || STATE.currentStaff.Staff_ID !== "0000") return alert("Only Owner (Staff 0000) can add guilds.");
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
     const res = await apiPost({
       action: "adminManage",
       subAction: "addGuild",
       staffId: STATE.currentStaff.Staff_ID,
       guildName: document.getElementById("admNewGuild").value
-    });
+    }, "Adding Guild to Database...");
+    if (!res) return;
     alert(res.message || res.status);
-    initPortal();
+    await initPortal();
   }
 
   initPortal();
