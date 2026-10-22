@@ -1168,18 +1168,31 @@
   }
 
   async function loginStaff() {
+    const staffIdInput = document.getElementById("admStaffId").value;
+    const passInput = document.getElementById("admStaffPass").value;
+
     const res = await apiPost({
       action: "adminLogin",
-      staffId: document.getElementById("admStaffId").value,
-      password: document.getElementById("admStaffPass").value
+      staffId: staffIdInput,
+      password: passInput
     }, "Authenticating Staff...");
+
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
+
+    // Save globally across all tabs (Admin + Archive)
     STATE.currentStaff = res.staff;
+
+    // Update UI badges in both Admin Console and Archive panel
+    const badgeText = `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
+    document.getElementById("currentStaffBadge").textContent = badgeText;
+    
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
     document.getElementById("currentStaffBadge").textContent =
       `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
+  
+    alert("Staff session active globally! You can now publish and upload Enclave Archive pages.");
   }
 
   async function registerStaff() {
