@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enclave Portal | Character & Progression System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Enclave Portal | Character & Archive System</title>
+  <!-- SheetJS for Inventory (.xlsx) & Mammoth.js for Word (.docx) Wiki Uploads -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <style>
     :root {
       --bg: #0f172a; --card: #1e293b; --border: #334155;
@@ -12,28 +14,80 @@
       --danger: #ef4444; --success: #22c55e;
     }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding: 20px; }
-    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-    h1 { margin: 0; font-size: 1.6rem; color: var(--accent); letter-spacing: 1px; }
-    nav button { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 6px; }
+    html, body {
+      margin: 0; padding: 0; width: 100%; max-width: 100vw;
+      overflow-x: hidden; background: var(--bg); color: var(--text);
+    }
+    .app-shell {
+      max-width: 1280px; margin: 0 auto; padding: 16px; width: 100%;
+    }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border); padding-bottom: 14px;
+      margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
+    }
+    h1 { margin: 0; font-size: 1.5rem; color: var(--accent); letter-spacing: 1px; }
+    nav { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+    @media (min-width: 769px) { nav { width: auto; } }
+    nav button {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.88rem;
+      flex: 1 1 auto; text-align: center;
+    }
     nav button.active, nav button:hover { border-color: var(--accent); color: var(--accent); }
-    .panel { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+
+    /* Boxed Panels & Mobile Spill Prevention */
+    .panel {
+      display: none; background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px; margin-bottom: 20px;
+      width: 100%; max-width: 100%; overflow: hidden;
+      overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;
+    }
     .panel.active { display: block; }
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-    label { display: block; font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
-    input, select, textarea { width: 100%; padding: 8px 10px; margin-top: 4px; border-radius: 6px; border: 1px solid var(--border); background: #0b1120; color: var(--text); }
-    button.btn { background: var(--accent); color: #0f172a; font-weight: 700; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px; transition: opacity 0.2s; }
+    .grid-2 {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px; width: 100%;
+    }
+    .stat-box {
+      background: #0b1120; border: 1px solid var(--border);
+      padding: 14px; border-radius: 8px; width: 100%; max-width: 100%;
+      overflow: hidden; overflow-wrap: break-word;
+    }
+    .flex-row {
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    }
+    .flex-row > * { flex: 1 1 140px; min-width: 0; }
+
+    /* Boxed Scrollable Tables so Mobile Never Zooms Out or Spills */
+    .table-box {
+      width: 100%; max-width: 100%; overflow-x: auto;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: #0b1120; margin-top: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 520px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 9px 10px; text-align: left; }
+    th { color: var(--accent); background: #070b14; white-space: nowrap; }
+    tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
+
+    label { display: block; font-size: 0.84rem; color: var(--muted); margin-top: 10px; }
+    input, select, textarea {
+      width: 100%; max-width: 100%; padding: 8px 10px; margin-top: 4px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: #0b1120; color: var(--text); font-size: 0.9rem;
+    }
+    button.btn {
+      background: var(--accent); color: #0f172a; font-weight: 700;
+      border: none; padding: 10px 14px; border-radius: 6px;
+      cursor: pointer; margin-top: 10px; transition: opacity 0.2s;
+      max-width: 100%; white-space: normal; line-height: 1.25;
+    }
     button.btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
     button.btn-secondary { background: #334155; color: var(--text); }
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
-    th, td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; }
-    th { color: var(--accent); background: #0b1120; }
-    tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
-    
-    .avatar-thumb { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #0b1120; }
+
+    .avatar-thumb { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 6px; background: #0b1120; }
     .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-top: 8px; background: #0b1120; display: block; }
 
-    /* Boxed Status Pill with Hover Tooltip */
     .status-pill {
       display: inline-block; padding: 4px 10px; border-radius: 6px;
       font-size: 0.75rem; font-weight: bold; cursor: help;
@@ -45,307 +99,488 @@
     .status-limbo { background: rgba(234,179,8,0.22); color: var(--gold); border-color: rgba(234,179,8,0.45); }
 
     .race-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .race-chip { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: #0b1120; }
+    .race-chip { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: #0b1120; font-size: 0.85rem; }
     .race-chip.selected { border-color: var(--gold); color: var(--gold); }
     .tooltip-box { background: #0b1120; border: 1px solid var(--gold); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
-    .stat-box { background: #0b1120; border: 1px solid var(--border); padding: 12px; border-radius: 8px; }
+
+    /* =====================================================
+       ENCLAVE ARCHIVE (WIKI LAYOUT + TIMES NEW ROMAN + FLOATING IMAGES)
+       ===================================================== */
+    .archive-layout {
+      display: grid; grid-template-columns: 250px 1fr; gap: 18px; width: 100%;
+    }
+    .archive-sidebar {
+      background: #0b1120; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; max-height: 78vh; overflow-y: auto;
+    }
+    .archive-cat-title {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--gold); margin: 12px 0 6px 0; border-bottom: 1px solid var(--border);
+      padding-bottom: 4px; font-weight: 700;
+    }
+    .archive-nav-btn {
+      display: block; width: 100%; text-align: left; background: transparent;
+      color: var(--text); border: none; padding: 6px 8px; border-radius: 5px;
+      cursor: pointer; font-size: 0.86rem; margin-bottom: 2px;
+    }
+    .archive-nav-btn:hover, .archive-nav-btn.active {
+      background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600;
+    }
+    .archive-article-box {
+      background: #0b1120; border: 1px solid var(--border); border-radius: 8px;
+      padding: 22px; min-width: 0; overflow: hidden;
+    }
+    /* Times New Roman Typography & Text Wrapping Around Images */
+    .wiki-content, .wiki-content * {
+      font-family: "Times New Roman", Times, Georgia, serif !important;
+    }
+    .wiki-content {
+      font-size: 1.12rem; line-height: 1.75; color: #f1f5f9;
+      text-align: justify; letter-spacing: 0.2px; overflow: hidden;
+    }
+    .wiki-content h1, .wiki-content h2, .wiki-content h3 {
+      color: var(--gold); border-bottom: 1px solid var(--border);
+      padding-bottom: 6px; margin-top: 20px; margin-bottom: 10px;
+      text-align: left;
+    }
+    .wiki-content p { margin: 0 0 14px 0; }
+    .wiki-content table {
+      min-width: 0; width: 100%; border: 1px solid var(--border); margin: 12px 0;
+    }
+    .wiki-content th, .wiki-content td {
+      border: 1px solid var(--border); padding: 8px;
+    }
+    .wiki-float-right {
+      float: right; width: 240px; max-width: 48%;
+      margin: 4px 0 14px 18px; background: #141d30;
+      border: 1px solid var(--gold); border-radius: 6px;
+      padding: 8px; text-align: center;
+    }
+    .wiki-float-left {
+      float: left; width: 240px; max-width: 48%;
+      margin: 4px 18px 14px 0; background: #141d30;
+      border: 1px solid var(--accent); border-radius: 6px;
+      padding: 8px; text-align: center;
+    }
+    .wiki-float-right img, .wiki-float-left img {
+      width: 100%; height: auto; border-radius: 4px; display: block;
+    }
+    .wiki-caption {
+      font-size: 0.88rem; color: var(--muted); margin-top: 6px; font-style: italic;
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+      .app-shell { padding: 10px; }
+      .panel { padding: 12px; }
+      .archive-layout { grid-template-columns: 1fr; }
+      .archive-sidebar { max-height: 240px; }
+      .wiki-float-right, .wiki-float-left {
+        width: 145px; max-width: 46%; margin-bottom: 10px;
+      }
+      .wiki-content { font-size: 1.03rem; line-height: 1.65; text-align: left; }
+    }
 
     /* Loading Modal Popup */
     #loadingOverlay {
-      position: fixed; inset: 0;
-      background: rgba(15, 23, 42, 0.82);
-      backdrop-filter: blur(4px);
-      display: none; justify-content: center; align-items: center;
-      z-index: 9999;
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(4px); display: none; justify-content: center;
+      align-items: center; z-index: 9999; padding: 16px;
     }
     .loading-modal-card {
       background: var(--card); border: 1px solid var(--accent);
-      border-radius: 14px; padding: 24px 32px;
-      display: flex; flex-direction: column; align-items: center; gap: 14px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-      max-width: 320px; text-align: center;
+      border-radius: 14px; padding: 24px 32px; display: flex;
+      flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6); max-width: 320px; text-align: center;
     }
-    #loadingGif {
-      width: 110px; height: 110px; object-fit: contain;
-      border-radius: 10px; display: none;
-    }
+    #loadingGif { width: 110px; height: 110px; object-fit: contain; border-radius: 10px; display: none; }
     .spinner-circle {
-      width: 46px; height: 46px;
-      border: 4px solid var(--border);
-      border-top: 4px solid var(--accent);
-      border-right: 4px solid var(--gold);
-      border-radius: 50%;
-      animation: enclaveSpin 0.75s linear infinite;
+      width: 46px; height: 46px; border: 4px solid var(--border);
+      border-top: 4px solid var(--accent); border-right: 4px solid var(--gold);
+      border-radius: 50%; animation: enclaveSpin 0.75s linear infinite;
     }
-    #loadingText {
-      font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: 0.5px;
-    }
-    @keyframes enclaveSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes enclaveSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-<!-- LOADING POPUP MODAL (Blocks extra clicks + displays GIF & Circular Spinner) -->
 <div id="loadingOverlay">
   <div class="loading-modal-card">
     <img id="loadingGif" src="" alt="Loading Animation" />
     <div class="spinner-circle"></div>
-    <div id="loadingText">Updating...</div>
+    <div id="loadingText" style="font-weight:700;">Updating...</div>
   </div>
 </div>
 
-<header>
-  <div>
-    <h1>ENCLAVE PORTAL</h1>
-    <small style="color:var(--muted)">Live RPG Character Registry, Drive Pool & Admin Logs</small>
-  </div>
-  <nav id="topNav">
-    <button class="active" onclick="showTab('leaderboard', this)">Public Leaderboard</button>
-    <button onclick="showTab('create', this)">Create Character</button>
-    <button onclick="showTab('dashboard', this)">Player Portal</button>
-    <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); font-size:1rem;">⚙️</button>
-  </nav>
-</header>
-
-<!-- 1. PUBLIC LEADERBOARD -->
-<section id="tab-leaderboard" class="panel active">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-    <h2>Live Public Leaderboard</h2>
-    <input type="text" id="searchIdInput" placeholder="Search ID (00-000-001) or Name..." style="max-width:280px;" oninput="renderLeaderboard()" />
-  </div>
-  <table>
-    <thead>
-      <tr>
-        <th>Rank #</th>
-        <th>ID & Character</th>
-        <th>Race / Class</th>
-        <th>Guild</th>
-        <th>Char Lv (Rank)</th>
-        <th>Class Lv (Tier)</th>
-        <th>Total Stats</th>
-        <th>Might / Spirit</th>
-        <th>Status (Hover for Note)</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboardBody"></tbody>
-  </table>
-</section>
-
-<!-- 2. CREATE CHARACTER -->
-<section id="tab-create" class="panel">
-  <h2>Create New Character (Starter Kit: 5 AP, 5 SP, 100 XP)</h2>
-  <div class="grid-2">
+<div class="app-shell">
+  <header>
     <div>
-      <label>Character Name</label>
-      <input type="text" id="crName" placeholder="Character name" />
-      <label>Gender</label>
-      <input type="text" id="crGender" placeholder="Male / Female / Other" />
-      <label>Character Password</label>
-      <input type="password" id="crPass" placeholder="Login password" />
-      <label>Character Class</label>
-      <select id="crClass">
-        <option>Warrior</option><option>Mage</option><option>Rogue</option>
-        <option>Ranger</option><option>Alchemist</option><option>Crafter</option>
-        <option>Scholar</option><option>Civil</option><option>Jack</option>
-      </select>
-      <label>Character Appearance (Image URL)</label>
-      <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
-      <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
-      <label>About Me / Backstory</label>
-      <textarea id="crAbout" rows="3"></textarea>
+      <h1>ENCLAVE PORTAL</h1>
+      <small style="color:var(--muted)">Live RPG Character Registry, Enclave Archive & Admin Logs</small>
     </div>
-    <div>
-      <label>Select Race</label>
-      <div class="race-grid" id="raceSelector"></div>
-      <input type="hidden" id="crRace" value="Human" />
-      <div class="tooltip-box" id="raceTooltip">Hover over a Race above to inspect skills.</div>
-      <button id="createCharBtn" class="btn" onclick="submitCreateCharacter()">Register Character & Claim Starter Kit</button>
+    <nav id="topNav">
+      <button class="active" onclick="showTab('leaderboard', this)">Leaderboard</button>
+      <button onclick="showTab('create', this)">Create Character</button>
+      <button onclick="showTab('dashboard', this)">Player Portal</button>
+      <button onclick="showTab('archive', this)">📜 Enclave Archive</button>
+      <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
+    </nav>
+  </header>
+
+  <!-- 1. PUBLIC LEADERBOARD -->
+  <section id="tab-leaderboard" class="panel active">
+    <div class="flex-row" style="justify-content:space-between; margin-bottom:8px;">
+      <h2 style="margin:0;">Live Public Leaderboard</h2>
+      <input type="text" id="searchIdInput" placeholder="Search ID (00-000-001) or Name..." style="max-width:300px;" oninput="renderLeaderboard()" />
     </div>
-  </div>
-</section>
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank #</th>
+            <th>ID & Character</th>
+            <th>Race / Class</th>
+            <th>Guild</th>
+            <th>Char Lv (Rank)</th>
+            <th>Class Lv (Tier)</th>
+            <th>Total Stats</th>
+            <th>Might / Spirit</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody"></tbody>
+      </table>
+    </div>
+  </section>
 
-<!-- 3. PLAYER DASHBOARD -->
-<section id="tab-dashboard" class="panel">
-  <h2>Player Character Login</h2>
-  <div style="display:flex; gap:10px; max-width:550px; margin-bottom:20px;">
-    <input type="text" id="loginId" placeholder="00-000-001" />
-    <input type="password" id="loginPass" placeholder="Password" />
-    <button class="btn" style="margin-top:4px;" onclick="loginPlayer()">Login</button>
-  </div>
-
-  <div id="playerArea" style="display:none;">
+  <!-- 2. CREATE CHARACTER -->
+  <section id="tab-create" class="panel">
+    <h2>Create New Character (Starter Kit: 5 AP, 5 SP, 100 XP)</h2>
     <div class="grid-2">
-      <!-- Profile & Drive Pool -->
       <div class="stat-box">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <img id="pAvatarImg" class="avatar-thumb" style="width:56px; height:56px;" src="" alt="Avatar" />
-          <div>
-            <h3 id="pHeaderName" style="margin:0; color:var(--gold);"></h3>
-            <p id="pSubHeader" style="color:var(--muted); margin:2px 0 0 0;"></p>
+        <label>Character Name</label>
+        <input type="text" id="crName" placeholder="Character name" />
+        <label>Gender</label>
+        <input type="text" id="crGender" placeholder="Male / Female / Other" />
+        <label>Character Password</label>
+        <input type="password" id="crPass" placeholder="Login password" />
+        <label>Character Class</label>
+        <select id="crClass">
+          <option>Warrior</option><option>Mage</option><option>Rogue</option>
+          <option>Ranger</option><option>Alchemist</option><option>Crafter</option>
+          <option>Scholar</option><option>Civil</option><option>Jack</option>
+        </select>
+        <label>Character Appearance (Image URL)</label>
+        <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
+        <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
+        <label>About Me / Backstory</label>
+        <textarea id="crAbout" rows="3"></textarea>
+      </div>
+      <div class="stat-box">
+        <label>Select Race (Tap or Hover to view Racial Skills)</label>
+        <div class="race-grid" id="raceSelector"></div>
+        <input type="hidden" id="crRace" value="Human" />
+        <div class="tooltip-box" id="raceTooltip">Hover or tap a Race above to inspect skills.</div>
+        <button id="createCharBtn" class="btn" style="width:100%;" onclick="submitCreateCharacter()">Register Character & Claim Starter Kit</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PLAYER DASHBOARD -->
+  <section id="tab-dashboard" class="panel">
+    <h2>Player Character Login</h2>
+    <div class="flex-row" style="max-width:560px; margin-bottom:18px;">
+      <input type="text" id="loginId" placeholder="00-000-001" />
+      <input type="password" id="loginPass" placeholder="Password" />
+      <button class="btn" style="margin-top:4px;" onclick="loginPlayer()">Login</button>
+    </div>
+
+    <div id="playerArea" style="display:none;">
+      <div class="grid-2">
+        <div class="stat-box">
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <img id="pAvatarImg" class="avatar-thumb" style="width:56px; height:56px;" src="" alt="Avatar" />
+            <div>
+              <h3 id="pHeaderName" style="margin:0; color:var(--gold);"></h3>
+              <p id="pSubHeader" style="color:var(--muted); margin:2px 0 0 0; font-size:0.88rem;"></p>
+            </div>
+          </div>
+          <hr style="border-color:var(--border); margin:12px 0;" />
+          <label>Update Character Avatar URL</label>
+          <div class="flex-row">
+            <input type="url" id="pAvatarInput" placeholder="https://..." />
+            <button class="btn" style="margin-top:4px;" onclick="savePlayerAvatar()">Update Avatar</button>
+          </div>
+          <p style="margin-top:12px;"><strong>Drive Pool XP:</strong> <span id="pDriveXP" style="color:var(--accent)"></span></p>
+          <p style="font-size:0.9rem;"><strong>Char Lv:</strong> <span id="pCharLv"></span> | <strong>Class Lv:</strong> <span id="pClassLv"></span></p>
+          <div class="flex-row" style="margin-top:8px;">
+            <input type="number" id="xpSpendAmt" placeholder="XP Amount" />
+            <button class="btn" onclick="spendDriveXP('character')">+ Char XP</button>
+            <button class="btn btn-secondary" onclick="spendDriveXP('class')">+ Class XP</button>
+          </div>
+          <div class="flex-row" style="margin-top:8px;">
+            <button class="btn btn-secondary" onclick="triggerAscend('ascendRank')">Ascend Rank (AP)</button>
+            <button class="btn btn-secondary" onclick="triggerAscend('ascendClass')">Ascend Class (SP)</button>
+          </div>
+          <label style="margin-top:14px;">Guild</label>
+          <div class="flex-row">
+            <select id="pGuildSelect"></select>
+            <button class="btn" style="margin-top:4px;" onclick="savePlayerProfile()">Save Guild</button>
           </div>
         </div>
-        <hr style="border-color:var(--border); margin:12px 0;" />
-        <label>Update Character Avatar URL</label>
-        <div style="display:flex; gap:8px;">
-          <input type="url" id="pAvatarInput" placeholder="https://..." />
-          <button class="btn" style="margin-top:4px;" onclick="savePlayerAvatar()">Update Avatar</button>
-        </div>
-        <p style="margin-top:12px;"><strong>Drive Pool XP:</strong> <span id="pDriveXP" style="color:var(--accent)"></span></p>
-        <p><strong>Character Level:</strong> <span id="pCharLv"></span> | <strong>Class Level:</strong> <span id="pClassLv"></span></p>
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <input type="number" id="xpSpendAmt" placeholder="XP Amount" style="max-width:130px;" />
-          <button class="btn" onclick="spendDriveXP('character')">+ Char Level XP</button>
-          <button class="btn btn-secondary" onclick="spendDriveXP('class')">+ Class Level XP</button>
-        </div>
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <button class="btn btn-secondary" onclick="triggerAscend('ascendRank')">Ascend Rank (AP)</button>
-          <button class="btn btn-secondary" onclick="triggerAscend('ascendClass')">Ascend Class (SP)</button>
-        </div>
-        <label style="margin-top:14px;">Guild</label>
-        <div style="display:flex; gap:8px;">
-          <select id="pGuildSelect"></select>
-          <button class="btn" style="margin-top:4px;" onclick="savePlayerProfile()">Save Guild</button>
+
+        <div class="stat-box">
+          <h3 style="margin-top:0;">Attributes (Available AP: <span id="pAP" style="color:var(--gold)">0</span>)</h3>
+          <div id="attrInputs" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(125px, 1fr)); gap:8px;">
+            <div><label>Power (<span id="valPow">0</span>)</label><input type="number" id="addPow" value="0" min="0" /></div>
+            <div><label>Endurance (<span id="valEnd">0</span>)</label><input type="number" id="addEnd" value="0" min="0" /></div>
+            <div><label>Mobility (<span id="valMob">0</span>)</label><input type="number" id="addMob" value="0" min="0" /></div>
+            <div><label>Vitality (<span id="valVit">0</span>)</label><input type="number" id="addVit" value="0" min="0" /></div>
+            <div><label>Intelligence (<span id="valInt">0</span>)</label><input type="number" id="addInt" value="0" min="0" /></div>
+            <div><label>Fate (Admin)</label><input type="number" id="valFate" disabled /></div>
+          </div>
+          <button class="btn" style="width:100%;" onclick="submitAP()">Confirm AP Distribution</button>
+          <hr style="border-color:var(--border); margin:14px 0;" />
+          <p><strong>Sub-Attributes:</strong> Might: <strong id="pMight" style="color:var(--accent)">0</strong> | Spirit: <strong id="pSpirit" style="color:var(--accent)">0</strong></p>
+          <small id="pBuffStatus" style="color:var(--muted); display:block;"></small>
         </div>
       </div>
 
-      <!-- Attributes & Sub-Attributes -->
-      <div class="stat-box">
-        <h3 style="margin-top:0;">Attributes (Available AP: <span id="pAP" style="color:var(--gold)">0</span>)</h3>
-        <div id="attrInputs" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <div><label>Power (<span id="valPow">0</span>)</label><input type="number" id="addPow" value="0" min="0" /></div>
-          <div><label>Endurance (<span id="valEnd">0</span>)</label><input type="number" id="addEnd" value="0" min="0" /></div>
-          <div><label>Mobility (<span id="valMob">0</span>)</label><input type="number" id="addMob" value="0" min="0" /></div>
-          <div><label>Vitality (<span id="valVit">0</span>)</label><input type="number" id="addVit" value="0" min="0" /></div>
-          <div><label>Intelligence (<span id="valInt">0</span>)</label><input type="number" id="addInt" value="0" min="0" /></div>
-          <div><label>Fate (Admin Only)</label><input type="number" id="valFate" disabled /></div>
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="stat-box">
+          <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buffs</h3>
+          <button class="btn btn-secondary" onclick="downloadInventoryExcel()">1. Download Inventory (.xlsx)</button>
+          <label style="margin-top:12px;">2. Upload Updated Inventory (.xlsx)</label>
+          <input type="file" id="invFileInput" accept=".xlsx,.xls,.csv" onchange="uploadInventoryExcel(event)" />
+          <div class="table-box">
+            <table>
+              <thead><tr><th>Item</th><th>Qty</th><th>Buff Slot</th><th>Mult Add</th></tr></thead>
+              <tbody id="pInvTable"></tbody>
+            </table>
+          </div>
         </div>
-        <button class="btn" onclick="submitAP()">Confirm AP Distribution</button>
-        <hr style="border-color:var(--border); margin:14px 0;" />
-        <p><strong>Sub-Attributes:</strong> Might: <strong id="pMight" style="color:var(--accent)">0</strong> | Spirit: <strong id="pSpirit" style="color:var(--accent)">0</strong></p>
-        <small id="pBuffStatus" style="color:var(--muted)"></small>
-      </div>
-    </div>
-
-    <!-- Inventory & Interactions -->
-    <div class="grid-2" style="margin-top:20px;">
-      <div class="stat-box">
-        <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buffs</h3>
-        <button class="btn btn-secondary" onclick="downloadInventoryExcel()">1. Download Inventory (.xlsx)</button>
-        <label style="margin-top:12px;">2. Upload Updated Inventory (.xlsx)</label>
-        <input type="file" id="invFileInput" accept=".xlsx,.xls,.csv" onchange="uploadInventoryExcel(event)" />
-        <table>
-          <thead><tr><th>Item</th><th>Qty</th><th>Buff Slot</th><th>Mult Add</th></tr></thead>
-          <tbody id="pInvTable"></tbody>
-        </table>
-      </div>
-      <div class="stat-box">
-        <h3 style="margin-top:0;">Activity & Character Meetings</h3>
-        <p id="pActivityCounts" style="font-size:0.9rem;"></p>
-        <table>
-          <thead><tr><th>Met ID</th><th>Battles</th><th>Sparring</th><th>Quests</th><th>Encounters</th><th>Total</th></tr></thead>
-          <tbody id="pInteractionsTable"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 4. ADMIN CONSOLE (Hidden until Cogwheel + ADMIN_KEY_2026 is entered) -->
-<section id="tab-admin" class="panel">
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h2 style="margin:0;">Enclave Admin Console</h2>
-    <span id="currentStaffBadge" style="color:var(--accent); font-size:0.9rem;"></span>
-  </div>
-
-  <div id="adminAuthGate" class="stat-box" style="margin-top:16px; max-width:480px;">
-    <h3 style="margin-top:0;">Staff Sign In / First-Time Registration</h3>
-    <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
-      Owner Login: Code <strong>0000</strong> | Staff Codes start from <strong>0001</strong>.
-    </p>
-    <label>Staff User Code (XXXX)</label>
-    <input type="text" id="admStaffId" placeholder="0000 or 0001" />
-    <label>Staff Password</label>
-    <input type="password" id="admStaffPass" placeholder="Enter your password" />
-    <div style="display:flex; gap:10px; margin-top:12px;">
-      <button class="btn" onclick="loginStaff()">Staff Login</button>
-      <button class="btn btn-secondary" onclick="registerStaff()">First Time? Register Staff Code</button>
-    </div>
-  </div>
-
-  <div id="adminDashboard" style="display:none; margin-top:16px;">
-    <div class="grid-2">
-      <div class="stat-box">
-        <h3 style="margin-top:0;">Log XP / SP / AP / Fate Points</h3>
-        <label>Character ID(s) (Comma-separated)</label>
-        <input type="text" id="admCharIds" placeholder="00-000-001, 00-000-002" />
-        <label>Method</label>
-        <select id="admMethod">
-          <option>Quest</option><option>Encounter</option><option>Battle</option>
-          <option>Sparring</option><option>Training</option><option>Innovation</option><option>Level Up</option>
-        </select>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <div><label>XP</label><input type="number" id="admXP" value="0" /></div>
-          <div><label>SP</label><input type="number" id="admSP" value="0" /></div>
-          <div><label>AP</label><input type="number" id="admAP" value="0" /></div>
-          <div><label>FP</label><input type="number" id="admFP" value="0" /></div>
-        </div>
-        <label>Notes</label>
-        <input type="text" id="admNotes" placeholder="Raid victory..." />
-        <button class="btn" onclick="submitAdminLog()">Submit Log</button>
-      </div>
-
-      <div class="stat-box">
-        <h3 style="margin-top:0;">Character Status & Guild Pull-Up</h3>
-        <label>Target Character ID</label>
-        <input type="text" id="admStatusCharId" placeholder="00-000-001" />
-        <label>Status</label>
-        <select id="admStatusVal">
-          <option value="Active">Active</option>
-          <option value="Deceased">Deceased (Grayed on Leaderboard)</option>
-          <option value="Limbo">Limbo (Banned)</option>
-        </select>
-        <label>Cause of Death / Status Note (Shown on Hover)</label>
-        <input type="text" id="admStatusNote" placeholder="Fell in the Abyssal Raid..." />
-        <button class="btn" onclick="submitStatusChange()">Update Character Status</button>
-
-        <hr style="border-color:var(--border); margin:14px 0;" />
-        <label>Register New Guild to Pull-Up Database</label>
-        <div style="display:flex; gap:8px;">
-          <input type="text" id="admNewGuild" placeholder="Guild Name" />
-          <button class="btn" style="margin-top:4px;" onclick="submitNewGuild()">Add Guild</button>
+        <div class="stat-box">
+          <h3 style="margin-top:0;">Activity & Character Meetings</h3>
+          <p id="pActivityCounts" style="font-size:0.86rem; color:var(--muted);"></p>
+          <div class="table-box">
+            <table>
+              <thead><tr><th>Met ID</th><th>Battles</th><th>Sparring</th><th>Quests</th><th>Encounters</th><th>Total</th></tr></thead>
+              <tbody id="pInteractionsTable"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- 4. ENCLAVE ARCHIVE (WIKI + WORD DOC UPLOAD/DOWNLOAD + COMMENTS) -->
+  <section id="tab-archive" class="panel">
+    <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
+      <div>
+        <h2 style="margin:0;">📜 The Enclave Archive</h2>
+        <small style="color:var(--muted)">Official Lore, Races, Classes, Timelines & Fandom Character Wiki Pages</small>
+      </div>
+      <div class="flex-row" style="flex:0 1 auto;">
+        <button class="btn btn-secondary" style="margin-top:0;" onclick="downloadWordTemplate('standard')">⬇ Lore/Wiki Word Template (.doc)</button>
+        <button class="btn" style="margin-top:0;" onclick="downloadWordTemplate('character')">⬇ Fandom Character Template (.doc)</button>
+      </div>
+    </div>
+
+    <div class="archive-layout">
+      <!-- Wiki Navigation Sidebar -->
+      <aside class="archive-sidebar" id="archiveSidebar"></aside>
+
+      <!-- Main Wiki Article & Comment Feed -->
+      <div class="archive-article-box">
+        <div class="flex-row" style="justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:14px;">
+          <div>
+            <span id="arcCategoryBadge" class="status-pill status-limbo" style="max-width:none;">Lore</span>
+            <h2 id="arcTitle" style="margin:6px 0 2px 0; color:var(--gold); font-family:'Times New Roman', serif; font-size:1.7rem;">Loading...</h2>
+            <small id="arcMeta" style="color:var(--muted)">Last updated: —</small>
+          </div>
+        </div>
+
+        <!-- Admin Upload & Image Wrap Controls -->
+        <details class="stat-box" style="margin-bottom:18px; background:#111827;">
+          <summary style="cursor:pointer; color:var(--accent); font-weight:700; font-size:0.9rem;">
+            ✏️ Edit / Upload Word File (.docx / .doc) & Floating Images (Admin Staff Upload)
+          </summary>
+          <div style="margin-top:12px;">
+            <p style="font-size:0.83rem; color:var(--muted); margin-top:0;">
+              <strong>How Image Wrapping Works:</strong> You can set a main right-aligned Portrait/Infobox image below, OR write <code>[IMG-RIGHT: https://image-url.jpg | Caption]</code> or <code>[IMG-LEFT: https://image-url.jpg | Caption]</code> anywhere inside your Word document to wrap Times New Roman text around multiple images!
+            </p>
+            <div class="grid-2">
+              <div>
+                <label>Page Title (Or New Character Wiki Name)</label>
+                <input type="text" id="arcEditTitle" placeholder="Page or Character Name" />
+                <label>Right-Aligned Infobox / Portrait Image URL (Optional)</label>
+                <input type="url" id="arcEditImg" placeholder="https://..." />
+                <label>Image Caption / Character Title</label>
+                <input type="text" id="arcEditSub" placeholder="e.g. 'The Crimson Alchemist | ID: 00-000-001'" />
+              </div>
+              <div>
+                <label>Upload Completed Word File (<code>.docx</code> or <code>.doc</code>)</label>
+                <input type="file" id="arcWordInput" accept=".docx,.doc,.html,.txt" onchange="handleArchiveWordFile(event)" />
+                <label>Or Edit / Preview Article Content Directly</label>
+                <textarea id="arcEditHtml" rows="4" placeholder="Uploaded Word file content will appear here..."></textarea>
+              </div>
+            </div>
+            <div class="flex-row" style="margin-top:10px;">
+              <button class="btn" onclick="submitArchivePage(false)">💾 Save / Publish to Current Page (Admin)</button>
+              <button class="btn btn-secondary" onclick="submitArchivePage(true)">➕ Publish as New Character Wiki Page (Admin)</button>
+            </div>
+          </div>
+        </details>
+
+        <!-- Rendered Times New Roman Wiki Content -->
+        <article id="arcArticleBody" class="wiki-content"></article>
+        <div style="clear:both;"></div>
+
+        <!-- Bottom Comment Section -->
+        <hr style="border-color:var(--border); margin:28px 0 18px 0;" />
+        <h3 style="margin-top:0; color:var(--accent);">💬 Archive Comments (<span id="arcCommentCount">0</span>)</h3>
+        <div id="arcCommentsList" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;"></div>
+
+        <div class="stat-box" style="background:#111827;">
+          <label style="margin-top:0;">Post a Comment on this Page</label>
+          <div class="flex-row">
+            <input type="text" id="arcCommentAuthor" placeholder="Your Character Name or ID (e.g. 00-000-001)" style="max-width:280px;" />
+            <input type="text" id="arcCommentText" placeholder="Write your comment or lore note..." />
+            <button class="btn" style="margin-top:4px; flex:0 0 auto;" onclick="submitArchiveComment()">Post Comment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ADMIN CONSOLE -->
+  <section id="tab-admin" class="panel">
+    <div class="flex-row" style="justify-content:space-between;">
+      <h2 style="margin:0;">Enclave Admin Console</h2>
+      <span id="currentStaffBadge" style="color:var(--accent); font-size:0.9rem;"></span>
+    </div>
+
+    <div id="adminAuthGate" class="stat-box" style="margin-top:16px; max-width:480px;">
+      <h3 style="margin-top:0;">Staff Sign In / First-Time Registration</h3>
+      <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
+        Owner Login: Code <strong>0000</strong> | Staff Codes start from <strong>0001</strong>.
+      </p>
+      <label>Staff User Code (XXXX)</label>
+      <input type="text" id="admStaffId" placeholder="0000 or 0001" />
+      <label>Staff Password</label>
+      <input type="password" id="admStaffPass" placeholder="Enter your password" />
+      <div class="flex-row" style="margin-top:12px;">
+        <button class="btn" onclick="loginStaff()">Staff Login</button>
+        <button class="btn btn-secondary" onclick="registerStaff()">Register Staff Code</button>
+      </div>
+    </div>
+
+    <div id="adminDashboard" style="display:none; margin-top:16px;">
+      <div class="grid-2">
+        <div class="stat-box">
+          <h3 style="margin-top:0;">Log XP / SP / AP / Fate Points</h3>
+          <label>Character ID(s) (Comma-separated)</label>
+          <input type="text" id="admCharIds" placeholder="00-000-001, 00-000-002" />
+          <label>Method</label>
+          <select id="admMethod">
+            <option>Quest</option><option>Encounter</option><option>Battle</option>
+            <option>Sparring</option><option>Training</option><option>Innovation</option><option>Level Up</option>
+          </select>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div><label>XP</label><input type="number" id="admXP" value="0" /></div>
+            <div><label>SP</label><input type="number" id="admSP" value="0" /></div>
+            <div><label>AP</label><input type="number" id="admAP" value="0" /></div>
+            <div><label>FP</label><input type="number" id="admFP" value="0" /></div>
+          </div>
+          <label>Notes</label>
+          <input type="text" id="admNotes" placeholder="Raid victory..." />
+          <button class="btn" style="width:100%;" onclick="submitAdminLog()">Submit Log</button>
+        </div>
+
+        <div class="stat-box">
+          <h3 style="margin-top:0;">Character Status & Guild Pull-Up</h3>
+          <label>Target Character ID</label>
+          <input type="text" id="admStatusCharId" placeholder="00-000-001" />
+          <label>Status</label>
+          <select id="admStatusVal">
+            <option value="Active">Active</option>
+            <option value="Deceased">Deceased (Grayed)</option>
+            <option value="Limbo">Limbo (Banned)</option>
+          </select>
+          <label>Cause of Death / Status Note (Shown on Hover)</label>
+          <input type="text" id="admStatusNote" placeholder="Fell in the Abyssal Raid..." />
+          <button class="btn" style="width:100%;" onclick="submitStatusChange()">Update Character Status</button>
+
+          <hr style="border-color:var(--border); margin:14px 0;" />
+          <label>Register New Guild to Pull-Up Database</label>
+          <div class="flex-row">
+            <input type="text" id="admNewGuild" placeholder="Guild Name" />
+            <button class="btn" style="margin-top:4px;" onclick="submitNewGuild()">Add Guild</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
 
 <script>
-  // 1. PASTE  GOOGLE APPS SCRIPT WEB APP URL BELOW:
-  const API_URL = "https://script.google.com/macros/s/AKfycbwpw85Gmj8aJihF9CJZ0b-xfax1WlYb2jye9Uh3T3YiRN4lci87pmSFToYsOQuriYB7WA/exec";
+  // 1. PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW:
+  const API_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
-  // 2. PASTE LOADING GIF LINK BELOW:
-  const LOADING_GIF_URL = "https://media.tenor.com/zTzHQQXcPh8AAAAM/anime-a-sign-of-affection.gif";
+  // 2. PASTE YOUR CUSTOM LOADING GIF LINK BELOW:
+  const LOADING_GIF_URL = "PASTE_YOUR_GIF_LINK_HERE";
 
   // 3. GATE KEY REQUIRED WHEN CLICKING THE COGWHEEL BUTTON:
   const ADMIN_GATE_KEY = "ADMIN_KEY_2026";
 
+  const DEFAULT_ARCHIVE_STRUCTURE = [
+    { group: "Core Lore & World", items: [
+      { slug: "lore", title: "World Lore", category: "Lore" },
+      { slug: "timeline", title: "History & Timeline", category: "Timeline" }
+    ]},
+    { group: "Races of the Enclave", items: [
+      { slug: "race-human", title: "Human", category: "Race" },
+      { slug: "race-elf", title: "Elf", category: "Race" },
+      { slug: "race-dwarf", title: "Dwarf", category: "Race" },
+      { slug: "race-vuxian", title: "Vuxian", category: "Race" },
+      { slug: "race-spirit", title: "Spirit", category: "Race" },
+      { slug: "race-fae", title: "Fae", category: "Race" },
+      { slug: "race-orc", title: "Orc", category: "Race" }
+    ]},
+    { group: "Classes", items: [
+      { slug: "class-warrior", title: "Warrior", category: "Class" },
+      { slug: "class-mage", title: "Mage", category: "Class" },
+      { slug: "class-rogue", title: "Rogue", category: "Class" },
+      { slug: "class-ranger", title: "Ranger", category: "Class" },
+      { slug: "class-alchemist", title: "Alchemist", category: "Class" },
+      { slug: "class-crafter", title: "Crafter", category: "Class" },
+      { slug: "class-scholar", title: "Scholar", category: "Class" },
+      { slug: "class-civil", title: "Civil", category: "Class" },
+      { slug: "class-jack", title: "Jack", category: "Class" }
+    ]},
+    { group: "System Mechanics", items: [
+      { slug: "item-rarity", title: "Item Rarity & Buffs", category: "Item Rarity" },
+      { slug: "attributes", title: "Attributes & Sub-Stats", category: "Attributes" },
+      { slug: "links", title: "Official Links & Resources", category: "Links" }
+    ]},
+    { group: "Characters (Fandom Wiki)", items: [
+      { slug: "char-directory", title: "Character Wiki Directory", category: "Characters" }
+    ]}
+  ];
+
   let STATE = {
     races: [], guilds: [], skills: [], staff: [],
     leaderboard: [], currentChar: null, currentStaff: null,
-    adminGateUnlocked: false
+    adminGateUnlocked: false,
+    archivePages: [], archiveComments: [], activeSlug: "lore"
   };
 
-  // Global submission lock to prevent double/triple clicking
   let isSubmitting = false;
 
   function showLoading(message = "Updating...") {
     const overlay = document.getElementById("loadingOverlay");
     const gifEl = document.getElementById("loadingGif");
     document.getElementById("loadingText").textContent = message;
-
     if (LOADING_GIF_URL && !LOADING_GIF_URL.includes("PASTE_YOUR_GIF")) {
       gifEl.src = LOADING_GIF_URL;
       gifEl.style.display = "block";
@@ -360,18 +595,28 @@
   }
 
   async function initPortal() {
+    renderArchiveSidebar();
+    renderArchiveArticle(STATE.activeSlug);
     if (API_URL.includes("PASTE_YOUR")) return;
     try {
-      const res = await fetch(API_URL + "?action=init");
-      const data = await res.json();
-      if (data.status === "ok") {
-        STATE.races = data.races;
-        STATE.guilds = data.guilds;
-        STATE.skills = data.skills;
-        STATE.staff = data.staff;
-        STATE.leaderboard = data.leaderboard;
+      const [initRes, arcRes] = await Promise.all([
+        fetch(API_URL + "?action=init").then(r => r.json()),
+        fetch(API_URL + "?action=getArchive").then(r => r.json()).catch(() => ({ status: "none" }))
+      ]);
+      if (initRes.status === "ok") {
+        STATE.races = initRes.races;
+        STATE.guilds = initRes.guilds;
+        STATE.skills = initRes.skills;
+        STATE.staff = initRes.staff;
+        STATE.leaderboard = initRes.leaderboard;
         renderLeaderboard();
         renderRaces();
+      }
+      if (arcRes && arcRes.status === "ok") {
+        STATE.archivePages = arcRes.pages || [];
+        STATE.archiveComments = arcRes.comments || [];
+        renderArchiveSidebar();
+        renderArchiveArticle(STATE.activeSlug);
       }
     } catch (e) {
       console.error("Failed to initialize portal:", e);
@@ -388,15 +633,274 @@
   function unlockAdminGate() {
     if (!STATE.adminGateUnlocked) {
       const entered = prompt("Enter Admin Access Key to open the Admin Console:");
-      if (entered !== ADMIN_GATE_KEY) {
-        alert("Access Denied: Invalid Admin Key.");
-        return;
-      }
+      if (entered !== ADMIN_GATE_KEY) return alert("Access Denied: Invalid Admin Key.");
       STATE.adminGateUnlocked = true;
     }
     showTab("admin", document.getElementById("adminToggleBtn"));
   }
 
+  /* ==============================================================
+     ENCLAVE ARCHIVE: SIDEBAR, RENDERER, WORD TEMPLATE & COMMENTS
+     ============================================================== */
+  function renderArchiveSidebar() {
+    const sb = document.getElementById("archiveSidebar");
+    sb.innerHTML = "";
+
+    const customCharPages = STATE.archivePages.filter(p => String(p.Category) === "Characters" && p.Page_Slug !== "char-directory");
+
+    DEFAULT_ARCHIVE_STRUCTURE.forEach(section => {
+      const h = document.createElement("div");
+      h.className = "archive-cat-title";
+      h.textContent = section.group;
+      sb.appendChild(h);
+
+      section.items.forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = "archive-nav-btn" + (STATE.activeSlug === item.slug ? " active" : "");
+        btn.textContent = item.title;
+        btn.onclick = () => renderArchiveArticle(item.slug);
+        sb.appendChild(btn);
+      });
+
+      if (section.group.includes("Characters") && customCharPages.length > 0) {
+        customCharPages.forEach(cp => {
+          const btn = document.createElement("button");
+          btn.className = "archive-nav-btn" + (STATE.activeSlug === cp.Page_Slug ? " active" : "");
+          btn.textContent = "👤 " + cp.Title;
+          btn.onclick = () => renderArchiveArticle(cp.Page_Slug);
+          sb.appendChild(btn);
+        });
+      }
+    });
+  }
+
+  function findDefaultMeta(slug) {
+    for (const sec of DEFAULT_ARCHIVE_STRUCTURE) {
+      for (const it of sec.items) {
+        if (it.slug === slug) return it;
+      }
+    }
+    return { slug, title: slug, category: "Characters" };
+  }
+
+  function formatInlineImageTags(html) {
+    return String(html || "")
+      .replace(/\[IMG-RIGHT:\s*([^|\]]+?)(?:\s*\|\s*([^\]]+))?\]/gi, (_, url, cap) =>
+        `<figure class="wiki-float-right"><img src="${url.trim()}" alt="Archive Image" />${cap ? `<figcaption class="wiki-caption">${cap.trim()}</figcaption>` : ""}</figure>`
+      )
+      .replace(/\[IMG-LEFT:\s*([^|\]]+?)(?:\s*\|\s*([^\]]+))?\]/gi, (_, url, cap) =>
+        `<figure class="wiki-float-left"><img src="${url.trim()}" alt="Archive Image" />${cap ? `<figcaption class="wiki-caption">${cap.trim()}</figcaption>` : ""}</figure>`
+      );
+  }
+
+  function renderArchiveArticle(slug) {
+    STATE.activeSlug = slug;
+    renderArchiveSidebar();
+
+    const saved = STATE.archivePages.find(p => String(p.Page_Slug) === slug);
+    const meta = findDefaultMeta(slug);
+
+    const title = saved ? saved.Title : meta.title;
+    const category = saved ? saved.Category : meta.category;
+    const infoboxImg = saved ? saved.Infobox_Image : "";
+    const infoboxSub = saved ? saved.Infobox_Subtitle : "";
+    const updatedInfo = saved
+      ? `Updated by ${saved.Updated_By} on ${new Date(saved.Updated_At).toLocaleDateString("en-GB")}`
+      : "Default Archive Entry (Upload a Word document to customize)";
+
+    document.getElementById("arcCategoryBadge").textContent = category;
+    document.getElementById("arcTitle").textContent = title;
+    document.getElementById("arcMeta").textContent = updatedInfo;
+
+    document.getElementById("arcEditTitle").value = title;
+    document.getElementById("arcEditImg").value = infoboxImg || "";
+    document.getElementById("arcEditSub").value = infoboxSub || "";
+
+    let rawBody = saved
+      ? saved.Content_HTML
+      : `<p>Welcome to the <strong>${title}</strong> archive page. Anyone can download the Word template above to draft lore or character articles in <em>Times New Roman</em>, and Admin Staff can upload the completed Word file to publish it live.</p>`;
+    document.getElementById("arcEditHtml").value = rawBody;
+
+    let floatHeader = "";
+    if (infoboxImg) {
+      floatHeader = `
+        <figure class="wiki-float-right">
+          <img src="${infoboxImg}" alt="${title}" />
+          <figcaption class="wiki-caption"><strong>${title}</strong>${infoboxSub ? `<br/>${infoboxSub}` : ""}</figcaption>
+        </figure>
+      `;
+    }
+
+    document.getElementById("arcArticleBody").innerHTML = floatHeader + formatInlineImageTags(rawBody);
+    renderArchiveComments(slug);
+  }
+
+  function renderArchiveComments(slug) {
+    const list = document.getElementById("arcCommentsList");
+    const pageComments = STATE.archiveComments.filter(c => String(c.Page_Slug) === slug);
+    document.getElementById("arcCommentCount").textContent = pageComments.length;
+    list.innerHTML = "";
+
+    if (pageComments.length === 0) {
+      list.innerHTML = `<small style="color:var(--muted)">No comments yet. Be the first to leave a note on this page!</small>`;
+      return;
+    }
+
+    pageComments.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "stat-box";
+      div.style.padding = "10px 12px";
+      const d = c.Timestamp ? new Date(c.Timestamp).toLocaleDateString("en-GB") : "";
+      div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gold); margin-bottom:4px;">
+          <strong>${c.Author_Name}</strong>
+          <span style="color:var(--muted)">${d}</span>
+        </div>
+        <div style="font-size:0.92rem; color:var(--text);">${c.Comment_Text}</div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function downloadWordTemplate(type) {
+    let content = "";
+    let filename = "";
+
+    if (type === "character") {
+      filename = "Enclave_Fandom_Character_Wiki_Template.doc";
+      content = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>Character Wiki Template</title></head>
+        <body style="font-family:'Times New Roman', Times, serif; font-size:12pt; line-height:1.6;">
+          <h1>[Character Full Name]</h1>
+          <p><em>"Insert an iconic character quote here."</em></p>
+          <p>[IMG-RIGHT: https://paste-your-character-portrait-url-here.png | Character Name &amp; ID (XX-XXX-XXX)]</p>
+          <h2>Overview</h2>
+          <p>Write a general overview of the character, their role in the Enclave, their guild affiliation, and their reputation.</p>
+          <h2>Appearance</h2>
+          <p>Describe their physical build, attire, weapons, and distinguishing marks. You can also wrap another image on the left side of the text using:</p>
+          <p>[IMG-LEFT: https://paste-secondary-image-url.png | Battle Attire]</p>
+          <h2>Personality</h2>
+          <p>Detail their temperament, ideals, flaws, and how they interact with allies and rivals.</p>
+          <h2>Abilities &amp; Combat Style</h2>
+          <p><strong>Class &amp; Race Synergy:</strong> Explain how their Race skills and Class skills combine in combat.</p>
+          <h2>History / Backstory</h2>
+          <p>Chronicle their past before and after joining the Enclave.</p>
+          <h2>Trivia</h2>
+          <ul>
+            <li>Favorite weapon or alchemy recipe.</li>
+            <li>Notable battles or rivalries.</li>
+          </ul>
+        </body></html>`;
+    } else {
+      filename = `Enclave_Archive_${STATE.activeSlug}_Template.doc`;
+      content = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>Enclave Archive Template</title></head>
+        <body style="font-family:'Times New Roman', Times, serif; font-size:12pt; line-height:1.6;">
+          <h1>${document.getElementById("arcTitle").textContent}</h1>
+          <p>[IMG-RIGHT: https://paste-image-url-here.png | Figure 1: Image Caption]</p>
+          <h2>I. Introduction</h2>
+          <p>Write your lore, race, class, or mechanics article here in Times New Roman. Any image tag above will automatically float so your paragraphs wrap cleanly around the image.</p>
+          <h2>II. Key Details &amp; Records</h2>
+          <p>Add additional sections, tables, or left-aligned images using [IMG-LEFT: https://paste-image-url-here.png | Figure 2].</p>
+        </body></html>`;
+    }
+
+    const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function handleArchiveWordFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (ext === "docx") {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        mammoth.convertToHtml({ arrayBuffer: e.target.result })
+          .then(result => {
+            document.getElementById("arcEditHtml").value = result.value;
+            alert("Word (.docx) file converted! Click 'Save / Publish' to update the Archive page.");
+          })
+          .catch(err => alert("Error reading .docx file: " + err.message));
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        let raw = e.target.result;
+        const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        if (bodyMatch) raw = bodyMatch[1];
+        document.getElementById("arcEditHtml").value = raw.trim();
+        alert("Word Template loaded! Click 'Save / Publish' to update the Archive page.");
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  async function submitArchivePage(asNewCharacterPage) {
+    if (!STATE.currentStaff) {
+      return alert("Only logged-in Admin Staff can upload or publish changes to the Enclave Archive. Click the ⚙️ icon to sign in with your Staff Code first.");
+    }
+    const titleVal = document.getElementById("arcEditTitle").value.trim();
+    if (!titleVal) return alert("Please enter a Page or Character Title.");
+
+    let slug = STATE.activeSlug;
+    let category = document.getElementById("arcCategoryBadge").textContent;
+
+    if (asNewCharacterPage) {
+      slug = "char-" + titleVal.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      category = "Characters";
+    }
+
+    const res = await apiPost({
+      action: "saveArchivePage",
+      staffId: STATE.currentStaff.Staff_ID,
+      slug,
+      category,
+      title: titleVal,
+      infoboxImage: document.getElementById("arcEditImg").value.trim(),
+      infoboxSubtitle: document.getElementById("arcEditSub").value.trim(),
+      contentHtml: document.getElementById("arcEditHtml").value
+    }, "Publishing to Enclave Archive...");
+
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      STATE.activeSlug = slug;
+      await initPortal();
+    }
+  }
+
+  async function submitArchiveComment() {
+    const author = document.getElementById("arcCommentAuthor").value.trim() ||
+      (STATE.currentChar ? `${STATE.currentChar.character.Name} (${STATE.currentChar.character.Char_ID})` : "Anonymous Traveler");
+    const text = document.getElementById("arcCommentText").value.trim();
+    if (!text) return alert("Please write a comment first.");
+
+    const res = await apiPost({
+      action: "addArchiveComment",
+      slug: STATE.activeSlug,
+      author,
+      text
+    }, "Posting Comment...");
+
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    document.getElementById("arcCommentText").value = "";
+    await initPortal();
+  }
+
+  /* ==============================================================
+     PORTAL LOGIC (LEADERBOARD, CREATION, PLAYER, ADMIN)
+     ============================================================== */
   function renderLeaderboard() {
     const q = (document.getElementById("searchIdInput").value || "").toLowerCase();
     const tbody = document.getElementById("leaderboardBody");
@@ -407,15 +911,13 @@
         const isDead = c.Status === "Deceased";
         const isLimbo = c.Status === "Limbo";
         const statusClass = isDead ? "status-deceased" : (isLimbo ? "status-limbo" : "status-active");
-        const hoverNote = c.Status_Note
-          ? `${c.Status} — ${c.Status_Note}`
-          : `${c.Status} (No additional status notes)`;
+        const hoverNote = c.Status_Note ? `${c.Status} — ${c.Status_Note}` : `${c.Status}`;
 
         const tr = document.createElement("tr");
         if (isDead || isLimbo) tr.className = "deceased";
         tr.innerHTML = `
           <td>#${idx + 1}</td>
-          <td>
+          <td style="white-space:nowrap;">
             <img class="avatar-thumb" src="${c.Avatar_URL || 'https://via.placeholder.com/36'}" alt="Avatar" />
             <strong>${c.Char_ID}</strong> — ${c.Name}
           </td>
@@ -425,9 +927,7 @@
           <td>Lv ${c.Class_Level} (${c.Class_Tier})</td>
           <td>${c.Total_Stats}</td>
           <td>${c.Might} / ${c.Spirit}</td>
-          <td>
-            <span class="status-pill ${statusClass}" title="${hoverNote.replace(/"/g, '&quot;')}">${c.Status}</span>
-          </td>
+          <td><span class="status-pill ${statusClass}" title="${hoverNote.replace(/"/g, '&quot;')}">${c.Status}</span></td>
         `;
         tbody.appendChild(tr);
       });
@@ -462,21 +962,14 @@
     `;
   }
 
-  // Centralized POST wrapper with single-flight lock + Loading Modal
   async function apiPost(payload, loadingMessage = "Updating...") {
-    if (isSubmitting) return null; // Ignore extra taps while busy
+    if (isSubmitting) return null;
     isSubmitting = true;
     showLoading(loadingMessage);
-
-    // Disable all action buttons while request is in flight
     const buttons = document.querySelectorAll("button.btn");
     buttons.forEach(b => b.disabled = true);
-
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
       return await res.json();
     } catch (err) {
       return { status: "error", message: "Network error: " + err.message };
@@ -490,9 +983,7 @@
   async function submitCreateCharacter() {
     const nameVal = document.getElementById("crName").value.trim();
     const passVal = document.getElementById("crPass").value.trim();
-    if (!nameVal || !passVal) {
-      return alert("Please enter both a Character Name and a Password.");
-    }
+    if (!nameVal || !passVal) return alert("Please enter both a Character Name and a Password.");
 
     const res = await apiPost({
       action: "createCharacter",
@@ -508,7 +999,6 @@
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
-      // Clear form inputs so user doesn't accidentally submit same character again
       document.getElementById("crName").value = "";
       document.getElementById("crPass").value = "";
       document.getElementById("crAbout").value = "";
@@ -677,7 +1167,6 @@
     reader.readAsBinaryString(file);
   }
 
-  /* Admin Staff Authentication */
   async function loginStaff() {
     const res = await apiPost({
       action: "adminLogin",
