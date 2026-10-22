@@ -600,7 +600,7 @@
     document.getElementById("loadingOverlay").style.display = "none";
   }
 
-   function initPortal() {
+  async function initPortal() {
     renderArchiveSidebar();
     renderArchiveArticle(STATE.activeSlug);
     if (API_URL.includes("PASTE_YOUR")) return;
@@ -1174,44 +1174,31 @@
   }
 
   async function loginStaff() {
+    const staffIdInput = document.getElementById("admStaffId").value;
+    const passInput = document.getElementById("admStaffPass").value;
+
     const res = await apiPost({
       action: "adminLogin",
-      staffId: document.getElementById("admStaffId").value,
-      password: document.getElementById("admStaffPass").value
+      staffId: staffIdInput,
+      password: passInput
     }, "Authenticating Staff...");
-    
+
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
 
-    // Save session globally in STATE
+    // Save globally across all tabs (Admin + Archive)
     STATE.currentStaff = res.staff;
 
-    // Update UI badges & global banner
+    // Update UI badges in both Admin Console and Archive panel
     const badgeText = `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
     document.getElementById("currentStaffBadge").textContent = badgeText;
-    document.getElementById("bannerStaffText").textContent = badgeText;
-    document.getElementById("globalStaffBanner").style.display = "flex";
-
-    // UNLOCK THE WIKI EDIT BOX ON THE ARCHIVE TAB
-    document.getElementById("archiveEditSection").style.display = "block";
-
+    
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
-    
-    alert("Staff session active! You can now edit and upload Enclave Archive pages.");
-  }
-
-  function logoutStaff() {
-    STATE.currentStaff = null;
-    document.getElementById("globalStaffBanner").style.display = "none";
-    
-    // HIDE THE WIKI EDIT BOX AGAIN
-    document.getElementById("archiveEditSection").style.display = "none";
-
-    document.getElementById("adminAuthGate").style.display = "block";
-    document.getElementById("adminDashboard").style.display = "none";
-    document.getElementById("admStaffPass").value = "";
-    alert("Staff session closed.");
+    document.getElementById("currentStaffBadge").textContent =
+      `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
+  
+    alert("Staff session active globally! You can now publish and upload Enclave Archive pages.");
   }
 
   async function registerStaff() {
