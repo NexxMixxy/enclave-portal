@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enclave Portal | Character & Progression System</title>
-  <!-- SheetJS for downloading & uploading Excel (.xlsx) Inventory Sheets -->
+  <title>Enclave Portal</title>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
@@ -29,9 +28,17 @@
     th, td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; }
     th { color: var(--accent); background: #0b1120; }
     tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
-    .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-    .badge-active { background: rgba(34,197,94,0.2); color: var(--success); }
-    .badge-deceased { background: rgba(239,68,68,0.25); color: #fca5a5; }
+    
+    /* Avatar Thumbnail */
+    .avatar-thumb { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #0b1120; }
+    .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-top: 8px; background: #0b1120; display: block; }
+
+    /* Status Pill with Tooltip */
+    .status-pill { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: help; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    .status-active { background: rgba(34,197,94,0.2); color: var(--success); }
+    .status-deceased { background: rgba(239,68,68,0.25); color: #fca5a5; }
+    .status-limbo { background: rgba(234,179,8,0.25); color: var(--gold); }
+
     .race-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .race-chip { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: #0b1120; }
     .race-chip.selected { border-color: var(--gold); color: var(--gold); }
@@ -44,13 +51,13 @@
 <header>
   <div>
     <h1>ENCLAVE PORTAL</h1>
-    <small style="color:var(--muted)">Live RPG Character Registry, Drive Pool & Admin Logs</small>
+    <small style="color:var(--muted)">Live RP Character Registry</small>
   </div>
-  <nav>
+  <nav id="topNav">
     <button class="active" onclick="showTab('leaderboard')">Public Leaderboard</button>
     <button onclick="showTab('create')">Create Character</button>
     <button onclick="showTab('dashboard')">Player Portal</button>
-    <button onclick="showTab('admin')">Admin Console</button>
+    <button id="adminToggleBtn" onclick="toggleAdminPanel()" style="background:#0f172a; border-color:var(--gold); color:var(--gold);">⚙️</button>
   </nav>
 </header>
 
@@ -58,14 +65,13 @@
 <section id="tab-leaderboard" class="panel active">
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
     <h2>Live Public Leaderboard</h2>
-    <input type="text" id="searchIdInput" placeholder="Search ID (e.g. 00-000-001) or Name..." style="max-width:280px;" oninput="renderLeaderboard()" />
+    <input type="text" id="searchIdInput" placeholder="Search ID (00-000-001) or Name..." style="max-width:280px;" oninput="renderLeaderboard()" />
   </div>
   <table>
     <thead>
       <tr>
         <th>Rank #</th>
-        <th>ID (XX-XXX-XXX)</th>
-        <th>Character</th>
+        <th>ID & Character</th>
         <th>Race / Class</th>
         <th>Guild</th>
         <th>Char Lv (Rank)</th>
@@ -85,11 +91,11 @@
   <div class="grid-2">
     <div>
       <label>Character Name</label>
-      <input type="text" id="crName" placeholder="Enter character name" />
+      <input type="text" id="crName" placeholder="Character name" />
       <label>Gender</label>
-      <input type="text" id="crGender" placeholder="Male / Female / Non-Binary / Other" />
-      <label>Character Password (Used to log in to your ID later)</label>
-      <input type="password" id="crPass" placeholder="Create a login password" />
+      <input type="text" id="crGender" placeholder="Male / Female / Other" />
+      <label>Character Password</label>
+      <input type="password" id="crPass" placeholder="Login password" />
       <label>Character Class</label>
       <select id="crClass">
         <option>Warrior</option><option>Mage</option><option>Rogue</option>
@@ -97,17 +103,16 @@
         <option>Scholar</option><option>Civil</option><option>Jack</option>
       </select>
       <label>Character Appearance (Image URL)</label>
-      <input type="url" id="crAvatar" placeholder="https://..." />
+      <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
+      <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
       <label>About Me / Backstory</label>
       <textarea id="crAbout" rows="3"></textarea>
     </div>
     <div>
-      <label>Select Race (Hover or click to inspect Racial Skills)</label>
+      <label>Select Race</label>
       <div class="race-grid" id="raceSelector"></div>
       <input type="hidden" id="crRace" value="Human" />
-      <div class="tooltip-box" id="raceTooltip">
-        Hover over a Race above to preview its Main Skill, Passives I-II, Ascensions I-IV, and Legendary Skill.
-      </div>
+      <div class="tooltip-box" id="raceTooltip">Hover over a Race above to inspect skills.</div>
       <button class="btn" onclick="submitCreateCharacter()">Register Character & Claim Starter Kit</button>
     </div>
   </div>
@@ -126,10 +131,20 @@
     <div class="grid-2">
       <!-- Profile & Drive Pool -->
       <div class="stat-box">
-        <h3 id="pHeaderName" style="margin-top:0; color:var(--gold);"></h3>
-        <p id="pSubHeader" style="color:var(--muted); margin:4px 0;"></p>
-        <hr style="border-color:var(--border)" />
-        <p><strong>Drive Pool XP:</strong> <span id="pDriveXP" style="color:var(--accent)"></span> (Left / Total)</p>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img id="pAvatarImg" class="avatar-thumb" style="width:56px; height:56px;" src="" alt="Avatar" />
+          <div>
+            <h3 id="pHeaderName" style="margin:0; color:var(--gold);"></h3>
+            <p id="pSubHeader" style="color:var(--muted); margin:2px 0 0 0;"></p>
+          </div>
+        </div>
+        <hr style="border-color:var(--border); margin:12px 0;" />
+        <label>Avatar Image URL</label>
+        <div style="display:flex; gap:8px;">
+          <input type="url" id="pAvatarInput" placeholder="https://..." />
+          <button class="btn" style="margin-top:4px;" onclick="savePlayerAvatar()">Update Avatar</button>
+        </div>
+        <p style="margin-top:12px;"><strong>Drive Pool XP:</strong> <span id="pDriveXP" style="color:var(--accent)"></span></p>
         <p><strong>Character Level:</strong> <span id="pCharLv"></span> | <strong>Class Level:</strong> <span id="pClassLv"></span></p>
         <div style="display:flex; gap:8px; margin-top:8px;">
           <input type="number" id="xpSpendAmt" placeholder="XP Amount" style="max-width:130px;" />
@@ -138,9 +153,9 @@
         </div>
         <div style="display:flex; gap:8px; margin-top:8px;">
           <button class="btn btn-secondary" onclick="triggerAscend('ascendRank')">Ascend Rank (AP)</button>
-          <button class="btn btn-secondary" onclick="triggerAscend('ascendClass')">Ascend Class Tier (SP)</button>
+          <button class="btn btn-secondary" onclick="triggerAscend('ascendClass')">Ascend Class (SP)</button>
         </div>
-        <label style="margin-top:14px;">Guild Pull-Up (Admin Approved Guilds)</label>
+        <label style="margin-top:14px;">Guild</label>
         <div style="display:flex; gap:8px;">
           <select id="pGuildSelect"></select>
           <button class="btn" style="margin-top:4px;" onclick="savePlayerProfile()">Save Guild</button>
@@ -160,31 +175,28 @@
         </div>
         <button class="btn" onclick="submitAP()">Confirm AP Distribution</button>
         <hr style="border-color:var(--border); margin:14px 0;" />
-        <p><strong>Sub-Attributes (Vitality + Level × Multiplier):</strong></p>
-        <p>Might: <strong id="pMight" style="color:var(--accent)">0</strong> | Spirit: <strong id="pSpirit" style="color:var(--accent)">0</strong></p>
+        <p><strong>Sub-Attributes:</strong> Might: <strong id="pMight" style="color:var(--accent)">0</strong> | Spirit: <strong id="pSpirit" style="color:var(--accent)">0</strong></p>
         <small id="pBuffStatus" style="color:var(--muted)"></small>
       </div>
     </div>
 
-    <!-- Inventory Excel Download/Upload & Activity Log -->
+    <!-- Inventory & Interactions -->
     <div class="grid-2" style="margin-top:20px;">
       <div class="stat-box">
-        <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buff Items</h3>
-        <p style="font-size:0.85rem; color:var(--muted);">Download your current inventory as an Excel sheet, edit your items and up to 2 equipped buff multipliers (`Left` / `Right`), then upload it back.</p>
+        <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buffs</h3>
         <button class="btn btn-secondary" onclick="downloadInventoryExcel()">1. Download Inventory (.xlsx)</button>
         <label style="margin-top:12px;">2. Upload Updated Inventory (.xlsx)</label>
         <input type="file" id="invFileInput" accept=".xlsx,.xls,.csv" onchange="uploadInventoryExcel(event)" />
         <table>
-          <thead><tr><th>Item</th><th>Qty</th><th>Buff Slot</th><th>Multiplier Add</th></tr></thead>
+          <thead><tr><th>Item</th><th>Qty</th><th>Buff Slot</th><th>Mult Add</th></tr></thead>
           <tbody id="pInvTable"></tbody>
         </table>
       </div>
-
       <div class="stat-box">
-        <h3 style="margin-top:0;">Activity Totals & Pairwise Character Meetings</h3>
+        <h3 style="margin-top:0;">Activity & Character Meetings</h3>
         <p id="pActivityCounts" style="font-size:0.9rem;"></p>
         <table>
-          <thead><tr><th>Met Character ID</th><th>Battles</th><th>Sparring</th><th>Quests</th><th>Encounters</th><th>Total</th></tr></thead>
+          <thead><tr><th>Met ID</th><th>Battles</th><th>Sparring</th><th>Quests</th><th>Encounters</th><th>Total</th></tr></thead>
           <tbody id="pInteractionsTable"></tbody>
         </table>
       </div>
@@ -192,62 +204,78 @@
   </div>
 </section>
 
-<!-- 4. ADMIN CONSOLE -->
+<!-- 4. ADMIN CONSOLE (Hidden by default, unlocked via Cogwheel) -->
 <section id="tab-admin" class="panel">
-  <h2>Enclave Admin Console</h2>
-  <label>Admin Master Key</label>
-  <input type="password" id="adminKey" placeholder="Enter ADMIN_MASTER_KEY" style="max-width:320px;" />
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0;">Enclave Admin Console</h2>
+    <span id="currentStaffBadge" style="color:var(--accent); font-size:0.9rem;"></span>
+  </div>
 
-  <div class="grid-2" style="margin-top:16px;">
-    <div class="stat-box">
-      <h3 style="margin-top:0;">Log XP / SP / AP / Fate Points</h3>
-      <label>Character ID(s) — Comma-separated for group Quests/Battles/Sparring</label>
-      <input type="text" id="admCharIds" placeholder="00-000-001, 00-000-002" />
-      <label>Method</label>
-      <select id="admMethod">
-        <option>Quest</option><option>Encounter</option><option>Battle</option>
-        <option>Sparring</option><option>Training</option><option>Innovation</option><option>Level Up</option>
-      </select>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <div><label>XP (Drive Pool)</label><input type="number" id="admXP" value="0" /></div>
-        <div><label>Skill Points (SP)</label><input type="number" id="admSP" value="0" /></div>
-        <div><label>Attribute Points (AP)</label><input type="number" id="admAP" value="0" /></div>
-        <div><label>Fate Points (FP)</label><input type="number" id="admFP" value="0" /></div>
-      </div>
-      <label>Event Notes</label>
-      <input type="text" id="admNotes" placeholder="Boss defeated / Sparring match" />
-      <button class="btn" onclick="submitAdminLog()">Submit Log & Update Interactions</button>
+  <!-- Staff Login / Signup Gate -->
+  <div id="adminAuthGate" class="stat-box" style="margin-top:16px; max-width:480px;">
+    <h3 style="margin-top:0;">Staff Sign In / Register</h3>
+    <label>Staff ID (e.g. 0000 for Owner, or 0001+ for Staff)</label>
+    <input type="text" id="admStaffId" placeholder="0000 or 0001" />
+    <label>Password</label>
+    <input type="password" id="admStaffPass" placeholder="Staff Password" />
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <button class="btn" onclick="loginStaff()">Staff Login</button>
+      <button class="btn btn-secondary" onclick="registerStaff()">Register New Staff Code</button>
     </div>
+  </div>
 
-    <div class="stat-box">
-      <h3 style="margin-top:0;">Character Status (Deceased / Limbo) & Guild Pull-Up</h3>
-      <label>Target Character ID</label>
-      <input type="text" id="admStatusCharId" placeholder="00-000-001" />
-      <label>Status</label>
-      <select id="admStatusVal">
-        <option value="Active">Active</option>
-        <option value="Deceased">Deceased (Grayed on Leaderboard)</option>
-        <option value="Limbo">Limbo (Banned)</option>
-      </select>
-      <label>Cause of Death / Limbo Note</label>
-      <input type="text" id="admStatusNote" placeholder="Fell in the Abyssal Raid..." />
-      <button class="btn" onclick="submitStatusChange()">Update Character Status</button>
+  <!-- Admin Logging Dashboard (Unlocked after Login) -->
+  <div id="adminDashboard" style="display:none; margin-top:16px;">
+    <div class="grid-2">
+      <div class="stat-box">
+        <h3 style="margin-top:0;">Log XP / SP / AP / Fate Points</h3>
+        <label>Character ID(s) (Comma-separated)</label>
+        <input type="text" id="admCharIds" placeholder="00-000-001, 00-000-002" />
+        <label>Method</label>
+        <select id="admMethod">
+          <option>Quest</option><option>Encounter</option><option>Battle</option>
+          <option>Sparring</option><option>Training</option><option>Innovation</option><option>Level Up</option>
+        </select>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div><label>XP</label><input type="number" id="admXP" value="0" /></div>
+          <div><label>SP</label><input type="number" id="admSP" value="0" /></div>
+          <div><label>AP</label><input type="number" id="admAP" value="0" /></div>
+          <div><label>FP</label><input type="number" id="admFP" value="0" /></div>
+        </div>
+        <label>Notes</label>
+        <input type="text" id="admNotes" placeholder="Raid victory..." />
+        <button class="btn" onclick="submitAdminLog()">Submit Log (Recorded with your Staff ID)</button>
+      </div>
 
-      <hr style="border-color:var(--border); margin:16px 0;" />
-      <label>Register New Guild to Pull-Up Database</label>
-      <div style="display:flex; gap:8px;">
-        <input type="text" id="admNewGuild" placeholder="Guild Name" />
-        <button class="btn" style="margin-top:4px;" onclick="submitNewGuild()">Add Guild</button>
+      <div class="stat-box">
+        <h3 style="margin-top:0;">Owner / Admin Management</h3>
+        <label>Target Character ID</label>
+        <input type="text" id="admStatusCharId" placeholder="00-000-001" />
+        <label>Status</label>
+        <select id="admStatusVal">
+          <option value="Active">Active</option>
+          <option value="Deceased">Deceased (Grayed)</option>
+          <option value="Limbo">Limbo (Banned)</option>
+        </select>
+        <label>Status Note / Cause of Death</label>
+        <input type="text" id="admStatusNote" placeholder="Fell in battle..." />
+        <button class="btn" onclick="submitStatusChange()">Update Character Status</button>
+
+        <hr style="border-color:var(--border); margin:14px 0;" />
+        <label>Register New Guild</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="admNewGuild" placeholder="Guild Name" />
+          <button class="btn" style="margin-top:4px;" onclick="submitNewGuild()">Add Guild</button>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <script>
-  // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW:
   const API_URL = "https://script.google.com/macros/s/AKfycbwpw85Gmj8aJihF9CJZ0b-xfax1WlYb2jye9Uh3T3YiRN4lci87pmSFToYsOQuriYB7WA/exec";
 
-  let STATE = { races: [], guilds: [], skills: [], leaderboard: [], currentChar: null };
+  let STATE = { races: [], guilds: [], skills: [], staff: [], leaderboard: [], currentChar: null, currentStaff: null };
 
   async function initPortal() {
     if (API_URL.includes("PASTE_YOUR")) return;
@@ -257,6 +285,7 @@
       STATE.races = data.races;
       STATE.guilds = data.guilds;
       STATE.skills = data.skills;
+      STATE.staff = data.staff;
       STATE.leaderboard = data.leaderboard;
       renderLeaderboard();
       renderRaces();
@@ -265,9 +294,16 @@
 
   function showTab(tab) {
     document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("nav button").forEach(b => {
+      if(b.id !== "adminToggleBtn") b.classList.remove("active");
+    });
     document.getElementById("tab-" + tab).classList.add("active");
-    event.target.classList.add("active");
+    if(tab !== "admin") event.target.classList.add("active");
+  }
+
+  function toggleAdminPanel() {
+    showTab("admin");
+    document.getElementById("adminToggleBtn").classList.add("active");
   }
 
   function renderLeaderboard() {
@@ -278,12 +314,18 @@
       .filter(c => String(c.Char_ID).toLowerCase().includes(q) || String(c.Name).toLowerCase().includes(q))
       .forEach((c, idx) => {
         const isDead = c.Status === "Deceased";
+        const isLimbo = c.Status === "Limbo";
+        const statusClass = isDead ? "status-deceased" : (isLimbo ? "status-limbo" : "status-active");
+        const statusText = c.Status + (c.Status_Note ? ": " + c.Status_Note : "");
+
         const tr = document.createElement("tr");
-        if (isDead) tr.className = "deceased";
+        if (isDead || isLimbo) tr.className = "deceased";
         tr.innerHTML = `
           <td>#${idx + 1}</td>
-          <td><strong>${c.Char_ID}</strong></td>
-          <td>${c.Name}</td>
+          <td>
+            <img class="avatar-thumb" src="${c.Avatar_URL || 'https://via.placeholder.com/36'}" alt="Avatar" />
+            <strong>${c.Char_ID}</strong> — ${c.Name}
+          </td>
           <td>${c.Race} / ${c.Class}</td>
           <td>${c.Guild || "—"}</td>
           <td>Lv ${c.Char_Level} (${c.Rank_Tier})</td>
@@ -291,8 +333,7 @@
           <td>${c.Total_Stats}</td>
           <td>${c.Might} / ${c.Spirit}</td>
           <td>
-            <span class="badge ${isDead ? 'badge-deceased' : 'badge-active'}">${c.Status}</span>
-            ${c.Status_Note ? `<br><small>${c.Status_Note}</small>` : ""}
+            <span class="status-pill ${statusClass}" title="${statusText}">${c.Status}</span>
           </td>
         `;
         tbody.appendChild(tr);
@@ -321,18 +362,15 @@
   function showRaceSkills(r) {
     document.getElementById("raceTooltip").innerHTML = `
       <strong style="color:var(--gold)">${r.Race} Racial Skill Tree</strong><br/>
-      • <strong>Main Skill:</strong> ${r.Main_Skill}<br/>
+      • <strong>Main:</strong> ${r.Main_Skill}<br/>
       • <strong>Passives:</strong> I: ${r.Passive_I} | II: ${r.Passive_II}<br/>
       • <strong>Ascensions:</strong> I: ${r.Ascension_I} | II: ${r.Ascension_II} | III: ${r.Ascension_III} | IV: ${r.Ascension_IV}<br/>
-      • <strong>Legendary Skill:</strong> <span style="color:var(--accent)">${r.Legendary_Skill}</span>
+      • <strong>Legendary:</strong> <span style="color:var(--accent)">${r.Legendary_Skill}</span>
     `;
   }
 
   async function apiPost(payload) {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
     return await res.json();
   }
 
@@ -343,7 +381,7 @@
       gender: document.getElementById("crGender").value,
       password: document.getElementById("crPass").value,
       race: document.getElementById("crRace").value,
-      charClass: document.getElementById("crClass").value,
+      class: document.getElementById("crClass").value,
       avatarUrl: document.getElementById("crAvatar").value,
       aboutMe: document.getElementById("crAbout").value
     });
@@ -370,6 +408,8 @@
     document.getElementById("playerArea").style.display = "block";
     document.getElementById("pHeaderName").textContent = `${c.Name} [${c.Char_ID}]`;
     document.getElementById("pSubHeader").textContent = `${c.Race} ${c.Class} | Status: ${c.Status}`;
+    document.getElementById("pAvatarImg").src = c.Avatar_URL || "https://via.placeholder.com/56";
+    document.getElementById("pAvatarInput").value = c.Avatar_URL || "";
     document.getElementById("pDriveXP").textContent = `${c.XP_Drive_Available} / ${c.XP_Drive_Total}`;
     document.getElementById("pCharLv").textContent = `${c.Char_Level} (${c.Char_XP_Progress}/200 XP) [${c.Rank_Tier}]`;
     document.getElementById("pClassLv").textContent = `${c.Class_Level} (${c.Class_XP_Progress}/${(Number(c.Class_Level)+1)*50} XP) [${c.Class_Tier}]`;
@@ -386,7 +426,6 @@
     document.getElementById("pSpirit").textContent = data.subStats.spirit;
     document.getElementById("pBuffStatus").textContent = `Active Multiplier: ${data.subStats.activeMultiplier}x (Slot 1: ${c.Buff1_Name} +${c.Buff1_Mult} | Slot 2: ${c.Buff2_Name} +${c.Buff2_Mult})`;
 
-    // Populate Guild dropdown from Admin Pull-Up DB
     const gSel = document.getElementById("pGuildSelect");
     gSel.innerHTML = `<option value="">-- No Guild --</option>`;
     STATE.guilds.forEach(g => {
@@ -397,14 +436,12 @@
       gSel.appendChild(opt);
     });
 
-    // Render Inventory
     const invBody = document.getElementById("pInvTable");
     invBody.innerHTML = "";
     data.inventory.forEach(it => {
       invBody.innerHTML += `<tr><td>${it.Item_Name}</td><td>${it.Quantity}</td><td>${it.Equip_Buff_Slot || "—"}</td><td>${it.Buff_Multiplier_Add || 0}</td></tr>`;
     });
 
-    // Render Activity & Pairwise Interactions
     document.getElementById("pActivityCounts").textContent =
       `Quests: ${c.Quests_Done} | Encounters: ${c.Encounters_Done} | Battles: ${c.Battles_Done} | Sparring: ${c.Sparring_Done} | Training: ${c.Training_Done} | Innovation: ${c.Innovation_Done}`;
     const intBody = document.getElementById("pInteractionsTable");
@@ -412,6 +449,19 @@
     data.interactions.forEach(row => {
       intBody.innerHTML += `<tr><td><strong>${row.otherCharId}</strong></td><td>${row.Battles}</td><td>${row.Sparring}</td><td>${row.Quests}</td><td>${row.Encounters}</td><td>${row.Total_Meetings}</td></tr>`;
     });
+  }
+
+  async function savePlayerAvatar() {
+    const res = await apiPost({
+      action: "updateProfile",
+      charId: document.getElementById("loginId").value,
+      password: document.getElementById("loginPass").value,
+      avatarUrl: document.getElementById("pAvatarInput").value
+    });
+    if (res.status !== "ok") return alert(res.message);
+    renderPlayerDashboard(res);
+    initPortal();
+    alert("Avatar updated successfully!");
   }
 
   async function submitAP() {
@@ -470,10 +520,7 @@
   function downloadInventoryExcel() {
     const inv = (STATE.currentChar && STATE.currentChar.inventory && STATE.currentChar.inventory.length > 0)
       ? STATE.currentChar.inventory
-      : [
-          { Item_Name: "Starter Blade", Category: "Weapon", Quantity: 1, Equip_Buff_Slot: "Left", Buff_Multiplier_Add: 1.0, Notes: "+1.0 additive mult" },
-          { Item_Name: "Spirit Charm", Category: "Accessory", Quantity: 1, Equip_Buff_Slot: "Right", Buff_Multiplier_Add: 0.5, Notes: "+0.5 additive mult" }
-        ];
+      : [{ Item_Name: "Starter Blade", Category: "Weapon", Quantity: 1, Equip_Buff_Slot: "Left", Buff_Multiplier_Add: 1.0, Notes: "Buff" }];
     const ws = XLSX.utils.json_to_sheet(inv);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Inventory");
@@ -486,8 +533,7 @@
     const reader = new FileReader();
     reader.onload = async (evt) => {
       const wb = XLSX.read(evt.target.result, { type: "binary" });
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet);
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
       const res = await apiPost({
         action: "uploadInventory",
         charId: document.getElementById("loginId").value,
@@ -500,10 +546,40 @@
     reader.readAsBinaryString(file);
   }
 
+  /* Admin Staff Authentication */
+  async function loginStaff() {
+    const res = await apiPost({
+      action: "adminLogin",
+      staffId: document.getElementById("admStaffId").value,
+      password: document.getElementById("admStaffPass").value
+    });
+    if (res.status !== "ok") return alert(res.message);
+    STATE.currentStaff = res.staff;
+    document.getElementById("adminAuthGate").style.display = "none";
+    document.getElementById("adminDashboard").style.display = "block";
+    document.getElementById("currentStaffBadge").textContent = `Logged in as: ${res.staff.Staff_Name} [Staff ID: ${res.staff.Staff_ID}] (${res.staff.Role})`;
+  }
+
+  async function registerStaff() {
+    const name = prompt("Enter your Staff / Admin Name:");
+    if (!name) return;
+    const pass = document.getElementById("admStaffPass").value;
+    if (!pass) return alert("Please enter a password in the password field first.");
+    const res = await apiPost({
+      action: "adminRegister",
+      name,
+      password: pass
+    });
+    if (res.status !== "ok") return alert(res.message);
+    alert(`Staff Registered! Your assigned Staff ID is: ${res.staff.Staff_ID}. Please use it to log in.`);
+    document.getElementById("admStaffId").value = res.staff.Staff_ID;
+  }
+
   async function submitAdminLog() {
+    if (!STATE.currentStaff) return alert("Please log in as Staff first.");
     const res = await apiPost({
       action: "adminLog",
-      adminKey: document.getElementById("adminKey").value,
+      staffId: STATE.currentStaff.Staff_ID,
       charIds: document.getElementById("admCharIds").value,
       method: document.getElementById("admMethod").value,
       xp: document.getElementById("admXP").value,
@@ -517,10 +593,11 @@
   }
 
   async function submitStatusChange() {
+    if (!STATE.currentStaff || STATE.currentStaff.Staff_ID !== "0000") return alert("Only Owner (Staff 0000) can update character status.");
     const res = await apiPost({
       action: "adminManage",
       subAction: "setStatus",
-      adminKey: document.getElementById("adminKey").value,
+      staffId: STATE.currentStaff.Staff_ID,
       charId: document.getElementById("admStatusCharId").value,
       status: document.getElementById("admStatusVal").value,
       statusNote: document.getElementById("admStatusNote").value
@@ -530,10 +607,11 @@
   }
 
   async function submitNewGuild() {
+    if (!STATE.currentStaff || STATE.currentStaff.Staff_ID !== "0000") return alert("Only Owner (Staff 0000) can add guilds.");
     const res = await apiPost({
       action: "adminManage",
       subAction: "addGuild",
-      adminKey: document.getElementById("adminKey").value,
+      staffId: STATE.currentStaff.Staff_ID,
       guildName: document.getElementById("admNewGuild").value
     });
     alert(res.message || res.status);
