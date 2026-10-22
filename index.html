@@ -226,6 +226,12 @@
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
     </nav>
   </header>
+    <div id="globalStaffBanner" style="display:none; background:rgba(56, 189, 248, 0.12); border:1px solid var(--accent); border-radius:8px; padding:8px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <div style="font-size:0.88rem; color:var(--text);">
+        🛡️ <span id="bannerStaffText" style="color:var(--accent); font-weight:600;">Not logged in</span>
+      </div>
+    <button class="btn btn-secondary" style="margin-top:0; padding:4px 10px; font-size:0.78rem;" onclick="logoutStaff()">Log Out Staff</button>
+  </div>
 
   <!-- 1. PUBLIC LEADERBOARD -->
   <section id="tab-leaderboard" class="panel active">
