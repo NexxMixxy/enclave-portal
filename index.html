@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Enclave Portal | Character & Archive System</title>
+  <title>Enclave Portal</title>
   <!-- SheetJS for Inventory (.xlsx) & Mammoth.js for Word (.docx) Wiki Uploads -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -11,7 +11,7 @@
     :root {
       --bg: #0f172a; --card: #1e293b; --border: #334155;
       --accent: #38bdf8; --gold: #facc15; --text: #f8fafc; --muted: #94a3b8;
-      --danger: #ef4444; --success: #22c55e;
+      --danger: #ef4444; --success: #22c55e; --purple: #c084fc;
     }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     html, body {
@@ -58,14 +58,14 @@
     }
     .flex-row > * { flex: 1 1 140px; min-width: 0; }
 
-    /* Boxed Scrollable Tables so Mobile Never Zooms Out or Spills */
+    /* Boxed Scrollable Tables */
     .table-box {
       width: 100%; max-width: 100%; overflow-x: auto;
       border: 1px solid var(--border); border-radius: 8px;
       background: #0b1120; margin-top: 12px;
       -webkit-overflow-scrolling: touch;
     }
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 520px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 540px; }
     th, td { border-bottom: 1px solid var(--border); padding: 9px 10px; text-align: left; }
     th { color: var(--accent); background: #070b14; white-space: nowrap; }
     tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
@@ -78,15 +78,17 @@
     }
     button.btn {
       background: var(--accent); color: #0f172a; font-weight: 700;
-      border: none; padding: 10px 14px; border-radius: 6px;
+      border: none; padding: 9px 14px; border-radius: 6px;
       cursor: pointer; margin-top: 10px; transition: opacity 0.2s;
       max-width: 100%; white-space: normal; line-height: 1.25;
     }
     button.btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
     button.btn-secondary { background: #334155; color: var(--text); }
+    button.btn-gold { background: var(--gold); color: #0f172a; }
 
     .avatar-thumb { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 6px; background: #0b1120; }
     .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-top: 8px; background: #0b1120; display: block; }
+    .skill-icon { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #070b14; }
 
     .status-pill {
       display: inline-block; padding: 4px 10px; border-radius: 6px;
@@ -98,13 +100,26 @@
     .status-deceased { background: rgba(239,68,68,0.22); color: #fca5a5; border-color: rgba(239,68,68,0.45); }
     .status-limbo { background: rgba(234,179,8,0.22); color: var(--gold); border-color: rgba(234,179,8,0.45); }
 
+    /* Class Equipped Skills Hover Card on Leaderboard */
+    .class-hover-wrap {
+      position: relative; display: inline-block; cursor: help;
+      border-bottom: 1px dashed var(--accent); padding-bottom: 1px;
+    }
+    .class-hover-card {
+      display: none; position: fixed; z-index: 9500;
+      background: #0b1120; border: 1px solid var(--gold);
+      border-radius: 8px; padding: 12px; width: 290px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.85); pointer-events: none;
+      white-space: normal;
+    }
+
     .race-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .race-chip { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: #0b1120; font-size: 0.85rem; }
     .race-chip.selected { border-color: var(--gold); color: var(--gold); }
     .tooltip-box { background: #0b1120; border: 1px solid var(--gold); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
 
     /* =====================================================
-       ENCLAVE ARCHIVE (WIKI LAYOUT + TIMES NEW ROMAN + FLOATING IMAGES)
+       ENCLAVE ARCHIVE (CLEAN READER WIKI + TIMES NEW ROMAN)
        ===================================================== */
     .archive-layout {
       display: grid; grid-template-columns: 250px 1fr; gap: 18px; width: 100%;
@@ -128,14 +143,19 @@
     }
     .archive-article-box {
       background: #0b1120; border: 1px solid var(--border); border-radius: 8px;
-      padding: 22px; min-width: 0; overflow: hidden;
+      padding: 24px; min-width: 0; overflow: hidden;
     }
-    /* Times New Roman Typography & Text Wrapping Around Images */
+    #arcTitle {
+      margin: 6px 0 0 0; color: var(--gold);
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.85rem; cursor: help; display: inline-block;
+      border-bottom: 1px dashed rgba(250, 204, 21, 0.35);
+    }
     .wiki-content, .wiki-content * {
       font-family: "Times New Roman", Times, Georgia, serif !important;
     }
     .wiki-content {
-      font-size: 1.12rem; line-height: 1.75; color: #f1f5f9;
+      font-size: 1.14rem; line-height: 1.75; color: #f1f5f9;
       text-align: justify; letter-spacing: 0.2px; overflow: hidden;
     }
     .wiki-content h1, .wiki-content h2, .wiki-content h3 {
@@ -169,7 +189,6 @@
       font-size: 0.88rem; color: var(--muted); margin-top: 6px; font-style: italic;
     }
 
-    /* Mobile Adjustments */
     @media (max-width: 768px) {
       .app-shell { padding: 10px; }
       .panel { padding: 12px; }
@@ -178,7 +197,7 @@
       .wiki-float-right, .wiki-float-left {
         width: 145px; max-width: 46%; margin-bottom: 10px;
       }
-      .wiki-content { font-size: 1.03rem; line-height: 1.65; text-align: left; }
+      .wiki-content { font-size: 1.04rem; line-height: 1.65; text-align: left; }
     }
 
     /* Loading Modal Popup */
@@ -212,31 +231,31 @@
   </div>
 </div>
 
+<!-- Floating Leaderboard Equipped Skills Tooltip -->
+<div id="classEquipTooltip" class="class-hover-card"></div>
+
 <div class="app-shell">
   <header>
     <div>
       <h1>ENCLAVE PORTAL</h1>
-      <small style="color:var(--muted)">Live RPG Character Registry, Enclave Archive & Admin Logs</small>
+      <small style="color:var(--muted)">Live RP Database and Wiki Page</small>
     </div>
     <nav id="topNav">
       <button class="active" onclick="showTab('leaderboard', this)">Leaderboard</button>
       <button onclick="showTab('create', this)">Create Character</button>
       <button onclick="showTab('dashboard', this)">Player Portal</button>
-      <button onclick="showTab('archive', this)">📜 Enclave Archive</button>
+      <button onclick="showTab('archive', this)">Enclave Archive</button>
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
     </nav>
   </header>
-    <div id="globalStaffBanner" style="display:none; background:rgba(56, 189, 248, 0.12); border:1px solid var(--accent); border-radius:8px; padding:8px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-      <div style="font-size:0.88rem; color:var(--text);">
-        🛡️ <span id="bannerStaffText" style="color:var(--accent); font-weight:600;">Not logged in</span>
-      </div>
-    <button class="btn btn-secondary" style="margin-top:0; padding:4px 10px; font-size:0.78rem;" onclick="logoutStaff()">Log Out Staff</button>
-  </div>
 
   <!-- 1. PUBLIC LEADERBOARD -->
   <section id="tab-leaderboard" class="panel active">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:8px;">
-      <h2 style="margin:0;">Live Public Leaderboard</h2>
+      <div>
+        <h2 style="margin:0;">Live Public Leaderboard</h2>
+        <small style="color:var(--muted)">Hover over a character's <strong>Race / Class</strong> to inspect their equipped skills, or <strong>Status</strong> for notes.</small>
+      </div>
       <input type="text" id="searchIdInput" placeholder="Search ID (00-000-001) or Name..." style="max-width:300px;" oninput="renderLeaderboard()" />
     </div>
     <div class="table-box">
@@ -245,7 +264,7 @@
           <tr>
             <th>Rank #</th>
             <th>ID & Character</th>
-            <th>Race / Class</th>
+            <th>Race / Class (Hover Skills)</th>
             <th>Guild</th>
             <th>Char Lv (Rank)</th>
             <th>Class Lv (Tier)</th>
@@ -261,7 +280,7 @@
 
   <!-- 2. CREATE CHARACTER -->
   <section id="tab-create" class="panel">
-    <h2>Create New Character (Starter Kit: 5 AP, 5 SP, 100 XP)</h2>
+    <h2>Create New Character</h2>
     <div class="grid-2">
       <div class="stat-box">
         <label>Character Name</label>
@@ -276,7 +295,7 @@
           <option>Ranger</option><option>Alchemist</option><option>Crafter</option>
           <option>Scholar</option><option>Civil</option><option>Jack</option>
         </select>
-        <label>Character Appearance (Image URL)</label>
+        <label>Character Appearance</label>
         <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
         <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
         <label>About Me / Backstory</label>
@@ -317,7 +336,10 @@
             <input type="url" id="pAvatarInput" placeholder="https://..." />
             <button class="btn" style="margin-top:4px;" onclick="savePlayerAvatar()">Update Avatar</button>
           </div>
-          <p style="margin-top:12px;"><strong>Drive Pool XP:</strong> <span id="pDriveXP" style="color:var(--accent)"></span></p>
+          <p style="margin-top:12px;">
+            <strong>Drive Pool XP:</strong> <span id="pDriveXP" style="color:var(--accent)"></span> |
+            <strong>Available SP:</strong> <span id="pSP" style="color:var(--gold); font-weight:700;">0</span>
+          </p>
           <p style="font-size:0.9rem;"><strong>Char Lv:</strong> <span id="pCharLv"></span> | <strong>Class Lv:</strong> <span id="pClassLv"></span></p>
           <div class="flex-row" style="margin-top:8px;">
             <input type="number" id="xpSpendAmt" placeholder="XP Amount" />
@@ -352,6 +374,58 @@
         </div>
       </div>
 
+      <!-- SKILL LOADOUT & SKILL SHOP SECTION -->
+      <div class="grid-2" style="margin-top:18px;">
+        <!-- Owned Skills & Equip Loadout Toggle -->
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--gold);">Owned Skills & Equip Loadout</h3>
+          <p id="pEquipSummary" style="font-size:0.83rem; color:var(--muted); margin:4px 0 10px 0;"></p>
+          <div class="table-box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Skill</th>
+                  <th>Type / Lv</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="pOwnedSkillsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Skill Shop (Class + Jack Cross-Class <=20 + Universal +50% Scaling) -->
+        <div class="stat-box">
+          <div class="flex-row" style="justify-content:space-between;">
+            <h3 style="margin:0; color:var(--accent);">🏪 Enclave Skill Shop (SP: <span id="pShopSP" style="color:var(--gold)">0</span>)</h3>
+            <select id="pShopFilter" style="max-width:190px; margin-top:0;" onchange="renderPlayerSkillShop()">
+              <option value="ALL">Eligible Class & Universal</option>
+              <option value="CLASS">Class Skills Only</option>
+              <option value="UNIVERSAL">Universal Skills Only</option>
+            </select>
+          </div>
+          <p style="font-size:0.82rem; color:var(--muted); margin:6px 0 10px 0;">
+            Class Tier unlocks: <strong>C1</strong> (Lv 1, 5) • <strong>C2</strong> (Lv 10, 20) • <strong>C3</strong> (Lv 30, 40) • <strong>C4</strong> (Lv 50, 60) • <strong>C5</strong> (Lv 70, 80) • <strong>C6</strong> (Lv 90, 100). Universal skills cost +50% from the 3rd Universal skill onward.
+          </p>
+          <div class="table-box" style="max-height:360px; overflow-y:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Skill</th>
+                  <th>Type / Class</th>
+                  <th>Lv (Req Tier)</th>
+                  <th>SP Cost</th>
+                  <th>Buy</th>
+                </tr>
+              </thead>
+              <tbody id="pSkillShopTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory & Interactions -->
       <div class="grid-2" style="margin-top:18px;">
         <div class="stat-box">
           <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buffs</h3>
@@ -379,71 +453,32 @@
     </div>
   </section>
 
-  <!-- 4. ENCLAVE ARCHIVE (WIKI + WORD DOC UPLOAD/DOWNLOAD + COMMENTS) -->
+  <!-- 4. ENCLAVE ARCHIVE (CLEAN PUBLIC WIKI + HOVER TIMESTAMP + COMMENTS) -->
   <section id="tab-archive" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
       <div>
-        <h2 style="margin:0;">📜</h2>
-        <small style="color:var(--muted)">The Enclave Archive: Official Wiki Pages</small>
+        <h2 style="margin:0;">The Enclave Archive</h2>
+        <small style="color:var(--muted)">Official Lore, Races, Classes, Timelines & Fandom Character Wiki Pages (Hover over page titles for last updated info)</small>
       </div>
       <div class="flex-row" style="flex:0 1 auto;">
-        <button class="btn btn-secondary" style="margin-top:0;" onclick="downloadWordTemplate('standard')">⬇ Lore/Wiki Word Template (.doc)</button>
+        <button class="btn btn-secondary" style="margin-top:0;" onclick="downloadWordTemplate('standard')">⬇ Lore Word Template (.doc)</button>
         <button class="btn" style="margin-top:0;" onclick="downloadWordTemplate('character')">⬇ Fandom Character Template (.doc)</button>
       </div>
     </div>
 
     <div class="archive-layout">
-      <!-- Wiki Navigation Sidebar -->
       <aside class="archive-sidebar" id="archiveSidebar"></aside>
 
-      <!-- Main Wiki Article & Comment Feed -->
       <div class="archive-article-box">
-        <div class="flex-row" style="justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:14px;">
-          <div>
-            <span id="arcCategoryBadge" class="status-pill status-limbo" style="max-width:none;">Lore</span>
-            <h2 id="arcTitle" style="margin:6px 0 2px 0; color:var(--gold); font-family:'Times New Roman', serif; font-size:1.7rem;">Loading...</h2>
-            <small id="arcMeta" style="color:var(--muted)">Last updated: —</small>
-          </div>
+        <div style="border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:18px;">
+          <span id="arcCategoryBadge" class="status-pill status-limbo" style="max-width:none;">Lore</span><br/>
+          <h2 id="arcTitle" title="Hover to view last updated date">Loading...</h2>
         </div>
 
-        <!-- Admin Upload & Image Wrap Controls -->
-        <details class="stat-box" style="margin-bottom:18px; background:#111827;">
-          <summary style="cursor:pointer; color:var(--accent); font-weight:700; font-size:0.9rem;">
-            ✏️ Edit / Upload Word File (.docx / .doc) & Floating Images (Admin Staff Upload)
-          </summary>
-          <div style="margin-top:12px;">
-            <p style="font-size:0.83rem; color:var(--muted); margin-top:0;">
-              <strong>How Image Wrapping Works:</strong> You can set a main right-aligned Portrait/Infobox image below, OR write <code>[IMG-RIGHT: https://image-url.jpg | Caption]</code> or <code>[IMG-LEFT: https://image-url.jpg | Caption]</code> anywhere inside your Word document to wrap Times New Roman text around multiple images!
-            </p>
-            <div class="grid-2">
-              <div>
-                <label>Page Title (Or New Character Wiki Name)</label>
-                <input type="text" id="arcEditTitle" placeholder="Page or Character Name" />
-                <label>Right-Aligned Infobox / Portrait Image URL (Optional)</label>
-                <input type="url" id="arcEditImg" placeholder="https://..." />
-                <label>Image Caption / Character Title</label>
-                <input type="text" id="arcEditSub" placeholder="e.g. 'The Crimson Alchemist | ID: 00-000-001'" />
-              </div>
-              <div>
-                <label>Upload Completed Word File (<code>.docx</code> or <code>.doc</code>)</label>
-                <input type="file" id="arcWordInput" accept=".docx,.doc,.html,.txt" onchange="handleArchiveWordFile(event)" />
-                <label>Or Edit / Preview Article Content Directly</label>
-                <textarea id="arcEditHtml" rows="4" placeholder="Uploaded Word file content will appear here..."></textarea>
-              </div>
-            </div>
-            <div class="flex-row" style="margin-top:10px;">
-              <button class="btn" onclick="submitArchivePage(false)">💾 Save / Publish to Current Page (Admin)</button>
-              <button class="btn btn-secondary" onclick="submitArchivePage(true)">➕ Publish as New Character Wiki Page (Admin)</button>
-            </div>
-          </div>
-        </details>
-
-        <!-- Rendered Times New Roman Wiki Content -->
         <article id="arcArticleBody" class="wiki-content"></article>
         <div style="clear:both;"></div>
 
-        <!-- Bottom Comment Section -->
-        <hr style="border-color:var(--border); margin:28px 0 18px 0;" />
+        <hr style="border-color:var(--border); margin:30px 0 18px 0;" />
         <h3 style="margin-top:0; color:var(--accent);">💬 Archive Comments (<span id="arcCommentCount">0</span>)</h3>
         <div id="arcCommentsList" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;"></div>
 
@@ -483,8 +518,9 @@
 
     <div id="adminDashboard" style="display:none; margin-top:16px;">
       <div class="grid-2">
+        <!-- Box 1: Log XP/SP/AP/FP -->
         <div class="stat-box">
-          <h3 style="margin-top:0;">Log XP / SP / AP / Fate Points</h3>
+          <h3 style="margin-top:0;">1. Log XP / SP / AP / Fate Points</h3>
           <label>Character ID(s) (Comma-separated)</label>
           <input type="text" id="admCharIds" placeholder="00-000-001, 00-000-002" />
           <label>Method</label>
@@ -503,8 +539,9 @@
           <button class="btn" style="width:100%;" onclick="submitAdminLog()">Submit Log</button>
         </div>
 
+        <!-- Box 2: Status & Guild Pull-Up -->
         <div class="stat-box">
-          <h3 style="margin-top:0;">Character Status & Guild Pull-Up</h3>
+          <h3 style="margin-top:0;">2. Character Status & Guild Pull-Up</h3>
           <label>Target Character ID</label>
           <input type="text" id="admStatusCharId" placeholder="00-000-001" />
           <label>Status</label>
@@ -525,6 +562,141 @@
           </div>
         </div>
       </div>
+
+      <!-- Box 3: ADMIN SKILL CREATOR & SKILL BOOK GRANTER -->
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--accent);">3. ⚡ Admin Skill Creator (Class, Book & Universal)</h3>
+          <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
+            Class Limits: Max 5 at Lv 1, 5 at Lv 5, and 3 at every 10 levels (Lv 10–100) = 40 total per Class. SP cost auto-sets by Skill Level (0 SP for Book).
+          </p>
+          <div class="flex-row">
+            <div>
+              <label>1. Skill Type</label>
+              <select id="admSkillType" onchange="updateAdminSkillCreatorUI()">
+                <option value="Class">Class Skill</option>
+                <option value="Book">Book Skill (0 SP, Admin Grant)</option>
+                <option value="Universal">Universal Skill (+50% scaling after 2nd)</option>
+              </select>
+            </div>
+            <div id="admSkillClassWrap">
+              <label>2. Class Restriction</label>
+              <select id="admSkillClass">
+                <option>Warrior</option><option>Mage</option><option>Rogue</option>
+                <option>Ranger</option><option>Alchemist</option><option>Crafter</option>
+                <option>Scholar</option><option>Civil</option><option>Jack</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-row">
+            <div>
+              <label>3. Skill Level Bracket</label>
+              <select id="admSkillLevel" onchange="updateAdminSkillCreatorUI()">
+                <option value="1">Level 1 (C1 — 5 SP)</option>
+                <option value="5">Level 5 (C1 — 10 SP)</option>
+                <option value="10">Level 10 (C2 — 20 SP)</option>
+                <option value="20">Level 20 (C2 — 40 SP)</option>
+                <option value="30">Level 30 (C3 — 50 SP)</option>
+                <option value="40">Level 40 (C3 — 75 SP)</option>
+                <option value="50">Level 50 (C4 — 100 SP)</option>
+                <option value="60">Level 60 (C4 — 250 SP)</option>
+                <option value="70">Level 70 (C5 — 500 SP)</option>
+                <option value="80">Level 80 (C5 — 1000 SP)</option>
+                <option value="90">Level 90 (C6 — 2500 SP)</option>
+                <option value="100">Level 100 (C6 — 5000 SP)</option>
+              </select>
+            </div>
+            <div>
+              <label>Auto Base SP Cost</label>
+              <input type="text" id="admSkillCostPreview" value="5 SP (Requires C1)" disabled />
+            </div>
+          </div>
+
+          <label>4. Skill Name</label>
+          <input type="text" id="admSkillName" placeholder="e.g. Aegis Breaker / Mana Surge" />
+
+          <label>5. Skill Image URL (Optional Icon/Showcase)</label>
+          <input type="url" id="admSkillImg" placeholder="https://..." />
+
+          <label>6.Or Upload Local Image File (Auto-converts to Data URL if small icon)</label>
+          <input type="file" accept="image/*" onchange="encodeSkillImageFile(event)" />
+
+          <label>7. Skill Description & Effects</label>
+          <textarea id="admSkillDesc" rows="2" placeholder="Describe damage, buffs, cooldown..."></textarea>
+
+          <button class="btn" style="width:100%;" onclick="submitAdminCreateSkill()">➕ Create Skill in Database</button>
+        </div>
+
+        <!-- Box 4: Grant Skill Book to Character -->
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--purple);">4. 📖 Grant Skill Book to Character (Max 3 Owned)</h3>
+          <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
+            Skill Books cost <strong>0 SP</strong>. A character can hold up to <strong>3 Skill Books</strong> at once (and equip 1 at a time). Granting a 4th Book requires selecting one of their existing 3 Books to replace.
+          </p>
+          <label>Target Character ID</label>
+          <div class="flex-row">
+            <input type="text" id="admBookCharId" placeholder="00-000-001" />
+            <button class="btn btn-secondary" style="margin-top:4px; flex:0 0 auto;" onclick="loadCharBooksForAdmin()">Check Character's Current Books</button>
+          </div>
+
+          <label>Select Skill to Grant as a Skill Book</label>
+          <select id="admBookSkillSelect"></select>
+
+          <label>Replace Existing Book Skill (Required only if character already has 3 Books)</label>
+          <select id="admBookReplaceSelect">
+            <option value="">-- No Replacement Needed (If under 3 Books) --</option>
+          </select>
+
+          <button class="btn btn-gold" style="width:100%;" onclick="submitAdminGrantBook()">📖 Grant Skill Book to Character</button>
+        </div>
+      </div>
+
+      <!-- Box 5: Enclave Archive Wiki Manager -->
+      <div class="stat-box" style="margin-top:18px;">
+        <h3 style="margin-top:0; color:var(--gold);">5. 📜 Enclave Archive Wiki Manager (Update or Add New Pages)</h3>
+        <p style="font-size:0.84rem; color:var(--muted); margin-top:0;">
+          Select a Section and Page below to edit an existing page, or choose <strong>➕ Create New Page in this Section...</strong> to add a new Character Wiki or Lore entry. Use <code>[IMG-RIGHT: https://url | Caption]</code> or <code>[IMG-LEFT: https://url | Caption]</code> inside your Word file to float images with Times New Roman text wrapping around them.
+        </p>
+
+        <div class="grid-2">
+          <div>
+            <label>1. Select Archive Section</label>
+            <select id="admArcSection" onchange="populateAdminArchivePageDropdown()">
+              <option value="Lore">Lore</option>
+              <option value="Timeline">Timeline</option>
+              <option value="Race">Race</option>
+              <option value="Class">Class</option>
+              <option value="Item Rarity">Item Rarity</option>
+              <option value="Attributes">Attributes</option>
+              <option value="Links">Links</option>
+              <option value="Characters">Characters (Fandom Wiki)</option>
+            </select>
+
+            <label>2. Select Page to Update (or Create New)</label>
+            <select id="admArcPageSelect" onchange="loadSelectedPageIntoAdminEditor()"></select>
+
+            <label>3. Page Title (Edit title or type New Page Name)</label>
+            <input type="text" id="admArcTitle" placeholder="e.g. Human, Warrior, or Character Name" />
+
+            <label>4. Top-Right Floating Infobox / Portrait Image URL (Optional)</label>
+            <input type="url" id="admArcImg" placeholder="https://..." />
+
+            <label>5. Infobox Subtitle / Caption</label>
+            <input type="text" id="admArcSub" placeholder="e.g. 'ID: 00-000-001 | The Crimson Alchemist'" />
+          </div>
+
+          <div>
+            <label>6. Upload Completed Word File (<code>.docx</code> or <code>.doc</code>)</label>
+            <input type="file" id="admArcWordInput" accept=".docx,.doc,.html,.txt" onchange="handleAdminArchiveWordFile(event)" />
+
+            <label>7. Page Content (HTML / Text — auto-filled when you upload a Word file)</label>
+            <textarea id="admArcHtml" rows="8" placeholder="Upload a Word file above or write content here..."></textarea>
+
+            <button class="btn" style="width:100%;" onclick="submitAdminArchivePage()">💾 Publish / Update Archive Page</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </div>
@@ -538,6 +710,21 @@
 
   // 3. GATE KEY REQUIRED WHEN CLICKING THE COGWHEEL BUTTON:
   const ADMIN_GATE_KEY = "ADMIN_KEY_2026";
+
+  const SKILL_LEVEL_META = {
+    1:   { cost: 5,    tier: "C1", order: 1, baseSlots: 3 },
+    5:   { cost: 10,   tier: "C1", order: 1, baseSlots: 2 },
+    10:  { cost: 20,   tier: "C2", order: 2, baseSlots: 1 },
+    20:  { cost: 40,   tier: "C2", order: 2, baseSlots: 1 },
+    30:  { cost: 50,   tier: "C3", order: 3, baseSlots: 1 },
+    40:  { cost: 75,   tier: "C3", order: 3, baseSlots: 1 },
+    50:  { cost: 100,  tier: "C4", order: 4, baseSlots: 1 },
+    60:  { cost: 250,  tier: "C4", order: 4, baseSlots: 1 },
+    70:  { cost: 500,  tier: "C5", order: 5, baseSlots: 1 },
+    80:  { cost: 1000, tier: "C5", order: 5, baseSlots: 1 },
+    90:  { cost: 2500, tier: "C6", order: 6, baseSlots: 1 },
+    100: { cost: 5000, tier: "C6", order: 6, baseSlots: 1 }
+  };
 
   const DEFAULT_ARCHIVE_STRUCTURE = [
     { group: "Core Lore & World", items: [
@@ -603,6 +790,8 @@
   async function initPortal() {
     renderArchiveSidebar();
     renderArchiveArticle(STATE.activeSlug);
+    populateAdminArchivePageDropdown();
+    updateAdminSkillCreatorUI();
     if (API_URL.includes("PASTE_YOUR")) return;
     try {
       const [initRes, arcRes] = await Promise.all([
@@ -617,12 +806,15 @@
         STATE.leaderboard = initRes.leaderboard;
         renderLeaderboard();
         renderRaces();
+        populateAdminBookSkillDropdown();
+        if (STATE.currentChar) renderPlayerSkillShop();
       }
       if (arcRes && arcRes.status === "ok") {
         STATE.archivePages = arcRes.pages || [];
         STATE.archiveComments = arcRes.comments || [];
         renderArchiveSidebar();
         renderArchiveArticle(STATE.activeSlug);
+        populateAdminArchivePageDropdown();
       }
     } catch (e) {
       console.error("Failed to initialize portal:", e);
@@ -646,37 +838,385 @@
   }
 
   /* ==============================================================
-     ENCLAVE ARCHIVE: SIDEBAR, RENDERER, WORD TEMPLATE & COMMENTS
+     LEADERBOARD + CLASS HOVER EQUIPPED SKILLS TOOLTIP
      ============================================================== */
+  function renderLeaderboard() {
+    const q = (document.getElementById("searchIdInput").value || "").toLowerCase();
+    const tbody = document.getElementById("leaderboardBody");
+    tbody.innerHTML = "";
+    STATE.leaderboard
+      .filter(c => String(c.Char_ID).toLowerCase().includes(q) || String(c.Name).toLowerCase().includes(q))
+      .forEach((c, idx) => {
+        const isDead = c.Status === "Deceased";
+        const isLimbo = c.Status === "Limbo";
+        const statusClass = isDead ? "status-deceased" : (isLimbo ? "status-limbo" : "status-active");
+        const hoverNote = c.Status_Note ? `${c.Status} — ${c.Status_Note}` : `${c.Status}`;
+
+        const tr = document.createElement("tr");
+        if (isDead || isLimbo) tr.className = "deceased";
+        tr.innerHTML = `
+          <td>#${idx + 1}</td>
+          <td style="white-space:nowrap;">
+            <img class="avatar-thumb" src="${c.Avatar_URL || 'https://via.placeholder.com/36'}" alt="Avatar" />
+            <strong>${c.Char_ID}</strong> — ${c.Name}
+          </td>
+          <td>
+            <span class="class-hover-wrap"
+                  onmouseenter="showClassSkillsTooltip(event, '${c.Char_ID}')"
+                  onmousemove="moveClassSkillsTooltip(event)"
+                  onmouseleave="hideClassSkillsTooltip()">
+              ${c.Race} / <strong>${c.Class}</strong>
+            </span>
+          </td>
+          <td>${c.Guild || "—"}</td>
+          <td>Lv ${c.Char_Level} (${c.Rank_Tier})</td>
+          <td>Lv ${c.Class_Level} (${c.Class_Tier})</td>
+          <td>${c.Total_Stats}</td>
+          <td>${c.Might} / ${c.Spirit}</td>
+          <td><span class="status-pill ${statusClass}" title="${hoverNote.replace(/"/g, '&quot;')}">${c.Status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+  }
+
+  function showClassSkillsTooltip(evt, charId) {
+    const char = STATE.leaderboard.find(c => c.Char_ID === charId);
+    const box = document.getElementById("classEquipTooltip");
+    if (!char || !box) return;
+
+    const eq = char.Equipped_Skills || [];
+    let html = `<div style="color:var(--gold); font-weight:700; margin-bottom:6px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+      ⚔️ ${char.Name} — Equipped Skills (${eq.length})
+    </div>`;
+
+    if (eq.length === 0) {
+      html += `<small style="color:var(--muted)">No skills currently equipped.</small>`;
+    } else {
+      eq.sort((a, b) => a.Skill_Level - b.Skill_Level).forEach(s => {
+        const imgTag = s.Image_URL
+          ? `<img src="${s.Image_URL}" style="width:22px;height:22px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px;" />`
+          : `🔹 `;
+        html += `<div style="font-size:0.82rem; margin:4px 0; display:flex; align-items:center; justify-content:space-between;">
+          <span>${imgTag}<strong>${s.Skill_Name}</strong></span>
+          <span style="color:var(--accent); font-size:0.75rem;">[${s.Type} Lv.${s.Skill_Level}]</span>
+        </div>`;
+      });
+    }
+
+    box.innerHTML = html;
+    box.style.display = "block";
+    moveClassSkillsTooltip(evt);
+  }
+
+  function moveClassSkillsTooltip(evt) {
+    const box = document.getElementById("classEquipTooltip");
+    if (!box || box.style.display === "none") return;
+    const x = Math.min(window.innerWidth - 310, evt.clientX + 14);
+    const y = Math.min(window.innerHeight - 220, evt.clientY + 14);
+    box.style.left = Math.max(10, x) + "px";
+    box.style.top = Math.max(10, y) + "px";
+  }
+
+  function hideClassSkillsTooltip() {
+    const box = document.getElementById("classEquipTooltip");
+    if (box) box.style.display = "none";
+  }
+
+  /* ==============================================================
+     SKILL SHOP, EQUIP LOADOUT & ADMIN SKILL CREATOR
+     ============================================================== */
+  function updateAdminSkillCreatorUI() {
+    const sType = document.getElementById("admSkillType").value;
+    const sLevel = Number(document.getElementById("admSkillLevel").value) || 1;
+    const classWrap = document.getElementById("admSkillClassWrap");
+    const costPreview = document.getElementById("admSkillCostPreview");
+
+    if (sType === "Class") {
+      classWrap.style.display = "block";
+    } else {
+      classWrap.style.display = "none";
+    }
+
+    const meta = SKILL_LEVEL_META[sLevel] || { cost: 5, tier: "C1" };
+    if (sType === "Book") {
+      costPreview.value = `0 SP (Admin Skill Book — Lv ${sLevel})`;
+    } else if (sType === "Universal") {
+      costPreview.value = `${meta.cost} Base SP (+50% from 3rd Universal skill onward — Req ${meta.tier})`;
+    } else {
+      costPreview.value = `${meta.cost} SP (Requires Class Tier ${meta.tier})`;
+    }
+  }
+
+  function encodeSkillImageFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 40000) {
+      return alert("This image is larger than 40KB. To keep your Google Sheet fast, please paste a direct Image URL (Discord/Imgur/Postimages) in Field 5, or choose a smaller icon image.");
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById("admSkillImg").value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function submitAdminCreateSkill() {
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminCreateSkill",
+      staffId: STATE.currentStaff.Staff_ID,
+      skillType: document.getElementById("admSkillType").value,
+      classRestriction: document.getElementById("admSkillClass").value,
+      skillLevel: document.getElementById("admSkillLevel").value,
+      skillName: document.getElementById("admSkillName").value,
+      imageUrl: document.getElementById("admSkillImg").value,
+      description: document.getElementById("admSkillDesc").value
+    }, "Creating Skill in Database...");
+
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      document.getElementById("admSkillName").value = "";
+      document.getElementById("admSkillDesc").value = "";
+      await initPortal();
+    }
+  }
+
+  function populateAdminBookSkillDropdown() {
+    const sel = document.getElementById("admBookSkillSelect");
+    if (!sel) return;
+    sel.innerHTML = "";
+    // List Book skills first, followed by Class skills so Admins can also grant out-of-class skills as Skill Books
+    const sorted = [...STATE.skills].sort((a, b) => (a.Type === "Book" ? -1 : 1));
+    sorted.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.Skill_ID;
+      opt.textContent = `[${s.Type} - ${s.Class_Restriction} Lv.${s.Skill_Level || 1}] ${s.Skill_Name}`;
+      sel.appendChild(opt);
+    });
+  }
+
+  async function loadCharBooksForAdmin() {
+    const cid = document.getElementById("admBookCharId").value.trim();
+    if (!cid) return alert("Enter a Target Character ID first.");
+    showLoading("Checking Character's Skill Books...");
+    try {
+      const res = await fetch(API_URL + "?action=profile&charId=" + encodeURIComponent(cid)).then(r => r.json());
+      hideLoading();
+      if (res.status !== "ok") return alert(res.message);
+      const books = (res.skills || []).filter(s => String(s.Type) === "Book");
+      const repSel = document.getElementById("admBookReplaceSelect");
+      repSel.innerHTML = `<option value="">-- Currently owns ${books.length}/3 Skill Books --</option>`;
+      books.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b.Skill_ID;
+        opt.textContent = `Replace: ${b.Skill_Name} (Lv.${b.Skill_Level})`;
+        repSel.appendChild(opt);
+      });
+      alert(`${res.character.Name} currently owns ${books.length}/3 Skill Books.`);
+    } catch (e) {
+      hideLoading();
+      alert("Error checking character books: " + e.message);
+    }
+  }
+
+  async function submitAdminGrantBook() {
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminGrantBookSkill",
+      staffId: STATE.currentStaff.Staff_ID,
+      charId: document.getElementById("admBookCharId").value,
+      skillId: document.getElementById("admBookSkillSelect").value,
+      replaceSkillId: document.getElementById("admBookReplaceSelect").value
+    }, "Granting Skill Book...");
+
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      await loadCharBooksForAdmin();
+      await initPortal();
+    }
+  }
+
+  function renderPlayerSkillsAndLoadout() {
+    if (!STATE.currentChar) return;
+    const c = STATE.currentChar.character;
+    const owned = STATE.currentChar.skills || [];
+
+    const eqClass = owned.filter(s => s.Equipped && s.Type === "Class").length;
+    const eqUniv = owned.filter(s => s.Equipped && s.Type === "Universal").length;
+    const eqBook = owned.filter(s => s.Equipped && s.Type === "Book").length;
+    const totalBooksOwned = owned.filter(s => s.Type === "Book").length;
+
+    document.getElementById("pEquipSummary").innerHTML = `
+      <strong>Equipped Loadout:</strong> Class/Base: <span style="color:var(--accent)">${eqClass}/13 max</span> |
+      Universal: <span style="color:var(--gold)">${eqUniv} (+1 Bonus Slot per Lv)</span> |
+      Skill Book Equipped: <span style="color:var(--purple)">${eqBook}/1</span> (Owned Books: ${totalBooksOwned}/3)
+    `;
+
+    const tbody = document.getElementById("pOwnedSkillsTable");
+    tbody.innerHTML = "";
+    if (owned.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted)">No skills owned yet. Purchase skills in the Skill Shop!</td></tr>`;
+    } else {
+      owned.sort((a, b) => Number(a.Skill_Level) - Number(b.Skill_Level)).forEach(s => {
+        const isEq = s.Equipped === true || String(s.Equipped).toUpperCase() === "TRUE";
+        const imgHtml = s.Image_URL ? `<img class="skill-icon" src="${s.Image_URL}" alt="Icon" />` : "";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${imgHtml}<strong>${s.Skill_Name}</strong></td>
+          <td>${s.Type} (Lv.${s.Skill_Level || 1})</td>
+          <td>
+            <span class="status-pill ${isEq ? 'status-active' : 'status-limbo'}">
+              ${isEq ? "Equipped" : "Unequipped"}
+            </span>
+          </td>
+          <td>
+            <button class="btn ${isEq ? 'btn-secondary' : ''}" style="margin:0; padding:6px 10px; font-size:0.8rem;"
+                    onclick="togglePlayerSkillEquip('${s.Skill_ID}')">
+              ${isEq ? "Unequip" : "Equip"}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderPlayerSkillShop();
+  }
+
+  function renderPlayerSkillShop() {
+    if (!STATE.currentChar) return;
+    const c = STATE.currentChar.character;
+    const owned = STATE.currentChar.skills || [];
+    const filter = document.getElementById("pShopFilter").value;
+    const ownedUnivCount = owned.filter(s => String(s.Type) === "Universal").length;
+
+    document.getElementById("pShopSP").textContent = c.SP_Available;
+    const tbody = document.getElementById("pSkillShopTable");
+    tbody.innerHTML = "";
+
+    const shopSkills = STATE.skills.filter(s => {
+      if (String(s.Type) === "Book") return false; // Books are Admin granted
+      if (filter === "CLASS" && String(s.Type) !== "Class") return false;
+      if (filter === "UNIVERSAL" && String(s.Type) !== "Universal") return false;
+
+      if (String(s.Type) === "Class") {
+        const sameClass = String(s.Class_Restriction) === String(c.Class);
+        const jackCross = String(c.Class) === "Jack" && Number(s.Skill_Level) <= 20;
+        return sameClass || jackCross;
+      }
+      return true;
+    });
+
+    if (shopSkills.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">No skills available in this category yet.</td></tr>`;
+      return;
+    }
+
+    shopSkills.sort((a, b) => Number(a.Skill_Level) - Number(b.Skill_Level)).forEach(s => {
+      const sLv = Number(s.Skill_Level) || 1;
+      const meta = SKILL_LEVEL_META[sLv] || { cost: 5, tier: "C1" };
+      const alreadyOwned = owned.some(o => String(o.Skill_ID) === String(s.Skill_ID));
+
+      let dynamicCost = Number(s.Base_SP_Cost) || meta.cost;
+      if (String(s.Type) === "Universal" && ownedUnivCount >= 2) {
+        dynamicCost = Math.ceil(dynamicCost * Math.pow(1.5, ownedUnivCount - 1));
+      }
+
+      const imgHtml = s.Image_URL ? `<img class="skill-icon" src="${s.Image_URL}" alt="Icon" />` : "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td title="${(s.Description || '').replace(/"/g, '&quot;')}">
+          ${imgHtml}<strong>${s.Skill_Name}</strong>
+          ${s.Description ? `<br/><small style="color:var(--muted)">${s.Description}</small>` : ""}
+        </td>
+        <td>${s.Type} (${s.Class_Restriction || "All"})</td>
+        <td>Lv ${sLv} <span style="color:var(--gold)">[${meta.tier}]</span></td>
+        <td><strong>${dynamicCost} SP</strong></td>
+        <td>
+          ${alreadyOwned
+            ? `<span class="status-pill status-active">Owned</span>`
+            : `<button class="btn" style="margin:0; padding:6px 12px; font-size:0.8rem;" onclick="purchaseSkillFromShop('${s.Skill_ID}')">Buy</button>`
+          }
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function purchaseSkillFromShop(skillId) {
+    const res = await apiPost({
+      action: "buySkill",
+      charId: document.getElementById("loginId").value,
+      password: document.getElementById("loginPass").value,
+      skillId
+    }, "Purchasing Skill...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    renderPlayerDashboard(res);
+    await initPortal();
+  }
+
+  async function togglePlayerSkillEquip(skillId) {
+    const res = await apiPost({
+      action: "toggleEquipSkill",
+      charId: document.getElementById("loginId").value,
+      password: document.getElementById("loginPass").value,
+      skillId
+    }, "Updating Equipped Skills...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    renderPlayerDashboard(res);
+    await initPortal();
+  }
+
+  /* ==============================================================
+     ENCLAVE ARCHIVE: PUBLIC READER + ADMIN CONSOLE WIKI MANAGER
+     ============================================================== */
+  function getAllArchivePagesForCategory(category) {
+    const list = [];
+    DEFAULT_ARCHIVE_STRUCTURE.forEach(sec => {
+      sec.items.forEach(it => {
+        if (it.category === category) list.push({ slug: it.slug, title: it.title, category: it.category });
+      });
+    });
+    STATE.archivePages.forEach(p => {
+      if (String(p.Category) === category && !list.some(x => x.slug === String(p.Page_Slug))) {
+        list.push({ slug: String(p.Page_Slug), title: String(p.Title), category: String(p.Category) });
+      }
+    });
+    return list;
+  }
+
   function renderArchiveSidebar() {
     const sb = document.getElementById("archiveSidebar");
     sb.innerHTML = "";
 
-    const customCharPages = STATE.archivePages.filter(p => String(p.Category) === "Characters" && p.Page_Slug !== "char-directory");
+    const categoryMap = [
+      { group: "Core Lore & World", cats: ["Lore", "Timeline"] },
+      { group: "Races of the Enclave", cats: ["Race"] },
+      { group: "Classes", cats: ["Class"] },
+      { group: "System Mechanics", cats: ["Item Rarity", "Attributes", "Links"] },
+      { group: "Characters (Fandom Wiki)", cats: ["Characters"] }
+    ];
 
-    DEFAULT_ARCHIVE_STRUCTURE.forEach(section => {
+    categoryMap.forEach(sec => {
       const h = document.createElement("div");
       h.className = "archive-cat-title";
-      h.textContent = section.group;
+      h.textContent = sec.group;
       sb.appendChild(h);
 
-      section.items.forEach(item => {
-        const btn = document.createElement("button");
-        btn.className = "archive-nav-btn" + (STATE.activeSlug === item.slug ? " active" : "");
-        btn.textContent = item.title;
-        btn.onclick = () => renderArchiveArticle(item.slug);
-        sb.appendChild(btn);
-      });
-
-      if (section.group.includes("Characters") && customCharPages.length > 0) {
-        customCharPages.forEach(cp => {
+      sec.cats.forEach(cat => {
+        const pages = getAllArchivePagesForCategory(cat);
+        pages.forEach(item => {
           const btn = document.createElement("button");
-          btn.className = "archive-nav-btn" + (STATE.activeSlug === cp.Page_Slug ? " active" : "");
-          btn.textContent = "👤 " + cp.Title;
-          btn.onclick = () => renderArchiveArticle(cp.Page_Slug);
+          btn.className = "archive-nav-btn" + (STATE.activeSlug === item.slug ? " active" : "");
+          btn.textContent = (cat === "Characters" && item.slug !== "char-directory" ? "👤 " : "") + item.title;
+          btn.onclick = () => renderArchiveArticle(item.slug);
           sb.appendChild(btn);
         });
-      }
+      });
     });
   }
 
@@ -710,22 +1250,18 @@
     const category = saved ? saved.Category : meta.category;
     const infoboxImg = saved ? saved.Infobox_Image : "";
     const infoboxSub = saved ? saved.Infobox_Subtitle : "";
-    const updatedInfo = saved
-      ? `Updated by ${saved.Updated_By} on ${new Date(saved.Updated_At).toLocaleDateString("en-GB")}`
-      : "Default Archive Entry (Upload a Word document to customize)";
+    const updatedTooltip = saved
+      ? `Last updated by ${saved.Updated_By} on ${new Date(saved.Updated_At).toLocaleDateString("en-GB")}`
+      : "Default Archive Entry (Not yet edited by Admin)";
 
     document.getElementById("arcCategoryBadge").textContent = category;
-    document.getElementById("arcTitle").textContent = title;
-    document.getElementById("arcMeta").textContent = updatedInfo;
-
-    document.getElementById("arcEditTitle").value = title;
-    document.getElementById("arcEditImg").value = infoboxImg || "";
-    document.getElementById("arcEditSub").value = infoboxSub || "";
+    const titleEl = document.getElementById("arcTitle");
+    titleEl.textContent = title;
+    titleEl.title = updatedTooltip;
 
     let rawBody = saved
       ? saved.Content_HTML
-      : `<p>Welcome to the <strong>${title}</strong> archive page. Anyone can download the Word template above to draft lore or character articles in <em>Times New Roman</em>, and Admin Staff can upload the completed Word file to publish it live.</p>`;
-    document.getElementById("arcEditHtml").value = rawBody;
+      : `<p>Welcome to the <strong>${title}</strong> archive page. Hover over the page title above to see when this entry was last updated.</p>`;
 
     let floatHeader = "";
     if (infoboxImg) {
@@ -739,6 +1275,111 @@
 
     document.getElementById("arcArticleBody").innerHTML = floatHeader + formatInlineImageTags(rawBody);
     renderArchiveComments(slug);
+  }
+
+  function populateAdminArchivePageDropdown() {
+    const secSelect = document.getElementById("admArcSection");
+    const pageSelect = document.getElementById("admArcPageSelect");
+    if (!secSelect || !pageSelect) return;
+
+    const category = secSelect.value;
+    const pages = getAllArchivePagesForCategory(category);
+    pageSelect.innerHTML = "";
+
+    pages.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.slug;
+      opt.textContent = p.title + " (" + p.slug + ")";
+      pageSelect.appendChild(opt);
+    });
+
+    const newOpt = document.createElement("option");
+    newOpt.value = "__NEW__";
+    newOpt.textContent = "➕ Create New Page in this Section...";
+    pageSelect.appendChild(newOpt);
+
+    loadSelectedPageIntoAdminEditor();
+  }
+
+  function loadSelectedPageIntoAdminEditor() {
+    const slug = document.getElementById("admArcPageSelect").value;
+    if (slug === "__NEW__") {
+      document.getElementById("admArcTitle").value = "";
+      document.getElementById("admArcImg").value = "";
+      document.getElementById("admArcSub").value = "";
+      document.getElementById("admArcHtml").value = "";
+      return;
+    }
+
+    const saved = STATE.archivePages.find(p => String(p.Page_Slug) === slug);
+    const meta = findDefaultMeta(slug);
+
+    document.getElementById("admArcTitle").value = saved ? saved.Title : meta.title;
+    document.getElementById("admArcImg").value = saved ? (saved.Infobox_Image || "") : "";
+    document.getElementById("admArcSub").value = saved ? (saved.Infobox_Subtitle || "") : "";
+    document.getElementById("admArcHtml").value = saved ? (saved.Content_HTML || "") : "";
+  }
+
+  function handleAdminArchiveWordFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (ext === "docx") {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        mammoth.convertToHtml({ arrayBuffer: e.target.result })
+          .then(result => {
+            document.getElementById("admArcHtml").value = result.value;
+            alert("Word (.docx) file loaded into editor! Click 'Publish / Update Archive Page' below.");
+          })
+          .catch(err => alert("Error reading .docx file: " + err.message));
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        let raw = e.target.result;
+        const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        if (bodyMatch) raw = bodyMatch[1];
+        document.getElementById("admArcHtml").value = raw.trim();
+        alert("Word Template loaded into editor! Click 'Publish / Update Archive Page' below.");
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  async function submitAdminArchivePage() {
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
+
+    const category = document.getElementById("admArcSection").value;
+    let slug = document.getElementById("admArcPageSelect").value;
+    const titleVal = document.getElementById("admArcTitle").value.trim();
+
+    if (!titleVal) return alert("Please enter a Page Title.");
+
+    if (slug === "__NEW__") {
+      slug = category.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + titleVal.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
+
+    const res = await apiPost({
+      action: "saveArchivePage",
+      staffId: STATE.currentStaff.Staff_ID,
+      slug,
+      category,
+      title: titleVal,
+      infoboxImage: document.getElementById("admArcImg").value.trim(),
+      infoboxSubtitle: document.getElementById("admArcSub").value.trim(),
+      contentHtml: document.getElementById("admArcHtml").value
+    }, "Publishing Archive Page...");
+
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      STATE.activeSlug = slug;
+      await initPortal();
+      document.getElementById("admArcPageSelect").value = slug;
+    }
   }
 
   function renderArchiveComments(slug) {
@@ -822,69 +1463,6 @@
     document.body.removeChild(link);
   }
 
-  function handleArchiveWordFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const ext = file.name.split(".").pop().toLowerCase();
-    if (ext === "docx") {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        mammoth.convertToHtml({ arrayBuffer: e.target.result })
-          .then(result => {
-            document.getElementById("arcEditHtml").value = result.value;
-            alert("Word (.docx) file converted! Click 'Save / Publish' to update the Archive page.");
-          })
-          .catch(err => alert("Error reading .docx file: " + err.message));
-      };
-      reader.readAsArrayBuffer(file);
-    } else {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        let raw = e.target.result;
-        const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-        if (bodyMatch) raw = bodyMatch[1];
-        document.getElementById("arcEditHtml").value = raw.trim();
-        alert("Word Template loaded! Click 'Save / Publish' to update the Archive page.");
-      };
-      reader.readAsText(file);
-    }
-  }
-
-  async function submitArchivePage(asNewCharacterPage) {
-    if (!STATE.currentStaff) {
-      return alert("Only logged-in Admin Staff can upload or publish changes to the Enclave Archive. Click the ⚙️ icon to sign in with your Staff Code first.");
-    }
-    const titleVal = document.getElementById("arcEditTitle").value.trim();
-    if (!titleVal) return alert("Please enter a Page or Character Title.");
-
-    let slug = STATE.activeSlug;
-    let category = document.getElementById("arcCategoryBadge").textContent;
-
-    if (asNewCharacterPage) {
-      slug = "char-" + titleVal.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      category = "Characters";
-    }
-
-    const res = await apiPost({
-      action: "saveArchivePage",
-      staffId: STATE.currentStaff.Staff_ID,
-      slug,
-      category,
-      title: titleVal,
-      infoboxImage: document.getElementById("arcEditImg").value.trim(),
-      infoboxSubtitle: document.getElementById("arcEditSub").value.trim(),
-      contentHtml: document.getElementById("arcEditHtml").value
-    }, "Publishing to Enclave Archive...");
-
-    if (!res) return;
-    alert(res.message || res.status);
-    if (res.status === "ok") {
-      STATE.activeSlug = slug;
-      await initPortal();
-    }
-  }
-
   async function submitArchiveComment() {
     const author = document.getElementById("arcCommentAuthor").value.trim() ||
       (STATE.currentChar ? `${STATE.currentChar.character.Name} (${STATE.currentChar.character.Char_ID})` : "Anonymous Traveler");
@@ -905,40 +1483,8 @@
   }
 
   /* ==============================================================
-     PORTAL LOGIC (LEADERBOARD, CREATION, PLAYER, ADMIN)
+     PORTAL LOGIC (CREATION, PLAYER, ADMIN)
      ============================================================== */
-  function renderLeaderboard() {
-    const q = (document.getElementById("searchIdInput").value || "").toLowerCase();
-    const tbody = document.getElementById("leaderboardBody");
-    tbody.innerHTML = "";
-    STATE.leaderboard
-      .filter(c => String(c.Char_ID).toLowerCase().includes(q) || String(c.Name).toLowerCase().includes(q))
-      .forEach((c, idx) => {
-        const isDead = c.Status === "Deceased";
-        const isLimbo = c.Status === "Limbo";
-        const statusClass = isDead ? "status-deceased" : (isLimbo ? "status-limbo" : "status-active");
-        const hoverNote = c.Status_Note ? `${c.Status} — ${c.Status_Note}` : `${c.Status}`;
-
-        const tr = document.createElement("tr");
-        if (isDead || isLimbo) tr.className = "deceased";
-        tr.innerHTML = `
-          <td>#${idx + 1}</td>
-          <td style="white-space:nowrap;">
-            <img class="avatar-thumb" src="${c.Avatar_URL || 'https://via.placeholder.com/36'}" alt="Avatar" />
-            <strong>${c.Char_ID}</strong> — ${c.Name}
-          </td>
-          <td>${c.Race} / ${c.Class}</td>
-          <td>${c.Guild || "—"}</td>
-          <td>Lv ${c.Char_Level} (${c.Rank_Tier})</td>
-          <td>Lv ${c.Class_Level} (${c.Class_Tier})</td>
-          <td>${c.Total_Stats}</td>
-          <td>${c.Might} / ${c.Spirit}</td>
-          <td><span class="status-pill ${statusClass}" title="${hoverNote.replace(/"/g, '&quot;')}">${c.Status}</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
-  }
-
   function renderRaces() {
     const container = document.getElementById("raceSelector");
     container.innerHTML = "";
@@ -1033,6 +1579,7 @@
     document.getElementById("pAvatarImg").src = c.Avatar_URL || "https://via.placeholder.com/56";
     document.getElementById("pAvatarInput").value = c.Avatar_URL || "";
     document.getElementById("pDriveXP").textContent = `${c.XP_Drive_Available} / ${c.XP_Drive_Total}`;
+    document.getElementById("pSP").textContent = c.SP_Available;
     document.getElementById("pCharLv").textContent = `${c.Char_Level} (${c.Char_XP_Progress}/200 XP) [${c.Rank_Tier}]`;
     document.getElementById("pClassLv").textContent = `${c.Class_Level} (${c.Class_XP_Progress}/${(Number(c.Class_Level)+1)*50} XP) [${c.Class_Tier}]`;
     document.getElementById("pAP").textContent = c.AP_Available;
@@ -1071,6 +1618,8 @@
     data.interactions.forEach(row => {
       intBody.innerHTML += `<tr><td><strong>${row.otherCharId}</strong></td><td>${row.Battles}</td><td>${row.Sparring}</td><td>${row.Quests}</td><td>${row.Encounters}</td><td>${row.Total_Meetings}</td></tr>`;
     });
+
+    renderPlayerSkillsAndLoadout();
   }
 
   async function savePlayerAvatar() {
@@ -1174,31 +1723,20 @@
   }
 
   async function loginStaff() {
-    const staffIdInput = document.getElementById("admStaffId").value;
-    const passInput = document.getElementById("admStaffPass").value;
-
     const res = await apiPost({
       action: "adminLogin",
-      staffId: staffIdInput,
-      password: passInput
+      staffId: document.getElementById("admStaffId").value,
+      password: document.getElementById("admStaffPass").value
     }, "Authenticating Staff...");
-
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
-
-    // Save globally across all tabs (Admin + Archive)
     STATE.currentStaff = res.staff;
-
-    // Update UI badges in both Admin Console and Archive panel
-    const badgeText = `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
-    document.getElementById("currentStaffBadge").textContent = badgeText;
-    
     document.getElementById("adminAuthGate").style.display = "none";
     document.getElementById("adminDashboard").style.display = "block";
     document.getElementById("currentStaffBadge").textContent =
       `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
-  
-    alert("Staff session active globally! You can now publish and upload Enclave Archive pages.");
+    populateAdminArchivePageDropdown();
+    populateAdminBookSkillDropdown();
   }
 
   async function registerStaff() {
