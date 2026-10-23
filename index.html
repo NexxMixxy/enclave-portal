@@ -703,7 +703,7 @@
 
 <script>
   // 1. PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW:
-  const API_URL = "https://script.google.com/macros/s/AKfycbwpw85Gmj8aJihF9CJZ0b-xfax1WlYb2jye9Uh3T3YiRN4lci87pmSFToYsOQuriYB7WA/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyS2Xe7pQ1ju2mfspSGPe5rysbJ_xh0jxCCjnSyYvvoSS4pL8YBPs3vOdZBD7M6AGYrKQ/exec";
 
   // 2. PASTE YOUR CUSTOM LOADING GIF LINK BELOW:
   const LOADING_GIF_URL = "https://media.tenor.com/zTzHQQXcPh8AAAAM/anime-a-sign-of-affection.gif";
@@ -1520,8 +1520,21 @@
     showLoading(loadingMessage);
     const buttons = document.querySelectorAll("button.btn");
     buttons.forEach(b => b.disabled = true);
+
     try {
-      const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+      // Automatically attach active Staff/Owner credentials if logged into Admin Console
+      if (STATE.currentStaff && !payload.staffId) {
+        payload.staffId = STATE.currentStaff.Staff_ID;
+      }
+
+      // Send action in BOTH the URL query string and JSON body so redirects never lose it
+      const targetUrl = API_URL + (API_URL.includes("?") ? "&" : "?") + "action=" + encodeURIComponent(payload.action);
+
+      const res = await fetch(targetUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
       return await res.json();
     } catch (err) {
       return { status: "error", message: "Network error: " + err.message };
