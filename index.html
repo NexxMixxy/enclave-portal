@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Enclave Portal</title>
-  <!-- SheetJS for Inventory (.xlsx) & Mammoth.js for Word (.docx) Wiki Uploads -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <style>
@@ -18,20 +17,45 @@
       margin: 0; padding: 0; width: 100%; max-width: 100vw;
       overflow-x: hidden; background: var(--bg); color: var(--text);
     }
+
+    /* =====================================================
+       FIRST-SCREEN GAMER TAG LOGIN GATE (MOBILE-BOXED)
+       ===================================================== */
+    #gamerAuthScreen {
+      min-height: 100vh; width: 100%; max-width: 100vw;
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 16px; background: radial-gradient(circle at top, #1e293b 0%, #0f172a 70%);
+    }
+    .auth-gate-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 26px 22px; width: 100%;
+      max-width: 420px; box-shadow: 0 16px 40px rgba(0,0,0,0.65);
+      text-align: center; overflow: hidden;
+    }
+    .portal-logo {
+      width: 110px; height: 110px; object-fit: contain;
+      margin: 0 auto 12px auto; display: block; border-radius: 12px;
+      border: 2px solid var(--gold); background: #0b1120; padding: 4px;
+    }
+    .header-logo {
+      width: 44px; height: 44px; object-fit: contain;
+      border-radius: 8px; border: 1px solid var(--gold); background: #0b1120;
+    }
+
     .app-shell {
-      max-width: 1280px; margin: 0 auto; padding: 16px; width: 100%;
+      max-width: 1280px; margin: 0 auto; padding: 16px; width: 100%; display: none;
     }
     header {
       display: flex; justify-content: space-between; align-items: center;
       border-bottom: 1px solid var(--border); padding-bottom: 14px;
       margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
     }
-    h1 { margin: 0; font-size: 1.5rem; color: var(--accent); letter-spacing: 1px; }
+    h1 { margin: 0; font-size: 1.45rem; color: var(--accent); letter-spacing: 1px; }
     nav { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
     @media (min-width: 769px) { nav { width: auto; } }
     nav button {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
-      padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.88rem;
+      padding: 8px 13px; border-radius: 6px; cursor: pointer; font-size: 0.86rem;
       flex: 1 1 auto; text-align: center;
     }
     nav button.active, nav button:hover { border-color: var(--accent); color: var(--accent); }
@@ -65,12 +89,12 @@
       background: #0b1120; margin-top: 12px;
       -webkit-overflow-scrolling: touch;
     }
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 540px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 580px; }
     th, td { border-bottom: 1px solid var(--border); padding: 9px 10px; text-align: left; }
     th { color: var(--accent); background: #070b14; white-space: nowrap; }
     tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
 
-    label { display: block; font-size: 0.84rem; color: var(--muted); margin-top: 10px; }
+    label { display: block; font-size: 0.84rem; color: var(--muted); margin-top: 10px; text-align: left; }
     input, select, textarea {
       width: 100%; max-width: 100%; padding: 8px 10px; margin-top: 4px;
       border-radius: 6px; border: 1px solid var(--border);
@@ -88,28 +112,32 @@
 
     .avatar-thumb { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 6px; background: #0b1120; }
     .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-top: 8px; background: #0b1120; display: block; }
-    .skill-icon { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #070b14; }
+    .skill-icon { width: 34px; height: 34px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #070b14; }
 
     .status-pill {
       display: inline-block; padding: 4px 10px; border-radius: 6px;
-      font-size: 0.75rem; font-weight: bold; cursor: help;
-      max-width: 110px; white-space: nowrap; overflow: hidden;
+      font-size: 0.74rem; font-weight: bold; cursor: help;
+      max-width: 120px; white-space: nowrap; overflow: hidden;
       text-overflow: ellipsis; text-align: center; border: 1px solid transparent;
     }
     .status-active { background: rgba(34,197,94,0.18); color: var(--success); border-color: rgba(34,197,94,0.4); }
     .status-deceased { background: rgba(239,68,68,0.22); color: #fca5a5; border-color: rgba(239,68,68,0.45); }
     .status-limbo { background: rgba(234,179,8,0.22); color: var(--gold); border-color: rgba(234,179,8,0.45); }
 
-    /* Class Equipped Skills Hover Card on Leaderboard */
-    .class-hover-wrap {
-      position: relative; display: inline-block; cursor: help;
-      border-bottom: 1px dashed var(--accent); padding-bottom: 1px;
+    /* Hoverable Leaderboard Spans & Floating Showcase Cards */
+    .hover-trigger {
+      cursor: help; border-bottom: 1px dashed var(--accent); padding-bottom: 1px;
     }
-    .class-hover-card {
+    .gamertag-pill {
+      display: inline-block; padding: 3px 8px; border-radius: 5px;
+      background: rgba(192, 132, 252, 0.16); border: 1px solid rgba(192, 132, 252, 0.45);
+      color: var(--purple); font-weight: 700; font-size: 0.8rem; cursor: help;
+    }
+    .floating-hover-card {
       display: none; position: fixed; z-index: 9500;
       background: #0b1120; border: 1px solid var(--gold);
-      border-radius: 8px; padding: 12px; width: 290px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.85); pointer-events: none;
+      border-radius: 10px; padding: 12px; width: 290px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.88); pointer-events: none;
       white-space: normal;
     }
 
@@ -223,6 +251,7 @@
 </head>
 <body>
 
+<!-- LOADING OVERLAY -->
 <div id="loadingOverlay">
   <div class="loading-modal-card">
     <img id="loadingGif" src="" alt="Loading Animation" />
@@ -231,21 +260,55 @@
   </div>
 </div>
 
-<!-- Floating Leaderboard Equipped Skills Tooltip -->
-<div id="classEquipTooltip" class="class-hover-card"></div>
+<!-- FLOATING HOVER TOOLTIP FOR LEADERBOARD (GAMER TAG TITLES & CLASS SKILLS) -->
+<div id="floatingHoverCard" class="floating-hover-card"></div>
 
-<div class="app-shell">
+<!-- ===============================================================
+     FIRST SCREEN: GAMER TAG PORTAL LOGIN / SIGNUP GATE
+     =============================================================== -->
+<div id="gamerAuthScreen">
+  <div class="auth-gate-card">
+    <img id="gateLogoImg" class="portal-logo" src="https://via.placeholder.com/110?text=ENCLAVE" alt="Enclave Portal Logo" />
+    <h1 style="margin:0; font-size:1.65rem; color:var(--accent);">ENCLAVE PORTAL</h1>
+    <p style="color:var(--muted); font-size:0.86rem; margin:6px 0 18px 0;">
+      Sign in with your Gamer Tag (or Sign Up if entering for the first time)
+    </p>
+
+    <label>Gamer Tag (Max 15 Characters)</label>
+    <input type="text" id="gateGamerTag" maxlength="15" placeholder="e.g. Nexxy" />
+
+    <label>Password</label>
+    <input type="password" id="gateGamerPass" placeholder="Enter password" />
+
+    <div class="flex-row" style="margin-top:16px;">
+      <button class="btn" style="margin-top:0;" onclick="submitGamerAuth('gamerLogin')">Log In to Portal</button>
+      <button class="btn btn-secondary" style="margin-top:0;" onclick="submitGamerAuth('gamerRegister')">First Time? Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===============================================================
+     MAIN PORTAL SHELL (UNLOCKED AFTER GAMER TAG LOGIN)
+     =============================================================== -->
+<div class="app-shell" id="mainAppShell">
   <header>
-    <div>
-      <h1>ENCLAVE PORTAL</h1>
-      <small style="color:var(--muted)">Live RP Database and Wiki Page</small>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <img id="headerLogoImg" class="header-logo" src="https://via.placeholder.com/44?text=E" alt="Logo" />
+      <div>
+        <h1>ENCLAVE PORTAL</h1>
+        <small style="color:var(--muted)">
+          Gamer Tag: <strong id="activeGamerTagBadge" style="color:var(--gold)">@—</strong> |
+          Active Characters: <strong id="activeSlotCountBadge" style="color:var(--accent)">0/3</strong>
+        </small>
+      </div>
     </div>
     <nav id="topNav">
       <button class="active" onclick="showTab('leaderboard', this)">Leaderboard</button>
       <button onclick="showTab('create', this)">Create Character</button>
       <button onclick="showTab('dashboard', this)">Player Portal</button>
-      <button onclick="showTab('archive', this)">Enclave Archive</button>
+      <button onclick="showTab('archive', this)">📜 Enclave Archive</button>
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
+      <button onclick="logoutGamerTag()" title="Log Out" style="background:#1e293b; color:var(--muted); flex:0 0 auto;">Log Out</button>
     </nav>
   </header>
 
@@ -254,17 +317,21 @@
     <div class="flex-row" style="justify-content:space-between; margin-bottom:8px;">
       <div>
         <h2 style="margin:0;">Live Public Leaderboard</h2>
-        <small style="color:var(--muted)">Hover over a character's <strong>Race / Class</strong> to inspect their equipped skills, or <strong>Status</strong> for notes.</small>
+        <small style="color:var(--muted)">
+          Hover over <strong>@GamerTag</strong> to view their showcased Achievement Titles, <strong>Race / Class</strong> for Equipped Skills, or <strong>Status</strong> for notes.
+        </small>
       </div>
-      <input type="text" id="searchIdInput" placeholder="Search ID (00-000-001) or Name..." style="max-width:300px;" oninput="renderLeaderboard()" />
+      <input type="text" id="searchIdInput" placeholder="Search ID, Character, or @GamerTag..." style="max-width:300px;" oninput="renderLeaderboard()" />
     </div>
     <div class="table-box">
       <table>
         <thead>
           <tr>
             <th>Rank #</th>
+            <th>Gamer Tag</th>
             <th>ID & Character</th>
-            <th>Race / Class (Hover Skills)</th>
+            <th>Slot Type</th>
+            <th>Race / Class</th>
             <th>Guild</th>
             <th>Char Lv (Rank)</th>
             <th>Class Lv (Tier)</th>
@@ -278,27 +345,38 @@
     </div>
   </section>
 
-  <!-- 2. CREATE CHARACTER -->
+  <!-- 2. CREATE CHARACTER (SLOT-AWARE) -->
   <section id="tab-create" class="panel">
     <h2>Create New Character</h2>
+    <div class="stat-box" style="margin-bottom:16px; border-color:var(--gold);">
+      <div class="flex-row" style="justify-content:space-between;">
+        <div>
+          <strong style="color:var(--gold)">Your Character Slot Status:</strong>
+          <div id="slotStatusExplanation" style="font-size:0.86rem; color:var(--text); margin-top:4px;"></div>
+        </div>
+        <div style="max-width:260px; width:100%;">
+          <label style="margin-top:0;">Select Available Character Slot</label>
+          <select id="crSlotType"></select>
+        </div>
+      </div>
+    </div>
+
     <div class="grid-2">
       <div class="stat-box">
         <label>Character Name</label>
         <input type="text" id="crName" placeholder="Character name" />
         <label>Gender</label>
         <input type="text" id="crGender" placeholder="Male / Female / Other" />
-        <label>Character Password</label>
-        <input type="password" id="crPass" placeholder="Login password" />
         <label>Character Class</label>
         <select id="crClass">
           <option>Warrior</option><option>Mage</option><option>Rogue</option>
           <option>Ranger</option><option>Alchemist</option><option>Crafter</option>
           <option>Scholar</option><option>Civil</option><option>Jack</option>
         </select>
-        <label>Character Appearance</label>
+        <label>Character Appearance (Image URL)</label>
         <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
         <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
-        <label>About Me / Backstory</label>
+        <label>About</label>
         <textarea id="crAbout" rows="3"></textarea>
       </div>
       <div class="stat-box">
@@ -306,18 +384,52 @@
         <div class="race-grid" id="raceSelector"></div>
         <input type="hidden" id="crRace" value="Human" />
         <div class="tooltip-box" id="raceTooltip">Hover or tap a Race above to inspect skills.</div>
-        <button id="createCharBtn" class="btn" style="width:100%;" onclick="submitCreateCharacter()">Register Character & Claim Starter Kit</button>
+        <button id="createCharBtn" class="btn" style="width:100%;" onclick="submitCreateCharacter()">Register Character in Selected Slot</button>
       </div>
     </div>
   </section>
 
-  <!-- 3. PLAYER DASHBOARD -->
+  <!-- 3. PLAYER PORTAL (NO LOGIN NEEDED — CHARACTER DROPDOWN + ACHIEVEMENTS) -->
   <section id="tab-dashboard" class="panel">
-    <h2>Player Character Login</h2>
-    <div class="flex-row" style="max-width:560px; margin-bottom:18px;">
-      <input type="text" id="loginId" placeholder="00-000-001" />
-      <input type="password" id="loginPass" placeholder="Password" />
-      <button class="btn" style="margin-top:4px;" onclick="loginPlayer()">Login</button>
+    <div class="flex-row" style="justify-content:space-between; margin-bottom:16px;">
+      <div>
+        <h2 style="margin:0;">Player Portal</h2>
+        <small style="color:var(--muted)">Select any character linked to your Gamer Tag below, or manage your Achievement Titles.</small>
+      </div>
+      <div class="flex-row" style="max-width:460px; width:100%;">
+        <select id="myCharDropdown" onchange="selectMyCharacterFromDropdown()"></select>
+        <button id="convertLimboBtn" class="btn btn-gold" style="display:none; margin-top:4px;" onclick="triggerConvertBoosterToLegacy()">
+          Convert Limbo Booster → Legacy Slot
+        </button>
+      </div>
+    </div>
+
+    <!-- GAMER TAG ACHIEVEMENTS & 3-TITLE SHOWCASE BOX -->
+    <div class="stat-box" style="margin-bottom:18px; border-color:var(--purple);">
+      <div class="flex-row" style="justify-content:space-between;">
+        <h3 style="margin:0; color:var(--purple);">Gamer Tag Achievements & Title Showcase</h3>
+        <span id="pAchSummary" style="font-size:0.85rem; color:var(--gold); font-weight:700;">Equipped Showcase: 0 / 3</span>
+      </div>
+      <p style="font-size:0.83rem; color:var(--muted); margin:4px 0 8px 0;">
+        You can equip up to <strong>3 Titles</strong> at a time. Equipped titles (Icon + Name) are showcased live when anyone hovers over your <strong>@GamerTag</strong> on the Leaderboard!
+      </p>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Badge & Title</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Showcase Action</th>
+            </tr>
+          </thead>
+          <tbody id="pAchievementsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="noCharSelectedMsg" class="stat-box" style="text-align:center; color:var(--muted);">
+      You don't have a character selected yet. Create a character in the <strong>Create Character</strong> tab or select one from the dropdown above!
     </div>
 
     <div id="playerArea" style="display:none;">
@@ -327,7 +439,7 @@
             <img id="pAvatarImg" class="avatar-thumb" style="width:56px; height:56px;" src="" alt="Avatar" />
             <div>
               <h3 id="pHeaderName" style="margin:0; color:var(--gold);"></h3>
-              <p id="pSubHeader" style="color:var(--muted); margin:2px 0 0 0; font-size:0.88rem;"></p>
+              <p id="pSubHeader" style="color:var(--muted); margin:2px 0 0 0; font-size:0.86rem;"></p>
             </div>
           </div>
           <hr style="border-color:var(--border); margin:12px 0;" />
@@ -374,28 +486,21 @@
         </div>
       </div>
 
-      <!-- SKILL LOADOUT & SKILL SHOP SECTION -->
+      <!-- SKILL LOADOUT & SKILL SHOP -->
       <div class="grid-2" style="margin-top:18px;">
-        <!-- Owned Skills & Equip Loadout Toggle -->
         <div class="stat-box">
-          <h3 style="margin-top:0; color:var(--gold);">Owned Skills & Equip Loadout</h3>
+          <h3 style="margin-top:0; color:var(--gold);">⚔️ Owned Skills & Equip Loadout</h3>
           <p id="pEquipSummary" style="font-size:0.83rem; color:var(--muted); margin:4px 0 10px 0;"></p>
           <div class="table-box">
             <table>
               <thead>
-                <tr>
-                  <th>Skill</th>
-                  <th>Type / Lv</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
+                <tr><th>Skill</th><th>Type / Lv</th><th>Status</th><th>Action</th></tr>
               </thead>
               <tbody id="pOwnedSkillsTable"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- Skill Shop (Class + Jack Cross-Class <=20 + Universal +50% Scaling) -->
         <div class="stat-box">
           <div class="flex-row" style="justify-content:space-between;">
             <h3 style="margin:0; color:var(--accent);">🏪 Enclave Skill Shop (SP: <span id="pShopSP" style="color:var(--gold)">0</span>)</h3>
@@ -406,18 +511,12 @@
             </select>
           </div>
           <p style="font-size:0.82rem; color:var(--muted); margin:6px 0 10px 0;">
-            Class Tier unlocks: <strong>C1</strong> (Lv 1, 5) • <strong>C2</strong> (Lv 10, 20) • <strong>C3</strong> (Lv 30, 40) • <strong>C4</strong> (Lv 50, 60) • <strong>C5</strong> (Lv 70, 80) • <strong>C6</strong> (Lv 90, 100). Universal skills cost +50% from the 3rd Universal skill onward.
+            Class Tier unlocks: <strong>C1</strong> (Lv 1, 5) • <strong>C2</strong> (Lv 10, 20) • <strong>C3</strong> (Lv 30, 40) • <strong>C4</strong> (Lv 50, 60) • <strong>C5</strong> (Lv 70, 80) • <strong>C6</strong> (Lv 90, 100).
           </p>
           <div class="table-box" style="max-height:360px; overflow-y:auto;">
             <table>
               <thead>
-                <tr>
-                  <th>Skill</th>
-                  <th>Type / Class</th>
-                  <th>Lv (Req Tier)</th>
-                  <th>SP Cost</th>
-                  <th>Buy</th>
-                </tr>
+                <tr><th>Skill</th><th>Type / Class</th><th>Lv (Req Tier)</th><th>SP Cost</th><th>Buy</th></tr>
               </thead>
               <tbody id="pSkillShopTable"></tbody>
             </table>
@@ -428,7 +527,7 @@
       <!-- Inventory & Interactions -->
       <div class="grid-2" style="margin-top:18px;">
         <div class="stat-box">
-          <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buffs</h3>
+          <h3 style="margin-top:0;">Inventory Sheet (.xlsx)</h3>
           <button class="btn btn-secondary" onclick="downloadInventoryExcel()">1. Download Inventory (.xlsx)</button>
           <label style="margin-top:12px;">2. Upload Updated Inventory (.xlsx)</label>
           <input type="file" id="invFileInput" accept=".xlsx,.xls,.csv" onchange="uploadInventoryExcel(event)" />
@@ -453,12 +552,12 @@
     </div>
   </section>
 
-  <!-- 4. ENCLAVE ARCHIVE (CLEAN PUBLIC WIKI + HOVER TIMESTAMP + COMMENTS) -->
+  <!-- 4. ENCLAVE ARCHIVE -->
   <section id="tab-archive" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
       <div>
         <h2 style="margin:0;">The Enclave Archive</h2>
-        <small style="color:var(--muted)">Official Lore, Races, Classes, Timelines & Fandom Character Wiki Pages (Hover over page titles for last updated info)</small>
+        <small style="color:var(--muted)">Official Fandom Character Wiki Pages (Hover over page titles for last updated info)</small>
       </div>
       <div class="flex-row" style="flex:0 1 auto;">
         <button class="btn btn-secondary" style="margin-top:0;" onclick="downloadWordTemplate('standard')">⬇ Lore Word Template (.doc)</button>
@@ -485,7 +584,7 @@
         <div class="stat-box" style="background:#111827;">
           <label style="margin-top:0;">Post a Comment on this Page</label>
           <div class="flex-row">
-            <input type="text" id="arcCommentAuthor" placeholder="Your Character Name or ID (e.g. 00-000-001)" style="max-width:280px;" />
+            <input type="text" id="arcCommentAuthor" placeholder="Your @GamerTag" style="max-width:260px;" />
             <input type="text" id="arcCommentText" placeholder="Write your comment or lore note..." />
             <button class="btn" style="margin-top:4px; flex:0 0 auto;" onclick="submitArchiveComment()">Post Comment</button>
           </div>
@@ -548,7 +647,7 @@
           <select id="admStatusVal">
             <option value="Active">Active</option>
             <option value="Deceased">Deceased (Grayed)</option>
-            <option value="Limbo">Limbo (Banned)</option>
+            <option value="Limbo">Limbo (Banned / Inactive)</option>
           </select>
           <label>Cause of Death / Status Note (Shown on Hover)</label>
           <input type="text" id="admStatusNote" placeholder="Fell in the Abyssal Raid..." />
@@ -563,13 +662,71 @@
         </div>
       </div>
 
-      <!-- Box 3: ADMIN SKILL CREATOR & SKILL BOOK GRANTER -->
+      <!-- Box 3 & 4: GAMER TAG SLOTS (COMMERCIAL/GIFT/TRADED) & ACHIEVEMENTS MANAGER -->
       <div class="grid-2" style="margin-top:18px;">
         <div class="stat-box">
-          <h3 style="margin-top:0; color:var(--accent);">3. ⚡ Admin Skill Creator (Class, Book & Universal)</h3>
-          <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
-            Class Limits: Max 5 at Lv 1, 5 at Lv 5, and 3 at every 10 levels (Lv 10–100) = 40 total per Class. SP cost auto-sets by Skill Level (0 SP for Book).
-          </p>
+          <h3 style="margin-top:0; color:var(--gold);">3. Gamer Tag Slot Manager (Commercial, Gift & Traded)</h3>
+          <label>Target Gamer Tag</label>
+          <input type="text" id="admSlotGamerTag" placeholder="e.g. Nexxy" />
+
+          <label>A. Server Booster (Commercial Slot) Privilege</label>
+          <div class="flex-row">
+            <select id="admBoosterStatus">
+              <option value="Active">Active (Unlocks Commercial Slot)</option>
+              <option value="Limbo">Limbo (Boost Expired — Puts Commercial Char in Limbo)</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <button class="btn" style="margin-top:4px;" onclick="submitAdminSlotAction('setBooster')">Set Booster Status</button>
+          </div>
+
+          <label>B. Giveaway Privilege (Grant Gift Character Slot)</label>
+          <div class="flex-row">
+            <input type="number" id="admGiftSlotCount" value="1" min="1" />
+            <button class="btn btn-secondary" style="margin-top:4px;" onclick="submitAdminSlotAction('addGiftSlot')">+ Grant Gift Slot(s)</button>
+          </div>
+
+          <hr style="border-color:var(--border); margin:12px 0;" />
+          <label>C. Rob / Trade / Giveaway Existing Character ID to a Gamer Tag</label>
+          <div class="flex-row">
+            <input type="text" id="admTransCharId" placeholder="Char ID (00-000-001)" />
+            <input type="text" id="admTransToTag" placeholder="New Gamer Tag" />
+          </div>
+          <div class="flex-row" style="margin-top:6px;">
+            <select id="admTransSlotType">
+              <option value="Traded Slot">Traded Slot (Robbed / Sold / Traded)</option>
+              <option value="Gift Slot">Gift Slot (Giveaway Character)</option>
+            </select>
+            <button class="btn btn-gold" style="margin-top:4px;" onclick="submitAdminSlotAction('transferCharacter')">Transfer Character</button>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--purple);">4. Achievements & Titles Creator / Granter</h3>
+          <label>Create New Achievement Title Name</label>
+          <input type="text" id="admAchName" placeholder="e.g. Grand Vanguard / First Blood" />
+          <label>Achievement Icon / Badge Image URL</label>
+          <input type="url" id="admAchImg" placeholder="https://..." />
+          <label>Or Upload Small Local Icon Image (Auto-converts)</label>
+          <input type="file" accept="image/*" onchange="encodeLocalImageToInput(event, 'admAchImg')" />
+          <label>Short Description (Shown in Player Portal; hidden on Leaderboard hover)</label>
+          <input type="text" id="admAchDesc" placeholder="Awarded for conquering the First Floor..." />
+          <button class="btn" style="width:100%;" onclick="submitAdminCreateAchievement()">➕ Create Achievement Title</button>
+
+          <hr style="border-color:var(--border); margin:14px 0;" />
+          <label>Grant Existing Achievement Title to Gamer Tag(s)</label>
+          <select id="admGrantAchSelect"></select>
+          <label>Target Gamer Tag(s) (Comma-separated)</label>
+          <div class="flex-row">
+            <input type="text" id="admGrantAchTags" placeholder="Nexxy, Argon" />
+            <button class="btn btn-gold" style="margin-top:4px;" onclick="submitAdminGrantAchievement()">🏅 Grant Title(s)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box 5 & 6: ADMIN SKILL CREATOR & SKILL BOOK GRANTER -->
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--accent);">5. Admin Skill Creator (Class, Book & Universal)</h3>
           <div class="flex-row">
             <div>
               <label>1. Skill Type</label>
@@ -615,50 +772,35 @@
 
           <label>4. Skill Name</label>
           <input type="text" id="admSkillName" placeholder="e.g. Aegis Breaker / Mana Surge" />
-
-          <label>5. Skill Image URL (Optional Icon/Showcase)</label>
+          <label>5. Skill Image URL (Optional)</label>
           <input type="url" id="admSkillImg" placeholder="https://..." />
-
-          <label>6.Or Upload Local Image File (Auto-converts to Data URL if small icon)</label>
-          <input type="file" accept="image/*" onchange="encodeSkillImageFile(event)" />
-
+          <label>6. Or Upload Small Local Icon Image</label>
+          <input type="file" accept="image/*" onchange="encodeLocalImageToInput(event, 'admSkillImg')" />
           <label>7. Skill Description & Effects</label>
           <textarea id="admSkillDesc" rows="2" placeholder="Describe damage, buffs, cooldown..."></textarea>
-
           <button class="btn" style="width:100%;" onclick="submitAdminCreateSkill()">➕ Create Skill in Database</button>
         </div>
 
-        <!-- Box 4: Grant Skill Book to Character -->
         <div class="stat-box">
-          <h3 style="margin-top:0; color:var(--purple);">4. 📖 Grant Skill Book to Character (Max 3 Owned)</h3>
-          <p style="font-size:0.82rem; color:var(--muted); margin-top:0;">
-            Skill Books cost <strong>0 SP</strong>. A character can hold up to <strong>3 Skill Books</strong> at once (and equip 1 at a time). Granting a 4th Book requires selecting one of their existing 3 Books to replace.
-          </p>
+          <h3 style="margin-top:0; color:var(--purple);">6. Grant Skill Book to Character (Max 3 Owned)</h3>
           <label>Target Character ID</label>
           <div class="flex-row">
             <input type="text" id="admBookCharId" placeholder="00-000-001" />
             <button class="btn btn-secondary" style="margin-top:4px; flex:0 0 auto;" onclick="loadCharBooksForAdmin()">Check Character's Current Books</button>
           </div>
-
           <label>Select Skill to Grant as a Skill Book</label>
           <select id="admBookSkillSelect"></select>
-
-          <label>Replace Existing Book Skill (Required only if character already has 3 Books)</label>
+          <label>Replace Existing Book Skill (If character already has 3 Books)</label>
           <select id="admBookReplaceSelect">
             <option value="">-- No Replacement Needed (If under 3 Books) --</option>
           </select>
-
           <button class="btn btn-gold" style="width:100%;" onclick="submitAdminGrantBook()">📖 Grant Skill Book to Character</button>
         </div>
       </div>
 
-      <!-- Box 5: Enclave Archive Wiki Manager -->
+      <!-- Box 7: Enclave Archive Wiki Manager -->
       <div class="stat-box" style="margin-top:18px;">
-        <h3 style="margin-top:0; color:var(--gold);">5. 📜 Enclave Archive Wiki Manager (Update or Add New Pages)</h3>
-        <p style="font-size:0.84rem; color:var(--muted); margin-top:0;">
-          Select a Section and Page below to edit an existing page, or choose <strong>➕ Create New Page in this Section...</strong> to add a new Character Wiki or Lore entry. Use <code>[IMG-RIGHT: https://url | Caption]</code> or <code>[IMG-LEFT: https://url | Caption]</code> inside your Word file to float images with Times New Roman text wrapping around them.
-        </p>
-
+        <h3 style="margin-top:0; color:var(--gold);">7. Enclave Archive Wiki Manager (Update or Add New Pages)</h3>
         <div class="grid-2">
           <div>
             <label>1. Select Archive Section</label>
@@ -672,27 +814,20 @@
               <option value="Links">Links</option>
               <option value="Characters">Characters (Fandom Wiki)</option>
             </select>
-
             <label>2. Select Page to Update (or Create New)</label>
             <select id="admArcPageSelect" onchange="loadSelectedPageIntoAdminEditor()"></select>
-
-            <label>3. Page Title (Edit title or type New Page Name)</label>
+            <label>3. Page Title</label>
             <input type="text" id="admArcTitle" placeholder="e.g. Human, Warrior, or Character Name" />
-
-            <label>4. Top-Right Floating Infobox / Portrait Image URL (Optional)</label>
+            <label>4. Top-Right Floating Infobox / Portrait Image URL</label>
             <input type="url" id="admArcImg" placeholder="https://..." />
-
             <label>5. Infobox Subtitle / Caption</label>
             <input type="text" id="admArcSub" placeholder="e.g. 'ID: 00-000-001 | The Crimson Alchemist'" />
           </div>
-
           <div>
             <label>6. Upload Completed Word File (<code>.docx</code> or <code>.doc</code>)</label>
             <input type="file" id="admArcWordInput" accept=".docx,.doc,.html,.txt" onchange="handleAdminArchiveWordFile(event)" />
-
-            <label>7. Page Content (HTML / Text — auto-filled when you upload a Word file)</label>
+            <label>7. Page Content (HTML / Text)</label>
             <textarea id="admArcHtml" rows="8" placeholder="Upload a Word file above or write content here..."></textarea>
-
             <button class="btn" style="width:100%;" onclick="submitAdminArchivePage()">💾 Publish / Update Archive Page</button>
           </div>
         </div>
@@ -708,7 +843,10 @@
   // 2. PASTE YOUR CUSTOM LOADING GIF LINK BELOW:
   const LOADING_GIF_URL = "https://media.tenor.com/zTzHQQXcPh8AAAAM/anime-a-sign-of-affection.gif";
 
-  // 3. GATE KEY REQUIRED WHEN CLICKING THE COGWHEEL BUTTON:
+  // 3. PASTE YOUR PORTAL LOGO IMAGE LINK BELOW (Shows on Login Gate & Header):
+  const PORTAL_LOGO_URL = "https://media.discordapp.net/attachments/813455390745428079/1563355860460240947/EnclaveLogo1.png?ex=6add541a&is=6adc029a&hm=ee557a637132038d8fdbe5c79cc5e77bab608c85a19983489ad7e6b3bce419ea&=&format=webp&quality=lossless";
+
+  // 4. GATE KEY REQUIRED WHEN CLICKING THE COGWHEEL BUTTON:
   const ADMIN_GATE_KEY = "ADMIN_KEY_2026";
 
   const SKILL_LEVEL_META = {
@@ -762,13 +900,23 @@
   ];
 
   let STATE = {
-    races: [], guilds: [], skills: [], staff: [],
-    leaderboard: [], currentChar: null, currentStaff: null,
+    races: [], guilds: [], skills: [], achievements: [], staff: [],
+    leaderboard: [],
+    gamerSession: null, // { gamerTag, password, account, slotSummary, characters, achievements }
+    currentChar: null,
+    currentStaff: null,
     adminGateUnlocked: false,
     archivePages: [], archiveComments: [], activeSlug: "lore"
   };
 
   let isSubmitting = false;
+
+  function applyLogoBranding() {
+    if (PORTAL_LOGO_URL && !PORTAL_LOGO_URL.includes("PASTE_YOUR_LOGO")) {
+      document.getElementById("gateLogoImg").src = PORTAL_LOGO_URL;
+      document.getElementById("headerLogoImg").src = PORTAL_LOGO_URL;
+    }
+  }
 
   function showLoading(message = "Updating...") {
     const overlay = document.getElementById("loadingOverlay");
@@ -787,7 +935,256 @@
     document.getElementById("loadingOverlay").style.display = "none";
   }
 
+  async function apiPost(payload, loadingMessage = "Updating...") {
+    if (isSubmitting) return null;
+    isSubmitting = true;
+    showLoading(loadingMessage);
+    const buttons = document.querySelectorAll("button.btn");
+    buttons.forEach(b => b.disabled = true);
+
+    try {
+      if (STATE.currentStaff && !payload.staffId) {
+        payload.staffId = STATE.currentStaff.Staff_ID;
+      }
+      if (STATE.gamerSession && !payload.gamerTag) {
+        payload.gamerTag = STATE.gamerSession.gamerTag;
+        payload.gamerPassword = STATE.gamerSession.password;
+      }
+
+      const targetUrl = API_URL + (API_URL.includes("?") ? "&" : "?") + "action=" + encodeURIComponent(payload.action);
+      const res = await fetch(targetUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    } catch (err) {
+      return { status: "error", message: "Network error: " + err.message };
+    } finally {
+      isSubmitting = false;
+      hideLoading();
+      buttons.forEach(b => b.disabled = false);
+    }
+  }
+
+  /* ==============================================================
+     1. GAMER TAG PORTAL LOGIN / SIGNUP & SESSION REFRESH
+     ============================================================== */
+  async function submitGamerAuth(actionType) {
+    const gt = document.getElementById("gateGamerTag").value.trim();
+    const pass = document.getElementById("gateGamerPass").value.trim();
+    if (!gt || !pass) return alert("Please enter both a Gamer Tag (max 15 chars) and a Password.");
+    if (gt.length > 15) return alert("Gamer Tag cannot exceed 15 characters.");
+
+    const res = await apiPost({
+      action: actionType,
+      gamerTag: gt,
+      password: pass
+    }, actionType === "gamerRegister" ? "Registering Gamer Tag..." : "Signing In to Enclave Portal...");
+
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+
+    STATE.gamerSession = {
+      gamerTag: res.account.Gamer_Tag,
+      password: pass,
+      account: res.account,
+      slotSummary: res.slotSummary,
+      characters: res.characters || [],
+      achievements: res.achievements || []
+    };
+
+    document.getElementById("gamerAuthScreen").style.display = "none";
+    document.getElementById("mainAppShell").style.display = "block";
+    document.getElementById("arcCommentAuthor").value = "@" + STATE.gamerSession.gamerTag;
+
+    syncGamerSessionUI();
+    await initPortal();
+
+    // Auto-load first character in Player Portal dropdown if the player owns one
+    if (STATE.gamerSession.characters.length > 0) {
+      await selectMyCharacterFromDropdown();
+    }
+  }
+
+  async function refreshGamerAccountData() {
+    if (!STATE.gamerSession) return;
+    const res = await apiPost({
+      action: "getGamerDashboard",
+      gamerTag: STATE.gamerSession.gamerTag,
+      password: STATE.gamerSession.password
+    }, "Refreshing Gamer Tag Slots & Achievements...");
+    if (res && res.status === "ok") {
+      STATE.gamerSession.account = res.account;
+      STATE.gamerSession.slotSummary = res.slotSummary;
+      STATE.gamerSession.characters = res.characters || [];
+      STATE.gamerSession.achievements = res.achievements || [];
+      syncGamerSessionUI();
+    }
+  }
+
+  function logoutGamerTag() {
+    STATE.gamerSession = null;
+    STATE.currentChar = null;
+    STATE.currentStaff = null;
+    document.getElementById("mainAppShell").style.display = "none";
+    document.getElementById("gamerAuthScreen").style.display = "flex";
+    document.getElementById("gateGamerPass").value = "";
+  }
+
+  function syncGamerSessionUI() {
+    if (!STATE.gamerSession) return;
+    const s = STATE.gamerSession.slotSummary;
+    document.getElementById("activeGamerTagBadge").textContent = "@" + STATE.gamerSession.gamerTag;
+    document.getElementById("activeSlotCountBadge").textContent = `${s.activeCount} / 3`;
+
+    // Populate Create Character Slot Selector & Explanation
+    const slotSel = document.getElementById("crSlotType");
+    slotSel.innerHTML = "";
+    if (s.creatableSlots.length === 0) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "No Available Slots Unlocked";
+      slotSel.appendChild(opt);
+      document.getElementById("createCharBtn").disabled = true;
+    } else {
+      s.creatableSlots.forEach(slotName => {
+        const opt = document.createElement("option");
+        opt.value = slotName;
+        opt.textContent = slotName;
+        slotSel.appendChild(opt);
+      });
+      document.getElementById("createCharBtn").disabled = false;
+    }
+
+    document.getElementById("slotStatusExplanation").innerHTML = `
+      • <strong>Active Characters:</strong> ${s.activeCount} / 3 Max Active<br/>
+      • <strong>Starter Slot:</strong> ${s.starterUsed ? "Used" : "<span style='color:var(--success)'>Available</span>"} |
+      <strong>Legacy Slot (Unlock at Lv 20):</strong> ${s.legacyUsed ? "Used" : (s.legacyUnlocked ? "<span style='color:var(--success)'>Available!</span>" : "Locked (Reach Lv 20 on 1st Char)")}<br/>
+      • <strong>Commercial Slot (Booster):</strong> ${s.boosterStatus} ${s.commercialUsed ? "(Occupied)" : ""} |
+      <strong>Gift Slots Available:</strong> ${s.giftSlotsAvailable}
+    `;
+
+    // Populate Player Portal Character Dropdown
+    const charDrop = document.getElementById("myCharDropdown");
+    const prevSelected = charDrop.value;
+    charDrop.innerHTML = "";
+
+    if (STATE.gamerSession.characters.length === 0) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "-- No Characters Created Yet --";
+      charDrop.appendChild(opt);
+      document.getElementById("playerArea").style.display = "none";
+      document.getElementById("noCharSelectedMsg").style.display = "block";
+    } else {
+      STATE.gamerSession.characters.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.Char_ID;
+        opt.textContent = `[${c.Char_ID}] ${c.Name} — Lv.${c.Char_Level} (${c.Slot_Type} | ${c.Status})`;
+        charDrop.appendChild(opt);
+      });
+      if (prevSelected && STATE.gamerSession.characters.some(c => c.Char_ID === prevSelected)) {
+        charDrop.value = prevSelected;
+      }
+    }
+
+    // Show/Hide Convert Limbo Commercial -> Legacy Slot Button
+    const convBtn = document.getElementById("convertLimboBtn");
+    convBtn.style.display = s.canConvertLimboBoosterToLegacy ? "inline-block" : "none";
+
+    renderPlayerAchievements();
+  }
+
+  function renderPlayerAchievements() {
+    if (!STATE.gamerSession) return;
+    const achList = STATE.gamerSession.achievements || [];
+    const eqCount = achList.filter(a => a.Equipped).length;
+    document.getElementById("pAchSummary").textContent = `Equipped Showcase: ${eqCount} / 3`;
+
+    const tbody = document.getElementById("pAchievementsTable");
+    tbody.innerHTML = "";
+    if (achList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted)">No Achievement Titles earned yet.</td></tr>`;
+      return;
+    }
+
+    achList.forEach(a => {
+      const isEq = a.Equipped === true || String(a.Equipped).toUpperCase() === "TRUE";
+      const imgHtml = a.Image_URL ? `<img class="skill-icon" src="${a.Image_URL}" alt="Badge" />` : "🏆 ";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${imgHtml}<strong>${a.Title_Name}</strong></td>
+        <td style="color:var(--muted)">${a.Description || "—"}</td>
+        <td>
+          <span class="status-pill ${isEq ? 'status-active' : 'status-limbo'}">
+            ${isEq ? "Showcased" : "Unequipped"}
+          </span>
+        </td>
+        <td>
+          <button class="btn ${isEq ? 'btn-secondary' : ''}" style="margin:0; padding:6px 10px; font-size:0.8rem;"
+                  onclick="toggleEquipMyAchievement('${a.Ach_ID}')">
+            ${isEq ? "Unequip" : "Equip Title"}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function toggleEquipMyAchievement(achId) {
+    const res = await apiPost({
+      action: "toggleEquipAchievement",
+      achId
+    }, "Updating Title Showcase...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    STATE.gamerSession.achievements = res.achievements || [];
+    renderPlayerAchievements();
+    await initPortal();
+  }
+
+  async function triggerConvertBoosterToLegacy() {
+    if (!STATE.gamerSession || !STATE.gamerSession.slotSummary.limboCommercialChars.length) return;
+    const limboChar = STATE.gamerSession.slotSummary.limboCommercialChars[0];
+    if (!confirm(`Convert '${limboChar.Name}' [${limboChar.Char_ID}] from your Limbo Commercial Slot into your permanent Legacy Slot?`)) return;
+
+    const res = await apiPost({
+      action: "convertBoosterToLegacy",
+      charId: limboChar.Char_ID
+    }, "Converting Commercial Slot to Legacy Slot...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    STATE.gamerSession.account = res.account;
+    STATE.gamerSession.slotSummary = res.slotSummary;
+    STATE.gamerSession.characters = res.characters || [];
+    syncGamerSessionUI();
+    await initPortal();
+    await selectMyCharacterFromDropdown();
+    alert("Character successfully converted to your permanent Legacy Slot and restored to Active!");
+  }
+
+  async function selectMyCharacterFromDropdown() {
+    const cid = document.getElementById("myCharDropdown").value;
+    if (!cid) return;
+    showLoading("Loading Character Sheet...");
+    try {
+      const res = await fetch(API_URL + "?action=profile&charId=" + encodeURIComponent(cid)).then(r => r.json());
+      hideLoading();
+      if (res.status !== "ok") return alert(res.message);
+      document.getElementById("noCharSelectedMsg").style.display = "none";
+      renderPlayerDashboard(res);
+    } catch (e) {
+      hideLoading();
+      alert("Failed to load character: " + e.message);
+    }
+  }
+
+  /* ==============================================================
+     2. PORTAL INITIALIZATION & LEADERBOARD HOVER CARDS
+     ============================================================== */
   async function initPortal() {
+    applyLogoBranding();
     renderArchiveSidebar();
     renderArchiveArticle(STATE.activeSlug);
     populateAdminArchivePageDropdown();
@@ -799,14 +1196,16 @@
         fetch(API_URL + "?action=getArchive").then(r => r.json()).catch(() => ({ status: "none" }))
       ]);
       if (initRes.status === "ok") {
-        STATE.races = initRes.races;
-        STATE.guilds = initRes.guilds;
-        STATE.skills = initRes.skills;
-        STATE.staff = initRes.staff;
-        STATE.leaderboard = initRes.leaderboard;
+        STATE.races = initRes.races || [];
+        STATE.guilds = initRes.guilds || [];
+        STATE.skills = initRes.skills || [];
+        STATE.achievements = initRes.achievements || [];
+        STATE.staff = initRes.staff || [];
+        STATE.leaderboard = initRes.leaderboard || [];
         renderLeaderboard();
         renderRaces();
         populateAdminBookSkillDropdown();
+        populateAdminAchievementDropdown();
         if (STATE.currentChar) renderPlayerSkillShop();
       }
       if (arcRes && arcRes.status === "ok") {
@@ -837,15 +1236,16 @@
     showTab("admin", document.getElementById("adminToggleBtn"));
   }
 
-  /* ==============================================================
-     LEADERBOARD + CLASS HOVER EQUIPPED SKILLS TOOLTIP
-     ============================================================== */
   function renderLeaderboard() {
     const q = (document.getElementById("searchIdInput").value || "").toLowerCase();
     const tbody = document.getElementById("leaderboardBody");
     tbody.innerHTML = "";
     STATE.leaderboard
-      .filter(c => String(c.Char_ID).toLowerCase().includes(q) || String(c.Name).toLowerCase().includes(q))
+      .filter(c =>
+        String(c.Char_ID).toLowerCase().includes(q) ||
+        String(c.Name).toLowerCase().includes(q) ||
+        String(c.Gamer_Tag).toLowerCase().includes(q)
+      )
       .forEach((c, idx) => {
         const isDead = c.Status === "Deceased";
         const isLimbo = c.Status === "Limbo";
@@ -856,15 +1256,24 @@
         if (isDead || isLimbo) tr.className = "deceased";
         tr.innerHTML = `
           <td>#${idx + 1}</td>
+          <td>
+            <span class="gamertag-pill"
+                  onmouseenter="showGamerTitlesTooltip(event, '${c.Char_ID}')"
+                  onmousemove="moveFloatingTooltip(event)"
+                  onmouseleave="hideFloatingTooltip()">
+              @${c.Gamer_Tag || "Unlinked"}
+            </span>
+          </td>
           <td style="white-space:nowrap;">
             <img class="avatar-thumb" src="${c.Avatar_URL || 'https://via.placeholder.com/36'}" alt="Avatar" />
             <strong>${c.Char_ID}</strong> — ${c.Name}
           </td>
+          <td><small style="color:var(--muted)">${c.Slot_Type || "Starter Slot"}</small></td>
           <td>
-            <span class="class-hover-wrap"
+            <span class="hover-trigger"
                   onmouseenter="showClassSkillsTooltip(event, '${c.Char_ID}')"
-                  onmousemove="moveClassSkillsTooltip(event)"
-                  onmouseleave="hideClassSkillsTooltip()">
+                  onmousemove="moveFloatingTooltip(event)"
+                  onmouseleave="hideFloatingTooltip()">
               ${c.Race} / <strong>${c.Class}</strong>
             </span>
           </td>
@@ -879,9 +1288,37 @@
       });
   }
 
+  function showGamerTitlesTooltip(evt, charId) {
+    const char = STATE.leaderboard.find(c => c.Char_ID === charId);
+    const box = document.getElementById("floatingHoverCard");
+    if (!char || !box) return;
+
+    const titles = char.Equipped_Titles || [];
+    let html = `<div style="color:var(--purple); font-weight:700; margin-bottom:6px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+      🏆 @${char.Gamer_Tag} — Showcased Titles (${titles.length}/3)
+    </div>`;
+
+    if (titles.length === 0) {
+      html += `<small style="color:var(--muted)">No Achievement Titles equipped.</small>`;
+    } else {
+      titles.forEach(t => {
+        const imgTag = t.Image_URL
+          ? `<img src="${t.Image_URL}" style="width:26px;height:26px;border-radius:5px;object-fit:cover;vertical-align:middle;margin-right:8px;border:1px solid var(--gold);" />`
+          : `🏅 `;
+        html += `<div style="font-size:0.86rem; margin:6px 0; display:flex; align-items:center; color:var(--gold); font-weight:700;">
+          ${imgTag}<span>${t.Title_Name}</span>
+        </div>`;
+      });
+    }
+
+    box.innerHTML = html;
+    box.style.display = "block";
+    moveFloatingTooltip(evt);
+  }
+
   function showClassSkillsTooltip(evt, charId) {
     const char = STATE.leaderboard.find(c => c.Char_ID === charId);
-    const box = document.getElementById("classEquipTooltip");
+    const box = document.getElementById("floatingHoverCard");
     if (!char || !box) return;
 
     const eq = char.Equipped_Skills || [];
@@ -905,11 +1342,11 @@
 
     box.innerHTML = html;
     box.style.display = "block";
-    moveClassSkillsTooltip(evt);
+    moveFloatingTooltip(evt);
   }
 
-  function moveClassSkillsTooltip(evt) {
-    const box = document.getElementById("classEquipTooltip");
+  function moveFloatingTooltip(evt) {
+    const box = document.getElementById("floatingHoverCard");
     if (!box || box.style.display === "none") return;
     const x = Math.min(window.innerWidth - 310, evt.clientX + 14);
     const y = Math.min(window.innerHeight - 220, evt.clientY + 14);
@@ -917,26 +1354,103 @@
     box.style.top = Math.max(10, y) + "px";
   }
 
-  function hideClassSkillsTooltip() {
-    const box = document.getElementById("classEquipTooltip");
+  function hideFloatingTooltip() {
+    const box = document.getElementById("floatingHoverCard");
     if (box) box.style.display = "none";
   }
 
   /* ==============================================================
-     SKILL SHOP, EQUIP LOADOUT & ADMIN SKILL CREATOR
+     3. ADMIN SLOTS, ACHIEVEMENTS & SKILL CREATOR
      ============================================================== */
+  function encodeLocalImageToInput(event, targetInputId) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 40000) {
+      return alert("This image is larger than 40KB. Please paste a direct image URL (Discord/Imgur/Postimages) or choose a smaller icon file.");
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById(targetInputId).value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function submitAdminSlotAction(subAction) {
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
+    const payload = {
+      action: "adminManageGamerSlot",
+      staffId: STATE.currentStaff.Staff_ID,
+      subAction,
+      gamerTag: document.getElementById("admSlotGamerTag").value.trim(),
+      boosterStatus: document.getElementById("admBoosterStatus").value,
+      count: document.getElementById("admGiftSlotCount").value,
+      charId: document.getElementById("admTransCharId").value.trim(),
+      toGamerTag: document.getElementById("admTransToTag").value.trim(),
+      transferSlotType: document.getElementById("admTransSlotType").value
+    };
+
+    const res = await apiPost(payload, "Updating Gamer Tag Slot Privileges...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      await refreshGamerAccountData();
+      await initPortal();
+    }
+  }
+
+  function populateAdminAchievementDropdown() {
+    const sel = document.getElementById("admGrantAchSelect");
+    if (!sel) return;
+    sel.innerHTML = "";
+    STATE.achievements.forEach(a => {
+      const opt = document.createElement("option");
+      opt.value = a.Ach_ID;
+      opt.textContent = `${a.Title_Name} (${a.Ach_ID})`;
+      sel.appendChild(opt);
+    });
+  }
+
+  async function submitAdminCreateAchievement() {
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminCreateAchievement",
+      staffId: STATE.currentStaff.Staff_ID,
+      titleName: document.getElementById("admAchName").value,
+      imageUrl: document.getElementById("admAchImg").value,
+      description: document.getElementById("admAchDesc").value
+    }, "Creating Achievement Title...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      document.getElementById("admAchName").value = "";
+      document.getElementById("admAchDesc").value = "";
+      await initPortal();
+    }
+  }
+
+  async function submitAdminGrantAchievement() {
+    if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminGrantAchievement",
+      staffId: STATE.currentStaff.Staff_ID,
+      achId: document.getElementById("admGrantAchSelect").value,
+      gamerTags: document.getElementById("admGrantAchTags").value
+    }, "Granting Achievement Title(s)...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      await refreshGamerAccountData();
+      await initPortal();
+    }
+  }
+
   function updateAdminSkillCreatorUI() {
     const sType = document.getElementById("admSkillType").value;
     const sLevel = Number(document.getElementById("admSkillLevel").value) || 1;
     const classWrap = document.getElementById("admSkillClassWrap");
     const costPreview = document.getElementById("admSkillCostPreview");
 
-    if (sType === "Class") {
-      classWrap.style.display = "block";
-    } else {
-      classWrap.style.display = "none";
-    }
-
+    classWrap.style.display = sType === "Class" ? "block" : "none";
     const meta = SKILL_LEVEL_META[sLevel] || { cost: 5, tier: "C1" };
     if (sType === "Book") {
       costPreview.value = `0 SP (Admin Skill Book — Lv ${sLevel})`;
@@ -945,19 +1459,6 @@
     } else {
       costPreview.value = `${meta.cost} SP (Requires Class Tier ${meta.tier})`;
     }
-  }
-
-  function encodeSkillImageFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 40000) {
-      return alert("This image is larger than 40KB. To keep your Google Sheet fast, please paste a direct Image URL (Discord/Imgur/Postimages) in Field 5, or choose a smaller icon image.");
-    }
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById("admSkillImg").value = e.target.result;
-    };
-    reader.readAsDataURL(file);
   }
 
   async function submitAdminCreateSkill() {
@@ -986,7 +1487,6 @@
     const sel = document.getElementById("admBookSkillSelect");
     if (!sel) return;
     sel.innerHTML = "";
-    // List Book skills first, followed by Class skills so Admins can also grant out-of-class skills as Skill Books
     const sorted = [...STATE.skills].sort((a, b) => (a.Type === "Book" ? -1 : 1));
     sorted.forEach(s => {
       const opt = document.createElement("option");
@@ -1038,9 +1538,11 @@
     }
   }
 
+  /* ==============================================================
+     4. PLAYER SKILL SHOP, LOADOUT & CHARACTER DASHBOARD
+     ============================================================== */
   function renderPlayerSkillsAndLoadout() {
     if (!STATE.currentChar) return;
-    const c = STATE.currentChar.character;
     const owned = STATE.currentChar.skills || [];
 
     const eqClass = owned.filter(s => s.Equipped && s.Type === "Class").length;
@@ -1066,11 +1568,7 @@
         tr.innerHTML = `
           <td>${imgHtml}<strong>${s.Skill_Name}</strong></td>
           <td>${s.Type} (Lv.${s.Skill_Level || 1})</td>
-          <td>
-            <span class="status-pill ${isEq ? 'status-active' : 'status-limbo'}">
-              ${isEq ? "Equipped" : "Unequipped"}
-            </span>
-          </td>
+          <td><span class="status-pill ${isEq ? 'status-active' : 'status-limbo'}">${isEq ? "Equipped" : "Unequipped"}</span></td>
           <td>
             <button class="btn ${isEq ? 'btn-secondary' : ''}" style="margin:0; padding:6px 10px; font-size:0.8rem;"
                     onclick="togglePlayerSkillEquip('${s.Skill_ID}')">
@@ -1081,7 +1579,6 @@
         tbody.appendChild(tr);
       });
     }
-
     renderPlayerSkillShop();
   }
 
@@ -1097,7 +1594,7 @@
     tbody.innerHTML = "";
 
     const shopSkills = STATE.skills.filter(s => {
-      if (String(s.Type) === "Book") return false; // Books are Admin granted
+      if (String(s.Type) === "Book") return false;
       if (filter === "CLASS" && String(s.Type) !== "Class") return false;
       if (filter === "UNIVERSAL" && String(s.Type) !== "Universal") return false;
 
@@ -1146,10 +1643,10 @@
   }
 
   async function purchaseSkillFromShop(skillId) {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: "buySkill",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value,
+      charId: STATE.currentChar.character.Char_ID,
       skillId
     }, "Purchasing Skill...");
     if (!res) return;
@@ -1159,10 +1656,10 @@
   }
 
   async function togglePlayerSkillEquip(skillId) {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: "toggleEquipSkill",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value,
+      charId: STATE.currentChar.character.Char_ID,
       skillId
     }, "Updating Equipped Skills...");
     if (!res) return;
@@ -1172,7 +1669,7 @@
   }
 
   /* ==============================================================
-     ENCLAVE ARCHIVE: PUBLIC READER + ADMIN CONSOLE WIKI MANAGER
+     5. ENCLAVE ARCHIVE: PUBLIC READER + ADMIN WIKI MANAGER
      ============================================================== */
   function getAllArchivePagesForCategory(category) {
     const list = [];
@@ -1465,7 +1962,7 @@
 
   async function submitArchiveComment() {
     const author = document.getElementById("arcCommentAuthor").value.trim() ||
-      (STATE.currentChar ? `${STATE.currentChar.character.Name} (${STATE.currentChar.character.Char_ID})` : "Anonymous Traveler");
+      (STATE.gamerSession ? `@${STATE.gamerSession.gamerTag}` : "Anonymous Traveler");
     const text = document.getElementById("arcCommentText").value.trim();
     if (!text) return alert("Please write a comment first.");
 
@@ -1483,7 +1980,7 @@
   }
 
   /* ==============================================================
-     PORTAL LOGIC (CREATION, PLAYER, ADMIN)
+     6. CHARACTER CREATION, PLAYER ACTIONS & ADMIN STAFF
      ============================================================== */
   function renderRaces() {
     const container = document.getElementById("raceSelector");
@@ -1514,73 +2011,34 @@
     `;
   }
 
-  async function apiPost(payload, loadingMessage = "Updating...") {
-    if (isSubmitting) return null;
-    isSubmitting = true;
-    showLoading(loadingMessage);
-    const buttons = document.querySelectorAll("button.btn");
-    buttons.forEach(b => b.disabled = true);
-
-    try {
-      // Automatically attach active Staff/Owner credentials if logged into Admin Console
-      if (STATE.currentStaff && !payload.staffId) {
-        payload.staffId = STATE.currentStaff.Staff_ID;
-      }
-
-      // Send action in BOTH the URL query string and JSON body so redirects never lose it
-      const targetUrl = API_URL + (API_URL.includes("?") ? "&" : "?") + "action=" + encodeURIComponent(payload.action);
-
-      const res = await fetch(targetUrl, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      });
-      return await res.json();
-    } catch (err) {
-      return { status: "error", message: "Network error: " + err.message };
-    } finally {
-      isSubmitting = false;
-      hideLoading();
-      buttons.forEach(b => b.disabled = false);
-    }
-  }
-
   async function submitCreateCharacter() {
+    if (!STATE.gamerSession) return alert("Please log in with your Gamer Tag first.");
     const nameVal = document.getElementById("crName").value.trim();
-    const passVal = document.getElementById("crPass").value.trim();
-    if (!nameVal || !passVal) return alert("Please enter both a Character Name and a Password.");
+    const slotType = document.getElementById("crSlotType").value;
+    if (!nameVal) return alert("Please enter a Character Name.");
+    if (!slotType) return alert("You do not have an unlocked Character Slot available.");
 
     const res = await apiPost({
       action: "createCharacter",
+      slotType,
       name: nameVal,
       gender: document.getElementById("crGender").value,
-      password: passVal,
       race: document.getElementById("crRace").value,
       class: document.getElementById("crClass").value,
       avatarUrl: document.getElementById("crAvatar").value,
       aboutMe: document.getElementById("crAbout").value
-    }, "Creating Character & Assigning ID...");
+    }, "Creating Character in " + slotType + "...");
 
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
       document.getElementById("crName").value = "";
-      document.getElementById("crPass").value = "";
       document.getElementById("crAbout").value = "";
-      document.getElementById("loginId").value = res.charId;
+      await refreshGamerAccountData();
       await initPortal();
+      document.getElementById("myCharDropdown").value = res.charId;
+      await selectMyCharacterFromDropdown();
     }
-  }
-
-  async function loginPlayer() {
-    const res = await apiPost({
-      action: "login",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value
-    }, "Loading Character Profile...");
-    if (!res) return;
-    if (res.status !== "ok") return alert(res.message);
-    renderPlayerDashboard(res);
   }
 
   function renderPlayerDashboard(data) {
@@ -1588,7 +2046,7 @@
     const c = data.character;
     document.getElementById("playerArea").style.display = "block";
     document.getElementById("pHeaderName").textContent = `${c.Name} [${c.Char_ID}]`;
-    document.getElementById("pSubHeader").textContent = `${c.Race} ${c.Class} | Status: ${c.Status}`;
+    document.getElementById("pSubHeader").textContent = `@${c.Gamer_Tag} | ${c.Slot_Type} | ${c.Race} ${c.Class} | Status: ${c.Status}`;
     document.getElementById("pAvatarImg").src = c.Avatar_URL || "https://via.placeholder.com/56";
     document.getElementById("pAvatarInput").value = c.Avatar_URL || "";
     document.getElementById("pDriveXP").textContent = `${c.XP_Drive_Available} / ${c.XP_Drive_Total}`;
@@ -1636,10 +2094,10 @@
   }
 
   async function savePlayerAvatar() {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: "updateProfile",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value,
+      charId: STATE.currentChar.character.Char_ID,
       avatarUrl: document.getElementById("pAvatarInput").value
     }, "Updating Avatar...");
     if (!res) return;
@@ -1649,10 +2107,10 @@
   }
 
   async function submitAP() {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: "distributeAP",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value,
+      charId: STATE.currentChar.character.Char_ID,
       Power: document.getElementById("addPow").value,
       Endurance: document.getElementById("addEnd").value,
       Mobility: document.getElementById("addMob").value,
@@ -1667,24 +2125,25 @@
   }
 
   async function spendDriveXP(track) {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: "spendXP",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value,
+      charId: STATE.currentChar.character.Char_ID,
       track,
       amount: document.getElementById("xpSpendAmt").value
     }, "Allocating Drive Pool XP...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
+    await refreshGamerAccountData();
     await initPortal();
   }
 
   async function triggerAscend(actionName) {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: actionName,
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value
+      charId: STATE.currentChar.character.Char_ID
     }, "Processing Ascension...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
@@ -1693,10 +2152,10 @@
   }
 
   async function savePlayerProfile() {
+    if (!STATE.currentChar) return;
     const res = await apiPost({
       action: "updateProfile",
-      charId: document.getElementById("loginId").value,
-      password: document.getElementById("loginPass").value,
+      charId: STATE.currentChar.character.Char_ID,
       guild: document.getElementById("pGuildSelect").value
     }, "Updating Guild...");
     if (!res) return;
@@ -1717,15 +2176,14 @@
 
   function uploadInventoryExcel(e) {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file || !STATE.currentChar) return;
     const reader = new FileReader();
     reader.onload = async (evt) => {
       const wb = XLSX.read(evt.target.result, { type: "binary" });
       const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
       const res = await apiPost({
         action: "uploadInventory",
-        charId: document.getElementById("loginId").value,
-        password: document.getElementById("loginPass").value,
+        charId: STATE.currentChar.character.Char_ID,
         items: rows
       }, "Uploading Inventory Sheet...");
       if (!res) return;
@@ -1750,6 +2208,7 @@
       `Logged in as: ${res.staff.Staff_Name} [Code: ${res.staff.Staff_ID}] (${res.staff.Role})`;
     populateAdminArchivePageDropdown();
     populateAdminBookSkillDropdown();
+    populateAdminAchievementDropdown();
   }
 
   async function registerStaff() {
@@ -1783,6 +2242,7 @@
     }, "Logging Points & Updating Interactions...");
     if (!res) return;
     alert(res.message || res.status);
+    await refreshGamerAccountData();
     await initPortal();
   }
 
@@ -1798,6 +2258,7 @@
     }, "Updating Character Status...");
     if (!res) return;
     alert(res.message || res.status);
+    await refreshGamerAccountData();
     await initPortal();
   }
 
@@ -1814,7 +2275,7 @@
     await initPortal();
   }
 
-  initPortal();
+  applyLogoBranding();
 </script>
 </body>
 </html>
