@@ -10,7 +10,7 @@
     :root {
       --bg: #0f172a; --card: #1e293b; --border: #334155;
       --accent: #38bdf8; --gold: #facc15; --text: #f8fafc; --muted: #94a3b8;
-      --danger: #ef4444; --success: #22c55e; --purple: #c084fc;
+      --danger: #ef4444; --success: #22c55e; --purple: #c084fc; --orange: #fb923c;
     }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     html, body {
@@ -18,9 +18,26 @@
       overflow-x: hidden; background: var(--bg); color: var(--text);
     }
 
+    /* MOVING HEADER AD TICKER */
+    .ticker-wrap {
+      width: 100%; overflow: hidden; background: #070b14;
+      border-bottom: 1px solid var(--gold); padding: 6px 0;
+      white-space: nowrap; position: sticky; top: 0; z-index: 900;
+    }
+    .ticker-move {
+      display: inline-block; padding-left: 100%;
+      animation: enclaveTicker 34s linear infinite;
+      color: var(--gold); font-weight: 700; font-size: 0.84rem; letter-spacing: 0.4px;
+    }
+    .ticker-wrap:hover .ticker-move { animation-play-state: paused; }
+    @keyframes enclaveTicker {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-100%, 0, 0); }
+    }
+
     /* FIRST-SCREEN GAMER TAG LOGIN GATE */
     #gamerAuthScreen {
-      min-height: 100vh; width: 100%; max-width: 100vw;
+      min-height: 94vh; width: 100%; max-width: 100vw;
       display: flex; flex-direction: column; justify-content: center;
       align-items: center; padding: 16px; background: radial-gradient(circle at top, #1e293b 0%, #0f172a 70%);
     }
@@ -41,19 +58,19 @@
     }
 
     .app-shell {
-      max-width: 1320px; margin: 0 auto; padding: 16px; width: 100%; display: none;
+      max-width: 1340px; margin: 0 auto; padding: 14px; width: 100%; display: none;
     }
     header {
       display: flex; justify-content: space-between; align-items: center;
       border-bottom: 1px solid var(--border); padding-bottom: 14px;
-      margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
+      margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
     }
-    h1 { margin: 0; font-size: 1.4rem; color: var(--accent); letter-spacing: 1px; }
-    nav { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
-    @media (min-width: 900px) { nav { width: auto; } }
+    h1 { margin: 0; font-size: 1.38rem; color: var(--accent); letter-spacing: 1px; }
+    nav { display: flex; flex-wrap: wrap; gap: 5px; width: 100%; }
+    @media (min-width: 960px) { nav { width: auto; } }
     nav button {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
-      padding: 8px 11px; border-radius: 6px; cursor: pointer; font-size: 0.83rem;
+      padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 0.81rem;
       flex: 1 1 auto; text-align: center;
     }
     nav button.active, nav button:hover { border-color: var(--accent); color: var(--accent); }
@@ -61,14 +78,14 @@
     /* Boxed Panels & Mobile Spill Prevention */
     .panel {
       display: none; background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 18px; margin-bottom: 20px;
+      border-radius: 10px; padding: 16px; margin-bottom: 20px;
       width: 100%; max-width: 100%; overflow: hidden;
       overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;
     }
     .panel.active { display: block; }
     .grid-2 {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px; width: 100%;
+      gap: 14px; width: 100%;
     }
     .stat-box {
       background: #0b1120; border: 1px solid var(--border);
@@ -78,38 +95,38 @@
     .flex-row {
       display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
     }
-    .flex-row > * { flex: 1 1 140px; min-width: 0; }
+    .flex-row > * { flex: 1 1 135px; min-width: 0; }
 
     /* Boxed Scrollable Tables */
     .table-box {
       width: 100%; max-width: 100%; overflow-x: auto;
       border: 1px solid var(--border); border-radius: 8px;
-      background: #0b1120; margin-top: 12px;
+      background: #0b1120; margin-top: 10px;
       -webkit-overflow-scrolling: touch;
     }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 580px; }
-    th, td { border-bottom: 1px solid var(--border); padding: 9px 10px; text-align: left; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; min-width: 560px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 8px 10px; text-align: left; }
     th { color: var(--accent); background: #070b14; white-space: nowrap; }
     tr.deceased { filter: grayscale(100%); opacity: 0.55; background: #111827; }
 
-    label { display: block; font-size: 0.83rem; color: var(--muted); margin-top: 10px; text-align: left; }
+    label { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 9px; text-align: left; }
     input, select, textarea {
-      width: 100%; max-width: 100%; padding: 8px 10px; margin-top: 4px;
+      width: 100%; max-width: 100%; padding: 7px 10px; margin-top: 4px;
       border-radius: 6px; border: 1px solid var(--border);
-      background: #0b1120; color: var(--text); font-size: 0.88rem;
+      background: #0b1120; color: var(--text); font-size: 0.87rem;
     }
     input[type="checkbox"] { width: auto; margin: 0 4px 0 0; cursor: pointer; }
     .chk-label {
       display: inline-flex; align-items: center; gap: 4px;
-      font-size: 0.84rem; color: var(--text); cursor: pointer;
+      font-size: 0.82rem; color: var(--text); cursor: pointer;
       background: #0b1120; border: 1px solid var(--border);
-      padding: 5px 10px; border-radius: 6px; margin-top: 0;
+      padding: 5px 9px; border-radius: 6px; margin-top: 0;
     }
 
     button.btn {
       background: var(--accent); color: #0f172a; font-weight: 700;
-      border: none; padding: 9px 14px; border-radius: 6px;
-      cursor: pointer; margin-top: 10px; transition: opacity 0.2s;
+      border: none; padding: 8px 13px; border-radius: 6px;
+      cursor: pointer; margin-top: 9px; transition: opacity 0.2s;
       max-width: 100%; white-space: normal; line-height: 1.25;
     }
     button.btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
@@ -119,11 +136,11 @@
 
     .avatar-thumb { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 6px; background: #0b1120; }
     .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-top: 8px; background: #0b1120; display: block; }
-    .skill-icon { width: 34px; height: 34px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 8px; background: #070b14; }
+    .skill-icon { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); vertical-align: middle; margin-right: 6px; background: #070b14; }
 
     .status-pill {
-      display: inline-block; padding: 4px 10px; border-radius: 6px;
-      font-size: 0.74rem; font-weight: bold; cursor: help;
+      display: inline-block; padding: 3px 9px; border-radius: 6px;
+      font-size: 0.73rem; font-weight: bold; cursor: help;
       max-width: 125px; white-space: nowrap; overflow: hidden;
       text-overflow: ellipsis; text-align: center; border: 1px solid transparent;
     }
@@ -131,11 +148,46 @@
     .status-deceased { background: rgba(239,68,68,0.22); color: #fca5a5; border-color: rgba(239,68,68,0.45); }
     .status-limbo { background: rgba(234,179,8,0.22); color: var(--gold); border-color: rgba(234,179,8,0.45); }
 
+    /* 10-TIER ITEM RARITY BADGES */
+    .rarity-badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.73rem; font-weight: 800; letter-spacing: 0.3px;
+    }
+    .rar-White { background: #e2e8f0; color: #0f172a; }
+    .rar-Green { background: rgba(34,197,94,0.25); color: #4ade80; border: 1px solid #22c55e; }
+    .rar-Blue { background: rgba(56,189,248,0.25); color: #38bdf8; border: 1px solid #0284c7; }
+    .rar-Purple { background: rgba(192,132,252,0.25); color: #c084fc; border: 1px solid #9333ea; }
+    .rar-Orange { background: rgba(251,146,60,0.25); color: #fb923c; border: 1px solid #ea580c; }
+    .rar-Silver-White { background: linear-gradient(90deg, #94a3b8, #f8fafc); color: #0f172a; border: 1px solid #fff; }
+    .rar-Silver-Green { background: linear-gradient(90deg, #cbd5e1, #22c55e); color: #052e16; border: 1px solid #86efac; }
+    .rar-Silver-Blue { background: linear-gradient(90deg, #cbd5e1, #38bdf8); color: #082f49; border: 1px solid #7dd3fc; }
+    .rar-Silver-Purple { background: linear-gradient(90deg, #cbd5e1, #c084fc); color: #2e1065; border: 1px solid #d8b4fe; }
+    .rar-Silver-Orange { background: linear-gradient(90deg, #e2e8f0, #fb923c); color: #431407; border: 1px solid #fdba74; }
+
+    /* 2-BIT RETRO TTRPG INSTANT DUNGEON THEME */
+    .retro-2bit-box {
+      background: #050805; color: #a3e635;
+      border: 3px double #a3e635; border-radius: 4px;
+      padding: 16px; font-family: "Courier New", Courier, monospace !important;
+      box-shadow: inset 0 0 18px rgba(163, 230, 53, 0.12);
+    }
+    .retro-2bit-box * { font-family: "Courier New", Courier, monospace !important; }
+    .retro-ascii {
+      background: #020402; border: 1px dashed #65a30d;
+      padding: 10px; white-space: pre; overflow-x: auto;
+      font-size: 0.78rem; line-height: 1.25; color: #bef264; text-align: center;
+    }
+    .retro-log {
+      background: #020402; border: 1px solid #4d7c0f;
+      padding: 12px; height: 250px; overflow-y: auto;
+      font-size: 0.85rem; line-height: 1.55; color: #ecfccb;
+    }
+
     .hover-trigger { cursor: help; border-bottom: 1px dashed var(--accent); padding-bottom: 1px; }
     .gamertag-pill {
       display: inline-block; padding: 3px 8px; border-radius: 5px;
       background: rgba(192, 132, 252, 0.16); border: 1px solid rgba(192, 132, 252, 0.45);
-      color: var(--purple); font-weight: 700; font-size: 0.8rem; cursor: help;
+      color: var(--purple); font-weight: 700; font-size: 0.79rem; cursor: help;
     }
     .floating-hover-card {
       display: none; position: fixed; z-index: 9500;
@@ -151,7 +203,7 @@
     .tooltip-box { background: #0b1120; border: 1px solid var(--gold); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; }
 
     /* ENCLAVE ARCHIVE */
-    .archive-layout { display: grid; grid-template-columns: 250px 1fr; gap: 18px; width: 100%; }
+    .archive-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; width: 100%; }
     .archive-sidebar {
       background: #0b1120; border: 1px solid var(--border); border-radius: 8px;
       padding: 12px; max-height: 78vh; overflow-y: auto;
@@ -164,14 +216,14 @@
     .archive-nav-btn {
       display: block; width: 100%; text-align: left; background: transparent;
       color: var(--text); border: none; padding: 6px 8px; border-radius: 5px;
-      cursor: pointer; font-size: 0.86rem; margin-bottom: 2px;
+      cursor: pointer; font-size: 0.85rem; margin-bottom: 2px;
     }
     .archive-nav-btn:hover, .archive-nav-btn.active {
       background: rgba(56, 189, 248, 0.15); color: var(--accent); font-weight: 600;
     }
     .archive-article-box {
       background: #0b1120; border: 1px solid var(--border); border-radius: 8px;
-      padding: 24px; min-width: 0; overflow: hidden;
+      padding: 22px; min-width: 0; overflow: hidden;
     }
     #arcTitle {
       margin: 6px 0 0 0; color: var(--gold);
@@ -188,9 +240,6 @@
       color: var(--gold); border-bottom: 1px solid var(--border);
       padding-bottom: 6px; margin-top: 20px; margin-bottom: 10px; text-align: left;
     }
-    .wiki-content p { margin: 0 0 14px 0; }
-    .wiki-content table { min-width: 0; width: 100%; border: 1px solid var(--border); margin: 12px 0; }
-    .wiki-content th, .wiki-content td { border: 1px solid var(--border); padding: 8px; }
     .wiki-float-right {
       float: right; width: 240px; max-width: 48%;
       margin: 4px 0 14px 18px; background: #141d30;
@@ -235,6 +284,13 @@
   </style>
 </head>
 <body>
+
+<!-- CONTINUOUS MOVING HEADER AD TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-move" id="headerTickerText">
+    📢 ENCLAVE EXCHANGE LIVE: 1 Scale = $0.50 USD Cashout | Buy 1 Scale = $1.00 USD  ✦  Daily Forager Instant Dungeons (ID) are OPEN!  ✦  C2 Crafters can submit Custom Equipment Recipes for +1 SP!  ✦  Visit the Trader Port in the Bank to trade Crowns, Scales, Items & Characters!
+  </div>
+</div>
 
 <div id="loadingOverlay">
   <div class="loading-modal-card">
@@ -287,20 +343,21 @@
       <button class="active" onclick="showTab('leaderboard', this)">Leaderboard</button>
       <button onclick="showTab('create', this)">Create Character</button>
       <button onclick="showTab('dashboard', this)">Player Portal</button>
+      <button onclick="showTab('dungeon', this)">Instant Dungeon (ID)</button>
       <button onclick="showTab('prototypes', this)">Prototype Skills</button>
       <button onclick="showTab('commissions', this)">Commissions</button>
-      <button onclick="showTab('bank', this)">Bank & Shop</button>
+      <button onclick="showTab('bank', this)">Enclave Commercial Hub</button>
       <button onclick="showTab('archive', this)">Enclave Archive</button>
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
       <button onclick="logoutGamerTag()" title="Log Out" style="background:#1e293b; color:var(--muted); flex:0 0 auto;">Log Out</button>
     </nav>
   </header>
 
-  <!-- 1. PUBLIC LEADERBOARD (WITH STATUS TICK-BOX FILTERS) -->
+  <!-- 1. PUBLIC LEADERBOARD -->
   <section id="tab-leaderboard" class="panel active">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:10px;">
       <div>
-        <h2 style="margin:0;">Live Public Leaderboard</h2>
+        <h2 style="margin:0;">Leaderboard</h2>
         <small style="color:var(--muted)">
           Hover over <strong>@GamerTag</strong> for Titles, <strong>Race / Class</strong> for Equipped Skills, or <strong>Status</strong> for notes.
         </small>
@@ -324,7 +381,7 @@
             <th>Guild</th>
             <th>Char Lv (Rank)</th>
             <th>Class Lv (Tier)</th>
-            <th>Total Stats</th>
+            <th>Invested (Total AP)</th>
             <th>Might / Spirit</th>
             <th>Crowns</th>
             <th>Status</th>
@@ -335,7 +392,7 @@
     </div>
   </section>
 
-  <!-- 2. CREATE CHARACTER (TRANSLATE-SAFE + DEVICE AVATAR UPLOAD) -->
+  <!-- 2. CREATE CHARACTER (STARTS AT 1 ALL STATS + FREE WHITE STARTER ITEM) -->
   <section id="tab-create" class="panel">
     <h2>Create New Character</h2>
     <div class="stat-box" style="margin-bottom:16px; border-color:var(--gold);">
@@ -358,50 +415,74 @@
         <label>Gender</label>
         <input type="text" id="crGender" placeholder="Male / Female / Other" />
         <label>Character Class</label>
-        <!-- Explicit value attributes prevent Google Translate from changing the submitted value -->
         <select id="crClass" translate="no">
-          <option value="Warrior">Warrior</option>
-          <option value="Mage">Mage</option>
-          <option value="Rogue">Rogue</option>
-          <option value="Ranger">Ranger</option>
-          <option value="Alchemist">Alchemist</option>
-          <option value="Crafter">Crafter</option>
-          <option value="Scholar">Scholar</option>
-          <option value="Civil">Civil</option>
-          <option value="Jack">Jack</option>
+          <option value="Warrior">Warrior</option><option value="Mage">Mage</option><option value="Rogue">Rogue</option>
+          <option value="Ranger">Ranger</option><option value="Alchemist">Alchemist</option><option value="Crafter">Crafter</option>
+          <option value="Scholar">Scholar</option><option value="Civil">Civil</option><option value="Jack">Jack</option>
         </select>
-        <label>Character Appearance — Option: Paste Image URL</label>
+
+        <hr style="border-color:var(--border); margin:12px 0;" />
+        <strong style="color:var(--accent); font-size:0.88rem;">Free White-Grade Starter Gear (No Buffs)</strong>
+        <div class="flex-row">
+          <div>
+            <label>Starter Item Type</label>
+            <select id="crStarterType">
+              <option value="Weapon">Weapon</option>
+              <option value="Armor">Armor</option>
+              <option value="Accessory">Accessory</option>
+              <option value="Tool">Artisan Tool</option>
+            </select>
+          </div>
+          <div>
+            <label>Custom Starter Item Name</label>
+            <input type="text" id="crStarterName" placeholder="e.g. Rusted Iron Shortsword" />
+          </div>
+        </div>
+
+        <hr style="border-color:var(--border); margin:12px 0;" />
+        <label>Character Appearance — Paste URL or Upload from Device</label>
         <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
-        <label>Character Appearance — Option: Upload Image from Device</label>
         <input type="file" accept="image/*" onchange="compressImageFileToInput(event, 'crAvatar', 'createAvatarPreview')" />
         <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
         <label>About</label>
-        <textarea id="crAbout" rows="3"></textarea>
+        <textarea id="crAbout" rows="2"></textarea>
       </div>
       <div class="stat-box">
         <label>Select Race (Tap or Hover to view Racial Skills)</label>
         <div class="race-grid" id="raceSelector" translate="no"></div>
         <input type="hidden" id="crRace" value="Human" />
         <div class="tooltip-box" id="raceTooltip">Hover or tap a Race above to inspect skills.</div>
-        <button id="createCharBtn" class="btn" style="width:100%;" onclick="submitCreateCharacter()">Register Character in Selected Slot</button>
+        <button id="createCharBtn" class="btn" style="width:100%;" onclick="submitCreateCharacter()">Register Character & Claim Starter Gear</button>
       </div>
     </div>
   </section>
 
-  <!-- 3. PLAYER PORTAL (AVATAR UPLOAD + CROWN SHARING + SKILLS + ACHIEVEMENTS) -->
+  <!-- 3. PLAYER PORTAL (DAILY FORAGER REMINDER + PNG ID CARD + DB INVENTORY) -->
   <section id="tab-dashboard" class="panel">
+    <!-- Daily Forager ID Reminder Notification -->
+    <div id="foragerReminderBanner" class="stat-box" style="display:none; margin-bottom:14px; background:rgba(250, 204, 21, 0.12); border-color:var(--gold);">
+      <div class="flex-row" style="justify-content:space-between;">
+        <span>⚠️ <strong>Daily Forager Reminder:</strong> You have not completed your daily <strong>Forager Instant Dungeon (ID)</strong> today! Gather free fish, meat, ore, or timber before midnight.</span>
+        <button class="btn btn-gold" style="margin:0; flex:0 0 auto;" onclick="showTab('dungeon')">Enter Forager ID Now</button>
+      </div>
+    </div>
+
     <div class="flex-row" style="justify-content:space-between; margin-bottom:16px;">
       <div>
         <h2 style="margin:0;">Player Portal</h2>
-        <small style="color:var(--muted)">Select any character linked to your Gamer Tag, share Crowns, or manage your Achievement Titles.</small>
+        <small style="color:var(--muted)">Select your character, generate your Gamer Tag ID Card, or manage gear & skills.</small>
       </div>
-      <div class="flex-row" style="max-width:460px; width:100%;">
+      <div class="flex-row" style="max-width:620px; width:100%;">
         <select id="myCharDropdown" onchange="selectMyCharacterFromDropdown()"></select>
-        <button id="convertLimboBtn" class="btn btn-gold" style="display:none; margin-top:4px;" onclick="triggerConvertBoosterToLegacy()">
-          Convert Limbo Booster → Legacy Slot
+        <button class="btn btn-gold" style="margin-top:4px; flex:0 0 auto;" onclick="downloadCharacterIdCardPng()">🪪 Download PNG ID Card</button>
+        <button id="convertLimboBtn" class="btn" style="display:none; margin-top:4px;" onclick="triggerConvertBoosterToLegacy()">
+          Convert Limbo Booster → Legacy
         </button>
       </div>
     </div>
+
+    <!-- Hidden Canvas for Generating Downloadable PNG ID Card -->
+    <canvas id="idCardCanvas" width="760" height="420" style="display:none;"></canvas>
 
     <!-- GAMER TAG ACHIEVEMENTS & 3-TITLE SHOWCASE BOX -->
     <div class="stat-box" style="margin-bottom:18px; border-color:var(--purple);">
@@ -427,7 +508,7 @@
       <div class="grid-2">
         <div class="stat-box">
           <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-            <img id="pAvatarImg" class="avatar-thumb" style="width:60px; height:60px;" src="" alt="Avatar" />
+            <img id="pAvatarImg" class="avatar-thumb" style="width:60px; height:60px;" src="" alt="Avatar" crossOrigin="anonymous" />
             <div>
               <h3 id="pHeaderName" style="margin:0; color:var(--gold);"></h3>
               <p id="pSubHeader" style="color:var(--muted); margin:2px 0 0 0; font-size:0.86rem;"></p>
@@ -475,13 +556,16 @@
         </div>
 
         <div class="stat-box">
-          <h3 style="margin-top:0;">Attributes (Available AP: <span id="pAP" style="color:var(--gold)">0</span>)</h3>
-          <div id="attrInputs" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(125px, 1fr)); gap:8px;">
-            <div><label>Power (<span id="valPow">0</span>)</label><input type="number" id="addPow" value="0" min="1" /></div>
-            <div><label>Endurance (<span id="valEnd">0</span>)</label><input type="number" id="addEnd" value="0" min="1" /></div>
-            <div><label>Mobility (<span id="valMob">0</span>)</label><input type="number" id="addMob" value="0" min="1" /></div>
-            <div><label>Vitality (<span id="valVit">0</span>)</label><input type="number" id="addVit" value="0" min="1" /></div>
-            <div><label>Intelligence (<span id="valInt">0</span>)</label><input type="number" id="addInt" value="0" min="0" /></div>
+          <div class="flex-row" style="justify-content:space-between;">
+            <h3 style="margin:0;">Attributes (Free AP: <span id="pAP" style="color:var(--gold)">0</span>)</h3>
+            <small id="pTotalApPoolBadge" style="color:var(--accent); font-weight:700;">Total AP Pool: 10</small>
+          </div>
+          <div id="attrInputs" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(125px, 1fr)); gap:8px; margin-top:6px;">
+            <div><label>Power (<span id="valPow">1</span>)</label><input type="number" id="addPow" value="0" min="0" /></div>
+            <div><label>Endurance (<span id="valEnd">1</span>)</label><input type="number" id="addEnd" value="0" min="0" /></div>
+            <div><label>Mobility (<span id="valMob">1</span>)</label><input type="number" id="addMob" value="0" min="0" /></div>
+            <div><label>Vitality (<span id="valVit">1</span>)</label><input type="number" id="addVit" value="0" min="0" /></div>
+            <div><label>Intelligence (<span id="valInt">1</span>)</label><input type="number" id="addInt" value="0" min="0" /></div>
             <div><label>Fate (Admin)</label><input type="number" id="valFate" disabled /></div>
           </div>
           <button class="btn" style="width:100%;" onclick="submitAP()">Confirm AP Distribution</button>
@@ -491,10 +575,45 @@
         </div>
       </div>
 
+      <!-- 10-RARITY DATABASE INVENTORY & PAIRWISE MEETINGS -->
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--gold);">Character Inventory</h3>
+          <p style="font-size:0.81rem; color:var(--muted); margin:0 0 8px 0;">
+            <strong>Equip</strong> weapons/armor (max 2 buffs), <strong>Use</strong> potions (vanishes on use), or <strong>Sell Bundles</strong> for Crowns!
+          </p>
+          <div class="table-box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Rarity & Type</th>
+                  <th>Qty (Bundle)</th>
+                  <th>Buff / Slot</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pInvTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <h3 style="margin-top:0;">Activity & Character Meetings</h3>
+          <p id="pActivityCounts" style="font-size:0.86rem; color:var(--muted);"></p>
+          <div class="table-box">
+            <table>
+              <thead><tr><th>Met ID</th><th>Battles</th><th>Sparring</th><th>Quests</th><th>Encounters</th><th>Total</th></tr></thead>
+              <tbody id="pInteractionsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- SKILL LOADOUT & SKILL SHOP -->
       <div class="grid-2" style="margin-top:18px;">
         <div class="stat-box">
-          <h3 style="margin-top:0; color:var(--gold);"Owned Skills & Equip Loadout</h3>
+          <h3 style="margin-top:0; color:var(--gold);">Loadout</h3>
           <p id="pEquipSummary" style="font-size:0.83rem; color:var(--muted); margin:4px 0 10px 0;"></p>
           <div class="table-box">
             <table>
@@ -525,42 +644,63 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Inventory & Interactions -->
-      <div class="grid-2" style="margin-top:18px;">
-        <div class="stat-box">
-          <h3 style="margin-top:0;">Inventory Sheet (.xlsx) — Max 2 Buffs</h3>
-          <button class="btn btn-secondary" onclick="downloadInventoryExcel()">1. Download Inventory (.xlsx)</button>
-          <label style="margin-top:12px;">2. Upload Updated Inventory (.xlsx)</label>
-          <input type="file" id="invFileInput" accept=".xlsx,.xls,.csv" onchange="uploadInventoryExcel(event)" />
-          <div class="table-box">
-            <table>
-              <thead><tr><th>Item</th><th>Qty</th><th>Buff Slot</th><th>Mult Add</th></tr></thead>
-              <tbody id="pInvTable"></tbody>
-            </table>
-          </div>
+  <!-- 4. INSTANT DUNGEON (ID) — 2-BIT RETRO TTRPG FORAGER MINI-GAME -->
+  <section id="tab-dungeon" class="panel">
+    <div class="retro-2bit-box">
+      <div class="flex-row" style="justify-content:space-between; border-bottom:2px solid #a3e635; padding-bottom:10px; margin-bottom:14px;">
+        <div>
+          <h2 style="margin:0; color:#a3e635;">🕹️ [ID] INSTANT DUNGEON // DAILY FORAGER REALM</h2>
+          <small style="color:#bef264;">TURN-BASED RESOURCE EXPEDITION — LIMIT: 1 DUNGEON ENTRY PER DAY</small>
         </div>
-        <div class="stat-box">
-          <h3 style="margin-top:0;">Activity & Character Meetings</h3>
-          <p id="pActivityCounts" style="font-size:0.86rem; color:var(--muted);"></p>
-          <div class="table-box">
-            <table>
-              <thead><tr><th>Met ID</th><th>Battles</th><th>Sparring</th><th>Quests</th><th>Encounters</th><th>Total</th></tr></thead>
-              <tbody id="pInteractionsTable"></tbody>
-            </table>
+        <span id="idDailyStatusBadge" style="padding:6px 12px; border:1px solid #a3e635; font-weight:700;">STATUS: READY</span>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label style="color:#bef264;">1. SELECT EXPEDITION CHARACTER</label>
+          <select id="idCharSelect" style="background:#020402; color:#a3e635; border-color:#65a30d;"></select>
+
+          <label style="color:#bef264;">2. SELECT FORAGER DUNGEON ZONE</label>
+          <select id="idNodeSelect" style="background:#020402; color:#a3e635; border-color:#65a30d;" onchange="previewIdNodeArt()"></select>
+
+          <div id="idNodeDescBox" style="font-size:0.83rem; color:#ecfccb; margin-top:10px; padding:8px; border:1px dotted #65a30d;"></div>
+
+          <pre id="idAsciiScene" class="retro-ascii">
+      /\  /\  /\        [ FORAGER REALM ]
+     /  \/  \/  \      Select a Zone & Press
+    /            \     [ENTER INSTANT DUNGEON]
+   /______________\    Turns scale by Class Lv!
+      ||      ||       Rank scales Yield %!
+          </pre>
+
+          <button class="btn" style="width:100%; background:#a3e635; color:#050805; font-size:1rem;" onclick="submitRunForagerDungeon()">
+            [ ENTER INSTANT DUNGEON & FORAGE ]
+          </button>
+        </div>
+
+        <div>
+          <label style="color:#bef264; margin-top:0;">TURN-BY-TURN TTRPG EXPEDITION LOG</label>
+          <div id="idCombatLogBox" class="retro-log">
+            > SYSTEM READY...<br/>
+            > Rank Nil Rating: 10% - 30% | Rank X Rating: 100% - 300% (Bonus Yield Multiplier!)<br/>
+            > Class Lv 0-4: 5 Turns | Class Lv 5-19: 10 Turns | Class Lv 20+: 15 Turns.<br/>
+            > Awaiting player command...
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4. SCHOLAR PROTOTYPE SKILLS TAB -->
+  <!-- 5. SCHOLAR PROTOTYPE SKILLS & EXISTING OFFICIAL SKILLS CATALOG -->
   <section id="tab-prototypes" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:12px;">
       <div>
-        <h2 style="margin:0;">Scholar Prototype Registry</h2>
+        <h2 style="margin:0;">Official Skills & Scholar Prototype Registry</h2>
         <small style="color:var(--muted)">
-          Public registry of all Scholar skill innovations. Hover over a <strong>Status</strong> badge to read Admin feedback notes! (Active Scholars can submit up to 3 Prototypes per week, resetting Sunday at Midnight).
+          Browse all Official Skills (tagged by <strong>ADMIN</strong> or Scholar <strong>@GamerTag</strong>) and inspect Scholar Prototype submissions!
         </small>
       </div>
       <button class="btn btn-gold" style="margin-top:0; flex:0 0 auto;" onclick="tryOpenScholarPrototypeForm()">
@@ -568,7 +708,7 @@
       </button>
     </div>
 
-    <!-- Scholar Submission Dropdown Box (Unlocked only if Gamer Tag has an Active Scholar) -->
+    <!-- Scholar Submission Dropdown Box -->
     <div id="scholarProtoFormBox" class="stat-box" style="display:none; margin-bottom:18px; border-color:var(--gold);">
       <h3 style="margin-top:0; color:var(--gold);">Submit New or Updated Skill Prototype (Max 3 / Week)</h3>
       <div class="grid-2">
@@ -594,15 +734,9 @@
           <div id="prtClassWrap">
             <label>3. Target Class</label>
             <select id="prtClass" translate="no">
-              <option value="Scholar">Scholar</option>
-              <option value="Warrior">Warrior</option>
-              <option value="Mage">Mage</option>
-              <option value="Rogue">Rogue</option>
-              <option value="Ranger">Ranger</option>
-              <option value="Alchemist">Alchemist</option>
-              <option value="Crafter">Crafter</option>
-              <option value="Civil">Civil</option>
-              <option value="Jack">Jack</option>
+              <option value="Scholar">Scholar</option><option value="Warrior">Warrior</option><option value="Mage">Mage</option>
+              <option value="Rogue">Rogue</option><option value="Ranger">Ranger</option><option value="Alchemist">Alchemist</option>
+              <option value="Crafter">Crafter</option><option value="Civil">Civil</option><option value="Jack">Jack</option>
             </select>
           </div>
 
@@ -628,87 +762,99 @@
           <label>7. Detailed Skill Description & Mechanics</label>
           <textarea id="prtDesc" rows="3" placeholder="Explain effects, scaling, cooldowns, or proposed changes..."></textarea>
 
-          <button class="btn" style="width:100%;" onclick="submitScholarPrototype()">🚀 Submit Prototype for Admin Review</button>
+          <button class="btn" style="width:100%;" onclick="submitScholarPrototype()">Submit Prototype for Admin Review</button>
         </div>
       </div>
     </div>
 
-    <div class="table-box">
-      <table>
-        <thead>
-          <tr>
-            <th>Proto ID</th>
-            <th>Submitted By</th>
-            <th>Mode</th>
-            <th>Skill Name</th>
-            <th>Type / Class / Lv</th>
-            <th>Proposed Description</th>
-            <th>Status (Hover for Note)</th>
-          </tr>
-        </thead>
-        <tbody id="prototypesTableBody"></tbody>
-      </table>
+    <!-- Official Existing Skills Catalog with Creator Filter -->
+    <div class="stat-box" style="margin-bottom:18px;">
+      <div class="flex-row" style="justify-content:space-between;">
+        <h3 style="margin:0; color:var(--accent);">Existing Official Skills Catalog</h3>
+        <select id="officialSkillCreatorFilter" style="max-width:260px; margin-top:0;" onchange="renderOfficialSkillsCatalog()">
+          <option value="ALL">Show All Official Skills</option>
+          <option value="ADMIN">Made by ADMIN Only</option>
+          <option value="SCHOLAR">Made by Scholars (@GamerTag) Only</option>
+        </select>
+      </div>
+      <div class="table-box" style="max-height:320px; overflow-y:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Skill ID & Name</th>
+              <th>Type / Class</th>
+              <th>Lv (SP Cost)</th>
+              <th>Description</th>
+              <th>Created By</th>
+            </tr>
+          </thead>
+          <tbody id="officialSkillsCatalogBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Submitted Scholar Prototypes Queue -->
+    <div class="stat-box">
+      <h3 style="margin-top:0; color:var(--gold);">Submitted Scholar Prototypes Queue (Hover Status for Admin Note)</h3>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th>Proto ID</th>
+              <th>Submitted By</th>
+              <th>Mode</th>
+              <th>Skill Name</th>
+              <th>Type / Class / Lv</th>
+              <th>Proposed Description</th>
+              <th>Status (Hover for Note)</th>
+            </tr>
+          </thead>
+          <tbody id="prototypesTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- 5. COMMISSION PORTAL TAB -->
+  <!-- 6. COMMISSION PORTAL TAB (+30 XP CLIENT, +40 XP ACCEPTER, +1 SP CIVIL PASSIVE) -->
   <section id="tab-commissions" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
       <div>
         <h2 style="margin:0;">Enclave Commission Portal</h2>
         <small style="color:var(--muted)">
-          Post up to 1 Commission per week (7-day expiry). Completion awards <strong>+50 Crowns + Bonus (1 SP / 1 AP / 30 XP)</strong> to the Accepter, and <strong>+100 Crowns</strong> to the Commissioner!
+          Post up to 1 Commission per week (7-day expiry). Completion awards <strong>+30 XP to the Commissioner</strong> and <strong>+40 XP to the Accepter</strong> (plus <strong>+1 SP</strong> automatically if the character is a <strong>Civil</strong> Class!). Use the Trader Port in the Bank to hand over crafted/gathered items before confirming completion.
         </small>
       </div>
     </div>
 
     <div class="grid-2" style="margin-bottom:18px;">
-      <!-- Post a Commission -->
       <div class="stat-box">
         <h3 style="margin-top:0; color:var(--gold);">Post a New Commission Request</h3>
-        <label>Commission Title</label>
-        <input type="text" id="comTitle" placeholder="e.g. Need 3 High-Grade Mana Potions" />
+        <label>Your Character Posting the Request (Receives +30 XP on completion)</label>
+        <select id="comClientCharSelect"></select>
 
-        <div class="flex-row">
-          <div>
-            <label>Category & Eligible Accepter Class</label>
-            <select id="comCategory">
-              <option value="Forge Request">Forge Request (Crafter Only)</option>
-              <option value="Material Gathering">Material Gathering (Civil Only)</option>
-              <option value="Potions">Potions (Alchemist Only)</option>
-              <option value="Skill Creation">Skill Creation (Scholar Only)</option>
-              <option value="Protection">Protection (Any Class)</option>
-              <option value="Monster Hunting">Monster Hunting (Any Class)</option>
-            </select>
-          </div>
-          <div>
-            <label>Accepter Bonus Reward (+50 Crowns included)</label>
-            <select id="comBonus">
-              <option value="1 SP">1 Class Point (1 SP) + 50 Crowns</option>
-              <option value="1 AP">1 Attribute Point (1 AP) + 50 Crowns</option>
-              <option value="30 XP">30 Drive Pool XP + 50 Crowns</option>
-            </select>
-          </div>
-        </div>
+        <label>Commission Title</label>
+        <input type="text" id="comTitle" placeholder="e.g. Need 6 Sticks & 2 Copper Ingots" />
+
+        <label>Category & Eligible Accepter Class</label>
+        <select id="comCategory">
+          <option value="Forge Request">Forge Request (Crafter Only)</option>
+          <option value="Material Gathering">Material Gathering (Civil Only)</option>
+          <option value="Potions">Potions (Alchemist Only)</option>
+          <option value="Skill Creation">Skill Creation (Scholar Only)</option>
+          <option value="Protection">Protection (Any Class)</option>
+          <option value="Monster Hunting">Monster Hunting (Any Class)</option>
+        </select>
 
         <label>Commission Details & Requirements</label>
         <textarea id="comDesc" rows="2" placeholder="Describe what you need forged, gathered, brewed, or hunted..."></textarea>
         <button class="btn" style="width:100%;" onclick="submitCreateCommission()">📌 Post Commission (1 / Week)</button>
       </div>
 
-      <!-- Select Active Character for Accepting Commissions -->
       <div class="stat-box">
-        <h3 style="margin-top:0; color:var(--accent);">Accept Commissions as Character</h3>
+        <h3 style="margin-top:0; color:var(--accent);">⚔️ Accept Commissions as Character (+40 XP Reward)</h3>
         <p style="font-size:0.84rem; color:var(--muted); margin-top:0;">
-          Choose which of your <strong>Active Characters</strong> will accept a commission below. Class-specific commissions require matching class:
+          Select which of your <strong>Active Characters</strong> will accept a commission below. Civil characters earn a bonus <strong>+1 SP</strong> on every completed commission!
         </p>
-        <ul style="font-size:0.83rem; color:var(--muted); padding-left:18px; line-height:1.6;">
-          <li><strong>Forge Request:</strong> Crafter Only</li>
-          <li><strong>Material Gathering:</strong> Civil Only</li>
-          <li><strong>Potions:</strong> Alchemist Only</li>
-          <li><strong>Skill Creation:</strong> Scholar Only</li>
-          <li><strong>Protection & Monster Hunting:</strong> Any Active Character</li>
-        </ul>
         <label>Your Active Character Accepting the Job</label>
         <select id="comAcceptCharSelect"></select>
       </div>
@@ -722,7 +868,7 @@
             <th>Commissioner</th>
             <th>Category (Req Class)</th>
             <th>Title & Details</th>
-            <th>Reward</th>
+            <th>Completion Rewards</th>
             <th>Accepter & Deadline</th>
             <th>Status</th>
             <th>Action</th>
@@ -733,11 +879,12 @@
     </div>
   </section>
 
-  <!-- 6. BANK, CURRENCY EXCHANGE & BANK SHOP TAB -->
+  <!-- 7. BANK, GLOBAL SHOP, CRAFTING WORKSHOP & TRADER PORT -->
   <section id="tab-bank" class="panel">
-    <h2>🏦 Enclave Bank, Currency Exchange & Shop</h2>
+    <h2>🏦 Enclave Bank,  Shop, Workshop & Trader Port</h2>
+
+    <!-- Row 1: Crown Vault + Per-GamerTag Scales/Crowns Conversion -->
     <div class="grid-2">
-      <!-- Gamer Tag & Character Crown Sharing -->
       <div class="stat-box">
         <h3 style="margin-top:0; color:var(--gold);">Gamer Tag & Character Crown Vault</h3>
         <p style="font-size:0.9rem;">
@@ -755,16 +902,15 @@
         </div>
       </div>
 
-      <!-- Global Monthly Currency Conversion (Crowns <-> Scales/Trinkets) -->
       <div class="stat-box">
-        <h3 style="margin-top:0; color:var(--purple);">Currency Exchange (Shared Global Monthly Limits)</h3>
-        <p id="bankGlobalLimitsText" style="font-size:0.84rem; color:var(--muted); margin-top:0;"></p>
+        <h3 style="margin-top:0; color:var(--purple);">Personal Monthly Currency Exchange (Crowns ⇄ Scales)</h3>
+        <p id="bankPersonalLimitsText" style="font-size:0.84rem; color:var(--muted); margin-top:0;"></p>
 
-        <div class="stat-box" style="background:#111827; margin-bottom:12px;">
+        <div class="stat-box" style="background:#111827; margin-bottom:10px;">
           <strong>Option 1: Exchange Crowns → Scales (50 Crowns = 1 Scale)</strong>
           <div class="flex-row" style="margin-top:6px;">
-            <input type="number" id="convBuyTrinketQty" placeholder="Trinket Qty (e.g. 1)" min="1" value="1" />
-            <button class="btn btn-gold" style="margin-top:4px;" onclick="submitCurrencyConversion('crownsToTrinkets')">
+            <input type="number" id="convBuyScaleQty" placeholder="Scale Qty (e.g. 1)" min="1" value="1" />
+            <button class="btn btn-gold" style="margin-top:4px;" onclick="submitCurrencyConversion('crownsToScales')">
               Buy Scale(s) (50 C each)
             </button>
           </div>
@@ -773,8 +919,8 @@
         <div class="stat-box" style="background:#111827;">
           <strong>Option 2: Exchange Scales → Crowns (1 Scale = 10 Crowns)</strong>
           <div class="flex-row" style="margin-top:6px;">
-            <input type="number" id="convSellTrinketQty" placeholder="Scale/Trinket Qty (e.g. 1)" min="1" value="1" />
-            <button class="btn" style="margin-top:4px;" onclick="submitCurrencyConversion('trinketsToCrowns')">
+            <input type="number" id="convSellScaleQty" placeholder="Scale Qty (e.g. 1)" min="1" value="1" />
+            <button class="btn" style="margin-top:4px;" onclick="submitCurrencyConversion('scalesToCrowns')">
               Exchange for Crowns (+10 C each)
             </button>
           </div>
@@ -782,16 +928,143 @@
       </div>
     </div>
 
-    <!-- Empty Bank Shop Placeholder for Future Additions -->
-    <div class="stat-box" style="margin-top:18px; text-align:center; padding:28px;">
-      <h3 style="margin-top:0; color:var(--accent);">Enclave Bank Shop (Scales & Crowns)</h3>
-      <p style="color:var(--muted); font-size:0.9rem; margin:0;">
-        The Bank Shop catalog is currently empty and reserved for future Enclave items and privileges.
-      </p>
+    <!-- Row 2: Global Shop + Buy-Back & Crafting Workshop -->
+    <div class="grid-2" style="margin-top:18px;">
+      <div class="stat-box">
+        <div class="flex-row" style="justify-content:space-between;">
+          <h3 style="margin:0; color:var(--accent);">Global Enclave Shop</h3>
+          <select id="shopTargetCharSelect" style="max-width:210px; margin-top:0;"></select>
+        </div>
+        <p style="font-size:0.81rem; color:var(--muted); margin:4px 0 8px 0;">
+          Items purchased are sent directly to your selected character above using your Gamer Tag Crowns.
+        </p>
+        <div class="table-box" style="max-height:260px; overflow-y:auto;">
+          <table>
+            <thead>
+              <tr><th>Item</th><th>Rarity / Type</th><th>Buy Price</th><th>Sell (Bundle)</th><th>Buy</th></tr>
+            </thead>
+            <tbody id="globalShopTableBody"></tbody>
+          </table>
+        </div>
+
+        <h4 style="margin:14px 0 6px 0; color:var(--gold);">Recently Sold Bundles</h4>
+        <div class="table-box" style="max-height:170px; overflow-y:auto;">
+          <table>
+            <thead>
+              <tr><th>Item & Qty</th><th>Rarity</th><th>Buy-Back Cost</th><th>Action</th></tr>
+            </thead>
+            <tbody id="buyBackTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Crafting Workshop (Crafter, Alchemist, Civil) -->
+      <div class="stat-box">
+        <div class="flex-row" style="justify-content:space-between;">
+          <h3 style="margin:0; color:var(--gold);">⚒️ Crafting Workshop</h3>
+          <button class="btn btn-secondary" style="margin:0; padding:5px 10px; font-size:0.78rem;" onclick="toggleCrafterRecipeForm()">
+            ➕ C2: Submit Recipe
+          </button>
+        </div>
+        <p style="font-size:0.81rem; color:var(--muted); margin:4px 0 8px 0;">
+          Select your <strong>Crafter, Alchemist, or Civil</strong> character (Jack cannot craft) to forge weapons, smelt ingots, or brew potions from your inventory materials!
+        </p>
+        <label style="margin-top:4px;">Crafting Character</label>
+        <select id="craftCharSelect"></select>
+
+        <!-- C2 Crafter Custom Recipe Submission Box -->
+        <div id="crafterRecipeFormBox" class="stat-box" style="display:none; margin-top:10px; background:#111827; border-color:var(--gold);">
+          <strong style="color:var(--gold)">Submit Custom Crafter Recipe</strong>
+          <div class="flex-row">
+            <input type="text" id="recSubName" placeholder="Recipe Name (e.g. Silver-Blue Katana)" />
+            <select id="recSubRarity">
+              <option value="White">White</option><option value="Green">Green</option><option value="Blue">Blue</option>
+              <option value="Purple">Purple</option><option value="Orange">Orange</option>
+              <option value="Silver-White">Silver-White</option><option value="Silver-Green">Silver-Green</option>
+              <option value="Silver-Blue">Silver-Blue</option><option value="Silver-Purple">Silver-Purple</option>
+              <option value="Silver-Orange">Silver-Orange</option>
+            </select>
+          </div>
+          <div class="flex-row" style="margin-top:6px;">
+            <select id="recSubType">
+              <option value="Equipment">Equipment</option><option value="Consumable">Consumable</option><option value="Material">Material</option>
+            </select>
+            <input type="number" id="recSubBuff" step="0.05" placeholder="Buff Mult (e.g. 0.20)" />
+            <input type="number" id="recSubSell" placeholder="Sell Price (Crowns)" />
+          </div>
+          <label>Required Materials (Format: <code>Item Name:Qty, Item Name:Qty</code>)</label>
+          <input type="text" id="recSubIngs" placeholder="e.g. Iron Ingot:2, Oak Log:1, Leather:2" />
+          <label>Description</label>
+          <input type="text" id="recSubDesc" placeholder="Describe the crafted gear..." />
+          <button class="btn btn-gold" style="width:100%;" onclick="submitNewCrafterRecipe()">🚀 Submit Recipe for Admin Review</button>
+        </div>
+
+        <div class="table-box" style="max-height:310px; overflow-y:auto;">
+          <table>
+            <thead>
+              <tr><th>Recipe & Output</th><th>Class</th><th>Required Materials</th><th>Craft</th></tr>
+            </thead>
+            <tbody id="craftingRecipesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Trader Port (GamerTag-to-GamerTag Exchange) -->
+    <div class="stat-box" style="margin-top:18px; border-color:var(--accent);">
+      <h3 style="margin:0 0 8px 0; color:var(--accent);">Enclave Trader Port</h3>
+      <div class="grid-2">
+        <div>
+          <label>1. Recipient Gamer Tag</label>
+          <input type="text" id="trdToGamerTag" placeholder="e.g. Argon" />
+
+          <label>2. Trade Offer Type</label>
+          <select id="trdOfferType" onchange="updateTraderPortFormUI()">
+            <option value="Currency">Crowns & Scales</option>
+            <option value="Item">Inventory Item (From Selected Character)</option>
+            <option value="Character">Character Transfer (Requires Secondary Admin Verification)</option>
+          </select>
+
+          <div id="trdCurrencyFields" class="flex-row" style="margin-top:6px;">
+            <div><label>Crowns to Send</label><input type="number" id="trdCrowns" value="0" min="0" /></div>
+            <div><label>Scales to Send</label><input type="number" id="trdScales" value="0" min="0" /></div>
+          </div>
+
+          <div id="trdItemFields" style="display:none; margin-top:6px;">
+            <label>From Your Character</label>
+            <select id="trdFromCharSelect" onchange="populateTraderItemDropdown()"></select>
+            <label>Select Inventory Item</label>
+            <select id="trdItemSelect"></select>
+            <label>Quantity to Send</label>
+            <input type="number" id="trdItemQty" value="1" min="1" />
+          </div>
+
+          <div id="trdCharFields" style="display:none; margin-top:6px;">
+            <label>Select Character to Trade Away</label>
+            <select id="trdCharToTradeSelect"></select>
+          </div>
+
+          <button class="btn" style="width:100%;" onclick="submitCreateTradeOffer()">📨 Send Trade Offer</button>
+        </div>
+
+        <div>
+          <label style="margin-top:0;">Receive Traded Items On Character (When Accepting an Item Trade)</label>
+          <select id="trdReceiveCharSelect"></select>
+
+          <div class="table-box" style="max-height:260px; overflow-y:auto;">
+            <table>
+              <thead>
+                <tr><th>Trade ID</th><th>From → To</th><th>Offer Summary</th><th>Status</th><th>Action</th></tr>
+              </thead>
+              <tbody id="tradesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 7. ENCLAVE ARCHIVE -->
+  <!-- 8. ENCLAVE ARCHIVE -->
   <section id="tab-archive" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
       <div>
@@ -832,7 +1105,7 @@
     </div>
   </section>
 
-  <!-- 8. ADMIN CONSOLE -->
+  <!-- 9. ADMIN CONSOLE -->
   <section id="tab-admin" class="panel">
     <div class="flex-row" style="justify-content:space-between;">
       <h2 style="margin:0;">Enclave Admin Console</h2>
@@ -855,6 +1128,15 @@
     </div>
 
     <div id="adminDashboard" style="display:none; margin-top:16px;">
+      <!-- Moving Header Ticker Editor -->
+      <div class="stat-box" style="margin-bottom:16px; border-color:var(--gold);">
+        <h3 style="margin-top:0; color:var(--gold);">📢 Moving Header Ad Ticker Manager</h3>
+        <div class="flex-row">
+          <input type="text" id="admTickerInput" placeholder="Enter moving ad string (separate items with ✦)..." />
+          <button class="btn btn-gold" style="margin-top:4px; flex:0 0 auto;" onclick="submitUpdateTickerAds()">Update Live Header Ads</button>
+        </div>
+      </div>
+
       <div class="grid-2">
         <!-- Box 1: Log XP/SP/AP/FP -->
         <div class="stat-box">
@@ -877,7 +1159,7 @@
           <button class="btn" style="width:100%;" onclick="submitAdminLog()">Submit Log</button>
         </div>
 
-        <!-- Box 2: Status, Guild Pull-Up & Currency (Scales / Crowns) Granter -->
+        <!-- Box 2: Status, Guild Pull-Up & Scales/Crowns Granter -->
         <div class="stat-box">
           <h3 style="margin-top:0;">2. Status, Guilds & Scales/Crowns Granter</h3>
           <div class="flex-row">
@@ -898,7 +1180,7 @@
             <div><label style="margin-top:2px;">+ Scales</label><input type="number" id="admAddScales" value="0" /></div>
             <div><label style="margin-top:2px;">+ Crowns</label><input type="number" id="admAddCrowns" value="0" /></div>
           </div>
-          <input type="text" id="admCurrReason" placeholder="Reason (Server Boost, Giveaway, Event...)" style="margin-top:6px;" />
+          <input type="text" id="admCurrReason" placeholder="Reason (Server Boost, Giveaway, USD Exchange...)" style="margin-top:6px;" />
           <button class="btn btn-gold" style="width:100%;" onclick="submitAdminCurrencyGrant()">Grant Scales / Crowns</button>
 
           <hr style="border-color:var(--border); margin:12px 0;" />
@@ -909,7 +1191,99 @@
         </div>
       </div>
 
-      <!-- Box 3 & 4: GAMER TAG SLOTS & ACHIEVEMENTS -->
+      <!-- Box 3 & 4: SHOP / INVENTORY ITEM GRANTER & RECIPE / TRADE / COMMISSION AUDIT -->
+      <div class="grid-2" style="margin-top:18px;">
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--accent);">Global Shop Creator & Direct Item Granter</h3>
+          <label>Item Name</label>
+          <input type="text" id="admItemName" placeholder="e.g. Abyssal Greatsword / Stick" />
+          <div class="flex-row">
+            <div>
+              <label>Item Type</label>
+              <select id="admItemType">
+                <option value="Equipment">Equipment (Equippable)</option>
+                <option value="Consumable">Consumable (Vanishes on Use)</option>
+                <option value="Material">Material (Crafting / Bundle)</option>
+                <option value="Special">Special (Tradeable Only)</option>
+              </select>
+            </div>
+            <div>
+              <label>Rarity (10 Tiers)</label>
+              <select id="admItemRarity">
+                <option value="White">White (Base)</option>
+                <option value="Green">Green (Gimmick)</option>
+                <option value="Blue">Blue (~10% Buff)</option>
+                <option value="Purple">Purple (20-30% Buff)</option>
+                <option value="Orange">Orange (40-60% Buff)</option>
+                <option value="Silver-White">Silver-White</option>
+                <option value="Silver-Green">Silver-Green</option>
+                <option value="Silver-Blue">Silver-Blue</option>
+                <option value="Silver-Purple">Silver-Purple</option>
+                <option value="Silver-Orange">Silver-Orange (70-80% Buff)</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex-row">
+            <div><label>Buff Mult Add (e.g. 0.20)</label><input type="number" id="admItemBuff" step="0.05" value="0" /></div>
+            <div><label>Buy Price (Crowns)</label><input type="number" id="admItemBuyPrice" value="25" /></div>
+            <div><label>Sell Price (Per Bundle)</label><input type="number" id="admItemSellPrice" value="10" /></div>
+            <div><label>Sell Bundle Size</label><input type="number" id="admItemBundleSize" value="1" min="1" /></div>
+          </div>
+          <input type="text" id="admItemDesc" placeholder="Item description / properties..." style="margin-top:6px;" />
+          <button class="btn" style="width:100%;" onclick="submitAdminAddShopItem()">Add Item to Global Shop</button>
+
+          <hr style="border-color:var(--border); margin:12px 0;" />
+          <label>Or Grant This Item Directly to a Character ID (Giveaway / Drop)</label>
+          <div class="flex-row">
+            <input type="text" id="admGrantItemCharId" placeholder="Char ID (00-000-001)" />
+            <input type="number" id="admGrantItemQty" value="1" min="1" placeholder="Qty" />
+            <button class="btn btn-gold" style="margin-top:4px;" onclick="submitAdminGrantDirectItem()">Grant to Character</button>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <h3 style="margin-top:0; color:var(--gold);">Admin Approvals: Recipes, Character Trades, Commissions & ID Nodes</h3>
+
+          <label>A. Review C2 Crafter Submitted Recipes (Accepting awards +1 SP)</label>
+          <div class="flex-row">
+            <select id="admRecipeReviewSelect"></select>
+            <button class="btn" style="margin-top:4px; flex:0 0 auto;" onclick="submitAdminRecipeReview('Accepted')">✅ Approve</button>
+            <button class="btn btn-danger" style="margin-top:4px; flex:0 0 auto;" onclick="submitAdminRecipeReview('Rejected')">✖ Reject</button>
+          </div>
+
+          <hr style="border-color:var(--border); margin:10px 0;" />
+          <label>B. Secondary Verification for Character Trades</label>
+          <div class="flex-row">
+            <select id="admCharTradeVerifySelect"></select>
+            <button class="btn" style="margin-top:4px; flex:0 0 auto;" onclick="submitAdminCharTradeVerify(true)">✅ Approve Transfer</button>
+            <button class="btn btn-danger" style="margin-top:4px; flex:0 0 auto;" onclick="submitAdminCharTradeVerify(false)">✖ Reject</button>
+          </div>
+
+          <hr style="border-color:var(--border); margin:10px 0;" />
+          <label>C. Commission Audit Log & Exploit Strike (-50 XP to Both Parties)</label>
+          <div class="flex-row">
+            <select id="admCommStrikeSelect"></select>
+            <button class="btn btn-danger" style="margin-top:4px; flex:0 0 auto;" onclick="submitAdminCommissionStrike()">⚠️ Issue -50 XP Strike</button>
+          </div>
+
+          <hr style="border-color:var(--border); margin:10px 0;" />
+          <label>D. Add New Instant Dungeon (Forager ID) Node</label>
+          <div class="flex-row">
+            <input type="text" id="admIdNodeName" placeholder="Node Name (e.g. Crystal Grotto)" />
+            <select id="admIdNodeCat">
+              <option value="Mine">Mine</option><option value="Chop">Chop</option>
+              <option value="Fish">Fish</option><option value="Hunt">Hunt</option>
+            </select>
+          </div>
+          <div class="flex-row" style="margin-top:4px;">
+            <input type="text" id="admIdWhite" placeholder="White Drops CSV (e.g. Quartz, Coal)" />
+            <input type="text" id="admIdGreen" placeholder="Green Drops CSV (e.g. Silver Ore)" />
+            <button class="btn btn-secondary" style="margin-top:4px; flex:0 0 auto;" onclick="submitAdminAddIdNode()">➕ Add ID Node</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box 5 & 6: GAMER TAG SLOTS & ACHIEVEMENTS -->
       <div class="grid-2" style="margin-top:18px;">
         <div class="stat-box">
           <h3 style="margin-top:0; color:var(--gold);">Gamer Tag Slot Manager</h3>
@@ -954,7 +1328,7 @@
           <label>Achievement Icon URL or Device Upload</label>
           <input type="url" id="admAchImg" placeholder="https://..." />
           <input type="file" accept="image/*" onchange="compressImageFileToInput(event, 'admAchImg')" />
-          <label>Short Description (Shown in Player Portal; hidden on Leaderboard hover)</label>
+          <label>Short Description</label>
           <input type="text" id="admAchDesc" placeholder="Awarded for conquering the First Floor..." />
           <button class="btn" style="width:100%;" onclick="submitAdminCreateAchievement()">➕ Create Achievement Title</button>
 
@@ -968,7 +1342,7 @@
         </div>
       </div>
 
-      <!-- Box 5 & 6: ADMIN SKILL CREATOR + SCHOLAR PROTOTYPE REVIEW & SKILL BOOK GRANTER -->
+      <!-- Box 7 & 8: ADMIN SKILL CREATOR + SCHOLAR PROTOTYPE REVIEW & SKILL BOOK GRANTER -->
       <div class="grid-2" style="margin-top:18px;">
         <div class="stat-box">
           <h3 style="margin-top:0; color:var(--accent);">Admin Skill Creator & Scholar Prototype Review</h3>
@@ -1018,10 +1392,8 @@
           <textarea id="admSkillDesc" rows="2" placeholder="Describe damage, buffs, cooldown..."></textarea>
           <button class="btn" style="width:100%;" onclick="submitAdminCreateSkill()">➕ Create Skill in Database</button>
 
-          <!-- Scholar Prototype Review Sub-Section -->
           <hr style="border-color:var(--border); margin:16px 0;" />
           <h4 style="margin:0 0 6px 0; color:var(--gold);">Scholar Prototype Review (Accepting awards +1 SP & adds Skill)</h4>
-          <label>Select Submitted Scholar Prototype</label>
           <select id="admProtoSelect" onchange="previewSelectedPrototypeForAdmin()"></select>
           <div id="admProtoPreviewBox" style="font-size:0.82rem; color:var(--muted); margin-top:6px; background:#111827; padding:8px; border-radius:6px;">
             Select a prototype above to inspect details.
@@ -1034,7 +1406,7 @@
             </select>
             <input type="text" id="admProtoFeedback" placeholder="Feedback note (shown on hover)..." />
           </div>
-          <button class="btn btn-gold" style="width:100%;" onclick="submitAdminPrototypeReview()">Update Prototype Review</button>
+          <button class="btn btn-gold" style="width:100%;" onclick="submitAdminPrototypeReview()">⚖️ Update Prototype Review</button>
         </div>
 
         <div class="stat-box">
@@ -1054,7 +1426,7 @@
         </div>
       </div>
 
-      <!-- Box 7: Enclave Archive Wiki Manager -->
+      <!-- Box 9: Enclave Archive Wiki Manager -->
       <div class="stat-box" style="margin-top:18px;">
         <h3 style="margin-top:0; color:var(--gold);">Enclave Archive Wiki Manager (Update or Add New Pages)</h3>
         <div class="grid-2">
@@ -1125,6 +1497,29 @@
     "Monster Hunting": "Any"
   };
 
+  const ASCII_SCENES = {
+    "Fish": `
+       ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+     ><(((('>     ~ ~    ><((('>
+       ~ ~   [ MISTY RIVER ]   ~ ~
+     ~~~~~~\\~~~~~~~~~~~~~~~/~~~~~~`,
+    "Hunt": `
+       /\\  /\\    _..---.._    /\\
+      /  \\/  \\  (  BOAR   )  /  \\
+     /________\\  '--...--'  /____\\
+       ||  ||   [ THICKET ]   ||`,
+    "Mine": `
+        _..---.._   [ IRONVEIN ]
+      .'  /\\ /\\  '.   * CLINK *
+     /   /  V  \\   \\   [ORE]
+    |___/_______\\___|`,
+    "Chop": `
+        (   )    (   )   [ TIMBER ]
+       (     )  (     )   * CHOP *
+        |   |    |   |
+       /_____\\  /_____\\`
+  };
+
   const DEFAULT_ARCHIVE_STRUCTURE = [
     { group: "Core Lore & World", items: [
       { slug: "lore", title: "World Lore", category: "Lore" },
@@ -1161,9 +1556,9 @@
   ];
 
   let STATE = {
-    races: [], guilds: [], skills: [], achievements: [], staff: [],
-    leaderboard: [], prototypes: [], commissions: [],
-    economy: { Month_Key: "—", Trinkets_Bought_With_Crowns: 0, Max_Trinkets_Per_Month: 100, Crowns_Bought_With_Trinkets: 0, Max_Crowns_Per_Month: 10000 },
+    races: [], guilds: [], skills: [], achievements: [], shop: [], recipes: [], idNodes: [], staff: [],
+    leaderboard: [], prototypes: [], commissions: [], trades: [],
+    tickerAds: "",
     gamerSession: null,
     currentChar: null,
     currentStaff: null,
@@ -1179,6 +1574,19 @@
       document.getElementById("gateLogoImg").src = PORTAL_LOGO_URL;
       document.getElementById("headerLogoImg").src = PORTAL_LOGO_URL;
     }
+  }
+
+  function getUserLocalTodayString() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function getUserLocalSundayMidnightKey() {
+    const now = new Date();
+    const day = now.getDay();
+    const daysUntilSunday = day === 0 ? 0 : 7 - day;
+    const sun = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday);
+    return sun.getFullYear() + "-" + String(sun.getMonth() + 1).padStart(2, "0") + "-" + String(sun.getDate()).padStart(2, "0");
   }
 
   function showLoading(message = "Updating...") {
@@ -1198,7 +1606,6 @@
     document.getElementById("loadingOverlay").style.display = "none";
   }
 
-  // Client-side Canvas Image Compressor so mobile photos never exceed Google Sheets' 50k char limit
   function compressImageFileToInput(event, targetInputId, previewImgId) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1229,18 +1636,6 @@
     reader.readAsDataURL(file);
   }
 
-  // Computes the Sunday Midnight boundary date in the user's local timezone
-  function getUserLocalSundayMidnightKey() {
-    const now = new Date();
-    const day = now.getDay(); // 0 = Sunday
-    const daysUntilSunday = day === 0 ? 0 : 7 - day;
-    const sun = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday);
-    const yyyy = sun.getFullYear();
-    const mm = String(sun.getMonth() + 1).padStart(2, "0");
-    const dd = String(sun.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  }
-
   async function apiPost(payload, loadingMessage = "Updating...") {
     if (isSubmitting) return null;
     isSubmitting = true;
@@ -1249,6 +1644,7 @@
     buttons.forEach(b => b.disabled = true);
 
     try {
+      payload.localDate = getUserLocalTodayString();
       if (STATE.currentStaff && !payload.staffId) {
         payload.staffId = STATE.currentStaff.Staff_ID;
       }
@@ -1324,20 +1720,34 @@
     STATE.guilds = initRes.guilds || [];
     STATE.skills = initRes.skills || [];
     STATE.achievements = initRes.achievements || [];
+    STATE.shop = initRes.shop || [];
+    STATE.recipes = initRes.recipes || [];
+    STATE.idNodes = initRes.idNodes || [];
     STATE.staff = initRes.staff || [];
     STATE.leaderboard = initRes.leaderboard || [];
     STATE.prototypes = initRes.prototypes || [];
     STATE.commissions = initRes.commissions || [];
-    if (initRes.economy) STATE.economy = initRes.economy;
+    STATE.trades = initRes.trades || [];
+
+    if (initRes.tickerAds) {
+      STATE.tickerAds = initRes.tickerAds;
+      document.getElementById("headerTickerText").textContent = initRes.tickerAds;
+      const admTicker = document.getElementById("admTickerInput");
+      if (admTicker) admTicker.value = initRes.tickerAds;
+    }
 
     renderLeaderboard();
     renderRaces();
+    renderOfficialSkillsCatalog();
     renderPrototypesTable();
     renderCommissionsTable();
-    renderBankAndEconomyUI();
+    renderGlobalShopAndCrafting();
+    renderTradesTable();
+    renderIdNodesUI();
     populateAdminBookSkillDropdown();
     populateAdminAchievementDropdown();
     populateAdminPrototypeDropdown();
+    populateAdminApprovalDropdowns();
     if (STATE.currentChar) renderPlayerSkillShop();
   }
 
@@ -1410,14 +1820,21 @@
     document.getElementById("headerScalesBadge").textContent = acc.Scales_Balance || 0;
     document.getElementById("pGamerCrownsInline").textContent = acc.Crown_Balance || 0;
 
+    // Daily Forager Reminder Banner in Player Portal & Status in ID Tab
+    const foragerDone = acc.Daily_Forager_Done === true;
+    document.getElementById("foragerReminderBanner").style.display = foragerDone ? "none" : "block";
+    const idBadge = document.getElementById("idDailyStatusBadge");
+    if (idBadge) {
+      idBadge.textContent = foragerDone ? "DAILY ID: COMPLETED TODAY" : "DAILY ID: AVAILABLE NOW!";
+      idBadge.style.borderColor = foragerDone ? "#ef4444" : "#a3e635";
+      idBadge.style.color = foragerDone ? "#fca5a5" : "#a3e635";
+    }
+
     // Create Character Slot Selector
     const slotSel = document.getElementById("crSlotType");
     slotSel.innerHTML = "";
     if (s.creatableSlots.length === 0) {
-      const opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = "No Available Slots Unlocked";
-      slotSel.appendChild(opt);
+      slotSel.innerHTML = `<option value="">No Available Slots Unlocked</option>`;
       document.getElementById("createCharBtn").disabled = true;
     } else {
       s.creatableSlots.forEach(slotName => {
@@ -1437,130 +1854,44 @@
       <strong>Gift Slots Available:</strong> ${s.giftSlotsAvailable}
     `;
 
-    // Populate Player Portal, Commission Accepter, and Bank Character Dropdowns
-    const charDrop = document.getElementById("myCharDropdown");
-    const bankDrop = document.getElementById("bankCharSelect");
-    const commDrop = document.getElementById("comAcceptCharSelect");
-    const prevSelected = charDrop.value;
+    // Populate all Character Selectors across tabs
+    const dropdownIds = [
+      "myCharDropdown", "bankCharSelect", "shopTargetCharSelect",
+      "craftCharSelect", "trdFromCharSelect", "trdCharToTradeSelect",
+      "trdReceiveCharSelect", "comClientCharSelect", "comAcceptCharSelect", "idCharSelect"
+    ];
+    const prevSelected = document.getElementById("myCharDropdown").value;
 
-    charDrop.innerHTML = "";
-    bankDrop.innerHTML = "";
-    commDrop.innerHTML = "";
+    dropdownIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = "";
+      const charsToUse = (id === "comAcceptCharSelect" || id === "idCharSelect" || id === "craftCharSelect")
+        ? STATE.gamerSession.characters.filter(c => String(c.Status) === "Active")
+        : STATE.gamerSession.characters;
+
+      if (charsToUse.length === 0) {
+        el.innerHTML = `<option value="">-- No Eligible Characters --</option>`;
+      } else {
+        charsToUse.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.Char_ID;
+          opt.textContent = `[${c.Char_ID}] ${c.Name} — ${c.Class} Lv.${c.Char_Level} (${c.Status})`;
+          el.appendChild(opt);
+        });
+      }
+    });
 
     if (STATE.gamerSession.characters.length === 0) {
-      charDrop.innerHTML = `<option value="">-- No Characters Created Yet --</option>`;
-      bankDrop.innerHTML = `<option value="">-- No Characters Created Yet --</option>`;
-      commDrop.innerHTML = `<option value="">-- No Active Characters --</option>`;
       document.getElementById("playerArea").style.display = "none";
       document.getElementById("noCharSelectedMsg").style.display = "block";
-    } else {
-      STATE.gamerSession.characters.forEach(c => {
-        const label = `[${c.Char_ID}] ${c.Name} — ${c.Class} Lv.${c.Char_Level} (🪙 ${c.Crown_Balance || 0} C | ${c.Status})`;
-        const opt1 = document.createElement("option");
-        opt1.value = c.Char_ID;
-        opt1.textContent = label;
-        charDrop.appendChild(opt1);
-
-        const opt2 = document.createElement("option");
-        opt2.value = c.Char_ID;
-        opt2.textContent = label;
-        bankDrop.appendChild(opt2);
-
-        if (String(c.Status) === "Active") {
-          const opt3 = document.createElement("option");
-          opt3.value = c.Char_ID;
-          opt3.textContent = `[${c.Char_ID}] ${c.Name} (${c.Class} — Lv.${c.Char_Level})`;
-          commDrop.appendChild(opt3);
-        }
-      });
-      if (prevSelected && STATE.gamerSession.characters.some(c => c.Char_ID === prevSelected)) {
-        charDrop.value = prevSelected;
-      }
+    } else if (prevSelected && STATE.gamerSession.characters.some(c => c.Char_ID === prevSelected)) {
+      document.getElementById("myCharDropdown").value = prevSelected;
     }
 
     document.getElementById("convertLimboBtn").style.display = s.canConvertLimboBoosterToLegacy ? "inline-block" : "none";
     renderPlayerAchievements();
     renderBankAndEconomyUI();
-  }
-
-  function renderPlayerAchievements() {
-    if (!STATE.gamerSession) return;
-    const achList = STATE.gamerSession.achievements || [];
-    const eqCount = achList.filter(a => a.Equipped).length;
-    document.getElementById("pAchSummary").textContent = `Equipped Showcase: ${eqCount} / 3`;
-
-    const tbody = document.getElementById("pAchievementsTable");
-    tbody.innerHTML = "";
-    if (achList.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted)">No Achievement Titles earned yet.</td></tr>`;
-      return;
-    }
-
-    achList.forEach(a => {
-      const isEq = a.Equipped === true || String(a.Equipped).toUpperCase() === "TRUE";
-      const imgHtml = a.Image_URL ? `<img class="skill-icon" src="${a.Image_URL}" alt="Badge" />` : "🏆 ";
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${imgHtml}<strong>${a.Title_Name}</strong></td>
-        <td style="color:var(--muted)">${a.Description || "—"}</td>
-        <td><span class="status-pill ${isEq ? 'status-active' : 'status-limbo'}">${isEq ? "Showcased" : "Unequipped"}</span></td>
-        <td>
-          <button class="btn ${isEq ? 'btn-secondary' : ''}" style="margin:0; padding:6px 10px; font-size:0.8rem;"
-                  onclick="toggleEquipMyAchievement('${a.Ach_ID}')">
-            ${isEq ? "Unequip" : "Equip Title"}
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  async function toggleEquipMyAchievement(achId) {
-    const res = await apiPost({ action: "toggleEquipAchievement", achId }, "Updating Title Showcase...");
-    if (!res) return;
-    if (res.status !== "ok") return alert(res.message);
-
-    STATE.gamerSession.achievements = res.achievements || [];
-    renderPlayerAchievements();
-
-    const myEquippedTitles = STATE.gamerSession.achievements
-      .filter(a => a.Equipped)
-      .map(a => ({ Ach_ID: a.Ach_ID, Title_Name: a.Title_Name, Image_URL: a.Image_URL || "" }));
-    const gtKey = STATE.gamerSession.gamerTag.toLowerCase();
-    STATE.leaderboard.forEach(c => {
-      if (String(c.Gamer_Tag).toLowerCase() === gtKey) c.Equipped_Titles = myEquippedTitles;
-    });
-    renderLeaderboard();
-  }
-
-  async function triggerConvertBoosterToLegacy() {
-    if (!STATE.gamerSession || !STATE.gamerSession.slotSummary.limboCommercialChars.length) return;
-    const limboChar = STATE.gamerSession.slotSummary.limboCommercialChars[0];
-    if (!confirm(`Convert '${limboChar.Name}' [${limboChar.Char_ID}] from your Limbo Commercial Slot into your permanent Legacy Slot?`)) return;
-
-    const res = await apiPost({ action: "convertBoosterToLegacy", charId: limboChar.Char_ID }, "Converting Slot...");
-    if (!res) return;
-    if (res.status !== "ok") return alert(res.message);
-    applyGamerPayload(res);
-    await refreshLeaderboardOnly();
-    await selectMyCharacterFromDropdown();
-    alert("Character successfully converted to your permanent Legacy Slot and restored to Active!");
-  }
-
-  async function selectMyCharacterFromDropdown() {
-    const cid = document.getElementById("myCharDropdown").value;
-    if (!cid) return;
-    showLoading("Loading Character Sheet...");
-    try {
-      const res = await fetch(API_URL + "?action=profile&charId=" + encodeURIComponent(cid)).then(r => r.json());
-      hideLoading();
-      if (res.status !== "ok") return alert(res.message);
-      document.getElementById("noCharSelectedMsg").style.display = "none";
-      renderPlayerDashboard(res);
-    } catch (e) {
-      hideLoading();
-      alert("Failed to load character: " + e.message);
-    }
   }
 
   function showTab(tab, btnEl) {
@@ -1581,7 +1912,123 @@
   }
 
   /* ==============================================================
-     2. LEADERBOARD WITH STATUS CHECKBOX FILTERS
+     2. PNG GAMER TAG & CHARACTER ID CARD GENERATOR
+     ============================================================== */
+  function downloadCharacterIdCardPng() {
+    if (!STATE.currentChar || !STATE.gamerSession) {
+      return alert("Select a character in the Player Portal first to generate your ID card.");
+    }
+    const c = STATE.currentChar.character;
+    const sub = STATE.currentChar.subStats;
+    const titles = (STATE.gamerSession.achievements || []).filter(a => a.Equipped).map(a => a.Title_Name);
+
+    const canvas = document.getElementById("idCardCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Card Background & Gold Border
+    const grad = ctx.createLinearGradient(0, 0, 760, 420);
+    grad.addColorStop(0, "#0b1120");
+    grad.addColorStop(1, "#1e293b");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 760, 420);
+
+    ctx.strokeStyle = "#facc15";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(8, 8, 744, 404);
+
+    // Header Bar
+    ctx.fillStyle = "#070b14";
+    ctx.fillRect(10, 10, 740, 58);
+    ctx.fillStyle = "#38bdf8";
+    ctx.font = "bold 22px sans-serif";
+    ctx.fillText("ENCLAVE PORTAL // OFFICIAL CITIZEN & HUNTER ID", 26, 46);
+
+    ctx.fillStyle = "#facc15";
+    ctx.font = "bold 18px monospace";
+    ctx.fillText("ID: " + c.Char_ID, 565, 46);
+
+    // Character & Gamer Tag Info
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 28px sans-serif";
+    ctx.fillText(c.Name, 26, 110);
+
+    ctx.fillStyle = "#c084fc";
+    ctx.font = "bold 18px sans-serif";
+    ctx.fillText("Gamer Tag: @" + c.Gamer_Tag + "  |  Slot: " + c.Slot_Type, 26, 140);
+
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "16px sans-serif";
+    ctx.fillText(`${c.Race} ${c.Class}  •  Guild: ${c.Guild || "Independent"}  •  Status: ${c.Status}`, 26, 168);
+
+    // Level & Rank Box
+    ctx.fillStyle = "#111827";
+    ctx.fillRect(26, 185, 460, 65);
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(26, 185, 460, 65);
+
+    ctx.fillStyle = "#facc15";
+    ctx.font = "bold 17px sans-serif";
+    ctx.fillText(`Char Level: ${c.Char_Level} (${c.Rank_Tier})   |   Class Level: ${c.Class_Level} (${c.Class_Tier})`, 40, 212);
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillText(`Might: ${sub.might}   |   Spirit: ${sub.spirit}   |   Total AP Pool: ${c.Total_AP_Pool || 10}`, 40, 238);
+
+    // Attributes Grid
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 15px monospace";
+    ctx.fillText(`POW: ${c.Power}   END: ${c.Endurance}   MOB: ${c.Mobility}   VIT: ${c.Vitality}   INT: ${c.Intelligence}   FATE: ${c.Fate}`, 26, 282);
+
+    // Showcased Titles
+    ctx.fillStyle = "#facc15";
+    ctx.font = "bold 15px sans-serif";
+    ctx.fillText("Showcased Titles: " + (titles.length ? titles.join("  ✦  ") : "None Equipped"), 26, 320);
+
+    // Equipped Skills Summary
+    const eqSkills = (STATE.currentChar.skills || []).filter(s => s.Equipped).map(s => s.Skill_Name);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "14px sans-serif";
+    const skillStr = "Equipped Loadout: " + (eqSkills.length ? eqSkills.slice(0, 5).join(", ") : "None");
+    ctx.fillText(skillStr.slice(0, 82), 26, 352);
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "italic 12px sans-serif";
+    ctx.fillText("Verified by Enclave Registry  •  Generated " + getUserLocalTodayString(), 26, 392);
+
+    const finishDownload = () => {
+      const link = document.createElement("a");
+      link.download = `Enclave_ID_${c.Char_ID}_${c.Name.replace(/\s+/g, "_")}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+
+    // Draw Avatar if DataURL or CORS-friendly
+    if (c.Avatar_URL) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(620, 195, 85, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, 535, 110, 170, 170);
+        ctx.restore();
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(620, 195, 85, 0, Math.PI * 2);
+        ctx.stroke();
+        finishDownload();
+      };
+      img.onerror = () => finishDownload();
+      img.src = c.Avatar_URL;
+    } else {
+      finishDownload();
+    }
+  }
+
+  /* ==============================================================
+     3. LEADERBOARD & HOVER TOOLTIPS
      ============================================================== */
   function syncCharIntoLocalLeaderboard(updatedProfile) {
     if (!updatedProfile || !updatedProfile.character) return;
@@ -1671,7 +2118,7 @@
           <td>${c.Guild || "—"}</td>
           <td>Lv ${c.Char_Level} (${c.Rank_Tier})</td>
           <td>Lv ${c.Class_Level} (${c.Class_Tier})</td>
-          <td>${c.Total_Stats}</td>
+          <td><strong>${c.Total_Stats}</strong> <small style="color:var(--muted)">(${c.Total_AP_Pool || 10} AP)</small></td>
           <td>${c.Might} / ${c.Spirit}</td>
           <td style="color:var(--gold); font-weight:700;">${c.Crown_Balance || 0}</td>
           <td><span class="status-pill ${statusClass}" title="${hoverNote.replace(/"/g, '&quot;')}">${c.Status}</span></td>
@@ -1752,8 +2199,120 @@
   }
 
   /* ==============================================================
-     3. SCHOLAR PROTOTYPE SKILLS & ADMIN PROTOTYPE REVIEW
+     4. INSTANT DUNGEON (ID): 2-BIT FORAGER MINI-GAME
      ============================================================== */
+  function renderIdNodesUI() {
+    const sel = document.getElementById("idNodeSelect");
+    if (!sel) return;
+    sel.innerHTML = "";
+    (STATE.idNodes || []).forEach(n => {
+      const opt = document.createElement("option");
+      opt.value = n.Node_ID;
+      opt.textContent = `[${n.Category.toUpperCase()}] ${n.Node_Name}`;
+      sel.appendChild(opt);
+    });
+    previewIdNodeArt();
+  }
+
+  function previewIdNodeArt() {
+    const nid = document.getElementById("idNodeSelect").value;
+    const node = (STATE.idNodes || []).find(n => String(n.Node_ID) === String(nid));
+    if (!node) return;
+    document.getElementById("idNodeDescBox").innerHTML = `
+      <strong>Zone:</strong> ${node.Node_Name} (${node.Category})<br/>
+      <strong>White Drops:</strong> ${node.White_Drops_CSV} | <strong>Green Drops:</strong> ${node.Green_Drops_CSV}<br/>
+      <em>${node.Description || ""}</em>
+    `;
+    document.getElementById("idAsciiScene").textContent = ASCII_SCENES[node.Category] || ASCII_SCENES["Chop"];
+  }
+
+  async function submitRunForagerDungeon() {
+    const charId = document.getElementById("idCharSelect").value;
+    const nodeId = document.getElementById("idNodeSelect").value;
+    if (!charId) return alert("Select an Active character first.");
+
+    const res = await apiPost({
+      action: "runForagerDungeon",
+      charId,
+      nodeId
+    }, "Exploring Forager Instant Dungeon...");
+
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+
+    const logBox = document.getElementById("idCombatLogBox");
+    logBox.innerHTML = `> <strong>EXPEDITION STARTED!</strong><br/>`;
+    (res.combatLog || []).forEach(line => {
+      logBox.innerHTML += `> ${line}<br/>`;
+    });
+    logBox.innerHTML += `<hr style="border-color:#65a30d"/><strong>TOTAL LOOT HAUL:</strong> ${(res.lootSummary || []).join(", ") || "None"}`;
+    logBox.scrollTop = logBox.scrollHeight;
+
+    if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
+    if (res.profile && STATE.currentChar && STATE.currentChar.character.Char_ID === charId) {
+      renderPlayerDashboard(res.profile);
+    }
+    alert(res.message);
+  }
+
+  async function submitAdminAddIdNode() {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminAddIdNode",
+      nodeName: document.getElementById("admIdNodeName").value,
+      category: document.getElementById("admIdNodeCat").value,
+      whiteDrops: document.getElementById("admIdWhite").value,
+      greenDrops: document.getElementById("admIdGreen").value
+    }, "Adding ID Node...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.idNodes) {
+      STATE.idNodes = res.idNodes;
+      renderIdNodesUI();
+    }
+  }
+
+  /* ==============================================================
+     5. OFFICIAL SKILLS CATALOG & SCHOLAR PROTOTYPES
+     ============================================================== */
+  function renderOfficialSkillsCatalog() {
+    const tbody = document.getElementById("officialSkillsCatalogBody");
+    if (!tbody) return;
+    const filter = document.getElementById("officialSkillCreatorFilter").value;
+    tbody.innerHTML = "";
+
+    const list = (STATE.skills || []).filter(s => {
+      const creator = String(s.Created_By || "ADMIN");
+      if (filter === "ADMIN" && creator !== "ADMIN") return false;
+      if (filter === "SCHOLAR" && creator === "ADMIN") return false;
+      return true;
+    });
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">No official skills match this filter yet.</td></tr>`;
+      return;
+    }
+
+    list.forEach(s => {
+      const creator = String(s.Created_By || "ADMIN");
+      const imgHtml = s.Image_URL ? `<img class="skill-icon" src="${s.Image_URL}" alt="Icon" />` : "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${imgHtml}<strong>${s.Skill_Name}</strong> <small style="color:var(--muted)">(${s.Skill_ID})</small></td>
+        <td>${s.Type} (${s.Class_Restriction || "All"})</td>
+        <td>Lv.${s.Skill_Level || 1} (${s.Base_SP_Cost || 0} SP)</td>
+        <td>${s.Description || "—"}</td>
+        <td>
+          ${creator === "ADMIN"
+            ? `<span class="status-pill status-limbo">Made by ADMIN</span>`
+            : `<span class="gamertag-pill">${creator}</span>`
+          }
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
   function tryOpenScholarPrototypeForm() {
     if (!STATE.gamerSession) return alert("Please log in with your Gamer Tag first.");
     const hasActiveScholar = (STATE.gamerSession.characters || []).some(
@@ -1860,7 +2419,7 @@
     (STATE.prototypes || []).forEach(p => {
       const opt = document.createElement("option");
       opt.value = p.Proto_ID;
-      opt.textContent = `[${p.Status}] ${p.Proto_ID} — ${p.Skill_Name} by @${p.Gamer_Tag} (${p.Submission_Mode})`;
+      opt.textContent = `[${p.Status}] ${p.Proto_ID} — ${p.Skill_Name} by @${p.Gamer_Tag}`;
       sel.appendChild(opt);
     });
   }
@@ -1899,21 +2458,26 @@
     alert(res.message || res.status);
     if (res.status === "ok") {
       if (res.prototypes) STATE.prototypes = res.prototypes;
+      if (res.skills) STATE.skills = res.skills;
       renderPrototypesTable();
+      renderOfficialSkillsCatalog();
       populateAdminPrototypeDropdown();
       await refreshLeaderboardOnly();
     }
   }
 
   /* ==============================================================
-     4. COMMISSION PORTAL
+     6. COMMISSION PORTAL (+30 XP / +40 XP & STRIKE SYSTEM)
      ============================================================== */
   async function submitCreateCommission() {
+    const clientCharId = document.getElementById("comClientCharSelect").value;
+    if (!clientCharId) return alert("Select which of your characters is posting this commission.");
+
     const res = await apiPost({
       action: "createCommission",
+      clientCharId,
       title: document.getElementById("comTitle").value,
       category: document.getElementById("comCategory").value,
-      bonusReward: document.getElementById("comBonus").value,
       description: document.getElementById("comDesc").value
     }, "Posting Commission...");
 
@@ -1924,6 +2488,7 @@
       document.getElementById("comDesc").value = "";
       if (res.commissions) STATE.commissions = res.commissions;
       renderCommissionsTable();
+      populateAdminApprovalDropdowns();
     }
   }
 
@@ -1943,7 +2508,7 @@
       const reqClass = COMMISSION_REQ_MAP[c.Category] || "Any";
       const st = String(c.Status || "Open");
       const isMine = String(c.Client_Gamer_Tag || "").toLowerCase() === myTag;
-      const pillClass = st === "Completed" ? "status-active" : (st === "Inactive" ? "status-deceased" : "status-limbo");
+      const pillClass = st === "Completed" ? "status-active" : (st.indexOf("Strike") !== -1 || st === "Inactive" ? "status-deceased" : "status-limbo");
 
       let deadlineText = "—";
       if (st === "Open" && c.Expires_At) {
@@ -1966,10 +2531,10 @@
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><strong>${c.Comm_ID}</strong></td>
-        <td><span class="gamertag-pill">@${c.Client_Gamer_Tag}</span></td>
+        <td><span class="gamertag-pill">@${c.Client_Gamer_Tag}</span><br/><small style="color:var(--muted)">Char: ${c.Client_Char_ID || "—"}</small></td>
         <td><strong>${c.Category}</strong><br/><small style="color:var(--accent)">Req: ${reqClass}</small></td>
-        <td style="max-width:260px;"><strong>${c.Title}</strong><br/><small style="color:var(--muted)">${c.Description}</small></td>
-        <td><strong style="color:var(--gold)">50 Crowns + ${c.Bonus_Reward_Type}</strong><br/><small style="color:var(--muted)">(Client gets +100 C)</small></td>
+        <td style="max-width:250px;"><strong>${c.Title}</strong><br/><small style="color:var(--muted)">${c.Description}</small></td>
+        <td><strong style="color:var(--gold)">Accepter: +40 XP</strong><br/><small style="color:var(--accent)">Client: +30 XP (+1 SP if Civil)</small></td>
         <td>${deadlineText}</td>
         <td><span class="status-pill ${pillClass}">${st}</span></td>
         <td>${actionBtn}</td>
@@ -1980,7 +2545,7 @@
 
   async function triggerAcceptCommission(commId) {
     const charId = document.getElementById("comAcceptCharSelect").value;
-    if (!charId) return alert("Please select one of your Active Characters in the box above first.");
+    if (!charId) return alert("Please select one of your Active Characters first.");
     const res = await apiPost({ action: "acceptCommission", commId, charId }, "Accepting Commission...");
     if (!res) return;
     alert(res.message || res.status);
@@ -1991,8 +2556,8 @@
   }
 
   async function triggerCompleteCommission(commId) {
-    if (!confirm("Confirm this Commission is completed? This will award +50 Crowns & Bonus to the Accepter, and +100 Crowns to the Commissioner.")) return;
-    const res = await apiPost({ action: "completeCommission", commId }, "Completing Commission & Awarding Crowns...");
+    if (!confirm("Confirm this Commission is completed? This awards +30 XP to the Commissioner and +40 XP to the Accepter (+1 SP if Civil Class).")) return;
+    const res = await apiPost({ action: "completeCommission", commId }, "Completing Commission & Awarding XP...");
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
@@ -2013,22 +2578,281 @@
     }
   }
 
+  async function submitAdminCommissionStrike() {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const commId = document.getElementById("admCommStrikeSelect").value;
+    if (!commId) return alert("Select a Commission first.");
+    if (!confirm(`Issue a -50 XP Violation Strike to BOTH parties on Commission ${commId}?`)) return;
+
+    const res = await apiPost({ action: "adminStrikeCommission", commId }, "Issuing -50 XP Violation Strike...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.commissions) {
+      STATE.commissions = res.commissions;
+      renderCommissionsTable();
+      await refreshLeaderboardOnly();
+    }
+  }
+
   /* ==============================================================
-     5. ECONOMY: CROWN SHARING & CURRENCY CONVERSION
+     7. BANK, GLOBAL SHOP, CRAFTING & TRADER PORT
      ============================================================== */
   function renderBankAndEconomyUI() {
-    if (STATE.gamerSession && STATE.gamerSession.account) {
-      document.getElementById("bankGamerCrowns").textContent = STATE.gamerSession.account.Crown_Balance || 0;
-      document.getElementById("bankGamerScales").textContent = STATE.gamerSession.account.Scales_Balance || 0;
-    }
-    const e = STATE.economy || {};
-    const tUsed = Number(e.Trinkets_Bought_With_Crowns) || 0;
-    const cUsed = Number(e.Crowns_Bought_With_Trinkets) || 0;
-    document.getElementById("bankGlobalLimitsText").innerHTML = `
-      <strong>Global Monthly Pool (${e.Month_Key || "Current Month"}):</strong><br/>
-      • Crowns → Trinkets Pool: <strong>${tUsed} / 100 Trinkets</strong> minted globally this month.<br/>
-      • Trinkets → Crowns Pool: <strong>${cUsed} / 10,000 Crowns</strong> exchanged globally this month.
+    if (!STATE.gamerSession || !STATE.gamerSession.account) return;
+    const acc = STATE.gamerSession.account;
+    document.getElementById("bankGamerCrowns").textContent = acc.Crown_Balance || 0;
+    document.getElementById("bankGamerScales").textContent = acc.Scales_Balance || 0;
+
+    const sUsed = Number(acc.Monthly_Scales_Bought) || 0;
+    const cUsed = Number(acc.Monthly_Crowns_Bought) || 0;
+    document.getElementById("bankPersonalLimitsText").innerHTML = `
+      <strong>Your Personal Monthly Pool (@${acc.Gamer_Tag} — ${acc.Eco_Month_Key || "Current Month"}):</strong><br/>
+      • Crowns → Scales Pool: <strong>${sUsed} / 100 Scales</strong> converted by you this month.<br/>
+      • Scales → Crowns Pool: <strong>${cUsed} / 10,000 Crowns</strong> converted by you this month.
     `;
+
+    // Render Buy-Back Table
+    const bbBody = document.getElementById("buyBackTableBody");
+    if (bbBody) {
+      bbBody.innerHTML = "";
+      const bbList = acc.BuyBack_List || [];
+      if (bbList.length === 0) {
+        bbBody.innerHTML = `<tr><td colspan="4" style="color:var(--muted)">No recently sold bundles.</td></tr>`;
+      } else {
+        bbList.forEach(b => {
+          bbBody.innerHTML += `
+            <tr>
+              <td><strong>${b.Quantity}x ${b.Item_Name}</strong></td>
+              <td><span class="rarity-badge rar-${b.Rarity}">${b.Rarity}</span></td>
+              <td><strong style="color:var(--gold)">${b.BuyBack_Cost_Crowns} C</strong></td>
+              <td><button class="btn" style="margin:0; padding:4px 8px; font-size:0.76rem;" onclick="triggerBuyBackItem('${b.buyBackId}')">Buy Back</button></td>
+            </tr>
+          `;
+        });
+      }
+    }
+  }
+
+  function renderGlobalShopAndCrafting() {
+    const shopBody = document.getElementById("globalShopTableBody");
+    if (shopBody) {
+      shopBody.innerHTML = "";
+      (STATE.shop || []).forEach(s => {
+        shopBody.innerHTML += `
+          <tr title="${(s.Description || '').replace(/"/g, '&quot;')}">
+            <td><strong>${s.Item_Name}</strong>${s.Buff_Multiplier_Add ? `<br/><small style="color:var(--accent)">+${s.Buff_Multiplier_Add}x Buff</small>` : ""}</td>
+            <td><span class="rarity-badge rar-${s.Rarity}">${s.Rarity}</span> <small>${s.Item_Type}</small></td>
+            <td><strong style="color:var(--gold)">${s.Buy_Price_Crowns} C</strong></td>
+            <td>${s.Sell_Price_Crowns} C <small>(per ${s.Sell_Bundle_Size})</small></td>
+            <td><button class="btn" style="margin:0; padding:5px 10px; font-size:0.78rem;" onclick="triggerBuyShopItem('${s.Shop_Item_ID}')">Buy</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    const recBody = document.getElementById("craftingRecipesTableBody");
+    if (recBody) {
+      recBody.innerHTML = "";
+      const acceptedRecipes = (STATE.recipes || []).filter(r => String(r.Status) === "Accepted");
+      acceptedRecipes.forEach(r => {
+        let ings = [];
+        try { ings = JSON.parse(r.Ingredients_JSON || "[]"); } catch (e) { ings = []; }
+        const ingStr = ings.map(i => `${i.qty}x ${i.name}`).join(", ");
+        recBody.innerHTML += `
+          <tr title="${(r.Description || '').replace(/"/g, '&quot;')}">
+            <td>
+              <strong>${r.Output_Qty || 1}x ${r.Output_Item_Name}</strong>
+              <span class="rarity-badge rar-${r.Output_Rarity}">${r.Output_Rarity}</span>
+              ${r.Output_Buff_Mult ? `<br/><small style="color:var(--accent)">+${r.Output_Buff_Mult}x Buff</small>` : ""}
+            </td>
+            <td><strong>${r.Required_Class}</strong></td>
+            <td><small>${ingStr || "None"}</small></td>
+            <td><button class="btn btn-gold" style="margin:0; padding:5px 10px; font-size:0.78rem;" onclick="triggerCraftRecipe('${r.Recipe_ID}')">⚒️ Craft</button></td>
+          </tr>
+        `;
+      });
+    }
+  }
+
+  async function triggerBuyShopItem(shopItemId) {
+    const charId = document.getElementById("shopTargetCharSelect").value;
+    if (!charId) return alert("Select a character to receive the purchased item.");
+    const qty = prompt("Enter quantity to buy:", "1");
+    if (!qty || Number(qty) <= 0) return;
+
+    const res = await apiPost({ action: "buyShopItem", charId, shopItemId, quantity: qty }, "Purchasing from Enclave Shop...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
+      if (res.profile && STATE.currentChar && STATE.currentChar.character.Char_ID === charId) {
+        renderPlayerDashboard(res.profile);
+      }
+    }
+  }
+
+  async function triggerBuyBackItem(buyBackId) {
+    const charId = document.getElementById("shopTargetCharSelect").value;
+    if (!charId) return alert("Select a character to receive the bought-back bundle.");
+    const res = await apiPost({ action: "buyBackItem", charId, buyBackId }, "Buying Back Bundle...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
+      if (res.profile && STATE.currentChar && STATE.currentChar.character.Char_ID === charId) {
+        renderPlayerDashboard(res.profile);
+      }
+    }
+  }
+
+  async function triggerCraftRecipe(recipeId) {
+    const charId = document.getElementById("craftCharSelect").value;
+    if (!charId) return alert("Select your Crafter, Alchemist, or Civil character first.");
+    const res = await apiPost({ action: "craftRecipe", charId, recipeId }, "Crafting Item...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && STATE.currentChar && STATE.currentChar.character.Char_ID === charId) {
+      renderPlayerDashboard(res);
+    }
+  }
+
+  function toggleCrafterRecipeForm() {
+    const box = document.getElementById("crafterRecipeFormBox");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+
+  async function submitNewCrafterRecipe() {
+    const charId = document.getElementById("craftCharSelect").value;
+    if (!charId) return alert("Select your C2+ Crafter character first.");
+    const rawIngs = document.getElementById("recSubIngs").value.split(",").map(s => s.trim()).filter(Boolean);
+    const ingredients = rawIngs.map(pair => {
+      const parts = pair.split(":");
+      return { name: (parts[0] || "").trim(), qty: Math.max(1, Number(parts[1]) || 1) };
+    }).filter(x => x.name);
+
+    if (ingredients.length === 0) return alert("Enter at least one ingredient in 'Item Name:Qty' format.");
+
+    const res = await apiPost({
+      action: "submitCraftRecipe",
+      charId,
+      recipeName: document.getElementById("recSubName").value,
+      outputItemName: document.getElementById("recSubName").value,
+      outputRarity: document.getElementById("recSubRarity").value,
+      outputType: document.getElementById("recSubType").value,
+      outputBuffMult: document.getElementById("recSubBuff").value,
+      outputSellPrice: document.getElementById("recSubSell").value,
+      ingredients,
+      description: document.getElementById("recSubDesc").value
+    }, "Submitting Crafter Recipe...");
+
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.recipes) {
+      STATE.recipes = res.recipes;
+      document.getElementById("crafterRecipeFormBox").style.display = "none";
+      populateAdminApprovalDropdowns();
+    }
+  }
+
+  /* Trader Port UI */
+  function updateTraderPortFormUI() {
+    const t = document.getElementById("trdOfferType").value;
+    document.getElementById("trdCurrencyFields").style.display = t === "Currency" ? "flex" : "none";
+    document.getElementById("trdItemFields").style.display = t === "Item" ? "block" : "none";
+    document.getElementById("trdCharFields").style.display = t === "Character" ? "block" : "none";
+    if (t === "Item") populateTraderItemDropdown();
+  }
+
+  async function populateTraderItemDropdown() {
+    const cid = document.getElementById("trdFromCharSelect").value;
+    const sel = document.getElementById("trdItemSelect");
+    if (!cid || !sel) return;
+    sel.innerHTML = `<option value="">Loading inventory...</option>`;
+    try {
+      const res = await fetch(API_URL + "?action=profile&charId=" + encodeURIComponent(cid)).then(r => r.json());
+      sel.innerHTML = "";
+      (res.inventory || []).forEach(it => {
+        const opt = document.createElement("option");
+        opt.value = it.Item_ID;
+        opt.textContent = `[${it.Rarity}] ${it.Item_Name} (Owned: ${it.Quantity})`;
+        sel.appendChild(opt);
+      });
+    } catch (e) {}
+  }
+
+  async function submitCreateTradeOffer() {
+    const offerType = document.getElementById("trdOfferType").value;
+    const res = await apiPost({
+      action: "createTradeOffer",
+      toGamerTag: document.getElementById("trdToGamerTag").value,
+      offerType,
+      crowns: document.getElementById("trdCrowns").value,
+      scales: document.getElementById("trdScales").value,
+      fromCharId: document.getElementById("trdFromCharSelect").value,
+      itemId: document.getElementById("trdItemSelect").value,
+      quantity: document.getElementById("trdItemQty").value,
+      charId: document.getElementById("trdCharToTradeSelect").value
+    }, "Sending Trade Offer...");
+
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.trades) {
+      STATE.trades = res.trades;
+      renderTradesTable();
+      populateAdminApprovalDropdowns();
+    }
+  }
+
+  function renderTradesTable() {
+    const tbody = document.getElementById("tradesTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    const myTag = STATE.gamerSession ? STATE.gamerSession.gamerTag.toLowerCase() : "";
+
+    if (!STATE.trades || STATE.trades.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">No active or recent trades.</td></tr>`;
+      return;
+    }
+
+    STATE.trades.forEach(t => {
+      const isRecipient = String(t.To_Gamer_Tag || "").toLowerCase() === myTag;
+      const isSender = String(t.From_Gamer_Tag || "").toLowerCase() === myTag;
+      const st = String(t.Status || "Open");
+
+      let btns = "—";
+      if (st === "Open") {
+        if (isRecipient) {
+          btns = `<button class="btn" style="margin:0; padding:4px 8px; font-size:0.76rem;" onclick="triggerRespondTrade('${t.Trade_ID}', 'Accept')">Accept</button> `;
+        }
+        if (isRecipient || isSender) {
+          btns += `<button class="btn btn-secondary" style="margin:0; padding:4px 8px; font-size:0.76rem;" onclick="triggerRespondTrade('${t.Trade_ID}', 'Cancel')">Cancel</button>`;
+        }
+      }
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${t.Trade_ID}</strong></td>
+          <td>@${t.From_Gamer_Tag} → <strong>@${t.To_Gamer_Tag}</strong></td>
+          <td>[${t.Offer_Type}] ${t.Offer_Summary}</td>
+          <td><span class="status-pill ${st === 'Completed' ? 'status-active' : 'status-limbo'}">${st}</span></td>
+          <td>${btns}</td>
+        </tr>
+      `;
+    });
+  }
+
+  async function triggerRespondTrade(tradeId, decision) {
+    const toCharId = document.getElementById("trdReceiveCharSelect").value;
+    const res = await apiPost({ action: "respondTradeOffer", tradeId, decision, toCharId }, "Processing Trade...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") {
+      if (res.trades) STATE.trades = res.trades;
+      if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
+      renderTradesTable();
+      populateAdminApprovalDropdowns();
+      if (STATE.currentChar) await selectMyCharacterFromDropdown();
+    }
   }
 
   async function submitCrownTransfer(direction) {
@@ -2054,43 +2878,268 @@
     const charId = document.getElementById("bankCharSelect").value;
     const amt = document.getElementById("bankTransferAmt").value;
     if (!charId) return alert("Select a character first.");
-    const res = await apiPost({
-      action: "transferCrowns",
-      charId,
-      amount: amt,
-      direction
-    }, "Transferring Crowns...");
+    const res = await apiPost({ action: "transferCrowns", charId, amount: amt, direction }, "Transferring Crowns...");
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
       document.getElementById("bankTransferAmt").value = "";
       if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
       if (res.profile) {
-        if (STATE.currentChar && STATE.currentChar.character.Char_ID === charId) {
-          renderPlayerDashboard(res.profile);
-        }
+        if (STATE.currentChar && STATE.currentChar.character.Char_ID === charId) renderPlayerDashboard(res.profile);
         syncCharIntoLocalLeaderboard(res.profile);
       }
     }
   }
 
   async function submitCurrencyConversion(direction) {
-    const qty = direction === "crownsToTrinkets"
-      ? document.getElementById("convBuyTrinketQty").value
-      : document.getElementById("convSellTrinketQty").value;
+    const qty = direction === "crownsToScales"
+      ? document.getElementById("convBuyScaleQty").value
+      : document.getElementById("convSellScaleQty").value;
 
+    const res = await apiPost({ action: "convertCurrency", direction, quantity: qty }, "Exchanging Currency...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.gamerPayload) {
+      applyGamerPayload(res.gamerPayload);
+    }
+  }
+
+  /* ==============================================================
+     8. PLAYER INVENTORY ACTIONS (EQUIP, USE, BUNDLE SELL)
+     ============================================================== */
+  function renderPlayerDashboard(data) {
+    STATE.currentChar = data;
+    const c = data.character;
+    document.getElementById("playerArea").style.display = "block";
+    document.getElementById("pHeaderName").textContent = `${c.Name} [${c.Char_ID}]`;
+    document.getElementById("pSubHeader").textContent = `@${c.Gamer_Tag} | ${c.Slot_Type} | ${c.Race} ${c.Class} | Status: ${c.Status}`;
+    document.getElementById("pAvatarImg").src = c.Avatar_URL || "https://via.placeholder.com/60";
+    document.getElementById("pAvatarInput").value = c.Avatar_URL || "";
+    document.getElementById("pCharCrowns").textContent = c.Crown_Balance || 0;
+    document.getElementById("pDriveXP").textContent = `${c.XP_Drive_Available} / ${c.XP_Drive_Total}`;
+    document.getElementById("pSP").textContent = c.SP_Available;
+    document.getElementById("pCharLv").textContent = `${c.Char_Level} (${c.Char_XP_Progress}/200 XP) [${c.Rank_Tier}]`;
+    document.getElementById("pClassLv").textContent = `${c.Class_Level} (${c.Class_XP_Progress}/${(Number(c.Class_Level)+1)*50} XP) [${c.Class_Tier}]`;
+    document.getElementById("pAP").textContent = c.AP_Available;
+    document.getElementById("pTotalApPoolBadge").textContent = `Invested: ${c.Total_Stats} (Total AP Pool: ${c.Total_AP_Pool || 10})`;
+
+    document.getElementById("valPow").textContent = c.Power;
+    document.getElementById("valEnd").textContent = c.Endurance;
+    document.getElementById("valMob").textContent = c.Mobility;
+    document.getElementById("valVit").textContent = c.Vitality;
+    document.getElementById("valInt").textContent = c.Intelligence;
+    document.getElementById("valFate").value = c.Fate;
+
+    document.getElementById("pMight").textContent = data.subStats.might;
+    document.getElementById("pSpirit").textContent = data.subStats.spirit;
+    document.getElementById("pBuffStatus").textContent = `Active Multiplier: ${data.subStats.activeMultiplier}x (Slot 1: ${c.Buff1_Name} +${c.Buff1_Mult} | Slot 2: ${c.Buff2_Name} +${c.Buff2_Mult})`;
+
+    const gSel = document.getElementById("pGuildSelect");
+    gSel.innerHTML = `<option value="">-- No Guild --</option>`;
+    STATE.guilds.forEach(g => {
+      const opt = document.createElement("option");
+      opt.value = g.Guild_Name;
+      opt.textContent = g.Guild_Name;
+      if (c.Guild === g.Guild_Name) opt.selected = true;
+      gSel.appendChild(opt);
+    });
+
+    // Render 10-Tier Rarity Interactive Inventory
+    const invBody = document.getElementById("pInvTable");
+    invBody.innerHTML = "";
+    if (!data.inventory || data.inventory.length === 0) {
+      invBody.innerHTML = `<tr><td colspan="5" style="color:var(--muted)">Inventory is empty.</td></tr>`;
+    } else {
+      data.inventory.forEach(it => {
+        const rar = it.Rarity || "White";
+        const iType = it.Item_Type || "Material";
+        const bSize = Number(it.Sell_Bundle_Size) || 1;
+        const sPrice = Number(it.Sell_Price) || 0;
+        const eqSlot = String(it.Equip_Buff_Slot || "").trim();
+
+        let actionBtns = "";
+        if (iType === "Equipment") {
+          actionBtns += `<button class="btn ${eqSlot ? 'btn-secondary' : ''}" style="margin:0 4px 0 0; padding:4px 8px; font-size:0.75rem;" onclick="triggerEquipItem('${it.Item_ID}')">${eqSlot ? "Unequip" : "Equip"}</button>`;
+        } else if (iType === "Consumable") {
+          actionBtns += `<button class="btn btn-gold" style="margin:0 4px 0 0; padding:4px 8px; font-size:0.75rem;" onclick="triggerUseItem('${it.Item_ID}')">🧪 Use</button>`;
+        }
+        if (sPrice > 0 && !eqSlot) {
+          actionBtns += `<button class="btn btn-secondary" style="margin:0; padding:4px 8px; font-size:0.75rem;" onclick="triggerSellItemBundle('${it.Item_ID}', ${bSize}, ${sPrice})">🪙 Sell (${bSize} for ${sPrice} C)</button>`;
+        }
+
+        invBody.innerHTML += `
+          <tr title="${(it.Notes || '').replace(/"/g, '&quot;')}">
+            <td><strong>${it.Item_Name}</strong>${it.Notes ? `<br/><small style="color:var(--muted)">${it.Notes}</small>` : ""}</td>
+            <td><span class="rarity-badge rar-${rar}">${rar}</span> <small>${iType}</small></td>
+            <td><strong>${it.Quantity}</strong> <small style="color:var(--muted)">(Bundle: ${bSize})</small></td>
+            <td>${it.Buff_Multiplier_Add ? `+${it.Buff_Multiplier_Add}x` : "—"} ${eqSlot ? `<span class="status-pill status-active">${eqSlot}</span>` : ""}</td>
+            <td>${actionBtns || "<small style='color:var(--muted)'>Trade Only</small>"}</td>
+          </tr>
+        `;
+      });
+    }
+
+    document.getElementById("pActivityCounts").textContent =
+      `Quests: ${c.Quests_Done} | Encounters: ${c.Encounters_Done} | Battles: ${c.Battles_Done} | Sparring: ${c.Sparring_Done} | Training: ${c.Training_Done} | Innovation: ${c.Innovation_Done}`;
+    const intBody = document.getElementById("pInteractionsTable");
+    intBody.innerHTML = "";
+    data.interactions.forEach(row => {
+      intBody.innerHTML += `<tr><td><strong>${row.otherCharId}</strong></td><td>${row.Battles}</td><td>${row.Sparring}</td><td>${row.Quests}</td><td>${row.Encounters}</td><td>${row.Total_Meetings}</td></tr>`;
+    });
+
+    renderPlayerSkillsAndLoadout();
+  }
+
+  async function triggerEquipItem(itemId) {
+    if (!STATE.currentChar) return;
+    const res = await apiPost({ action: "equipInventoryItem", charId: STATE.currentChar.character.Char_ID, itemId }, "Updating Equipped Gear...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    renderPlayerDashboard(res);
+    syncCharIntoLocalLeaderboard(res);
+  }
+
+  async function triggerUseItem(itemId) {
+    if (!STATE.currentChar) return;
+    const res = await apiPost({ action: "useInventoryItem", charId: STATE.currentChar.character.Char_ID, itemId }, "Using Consumable...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok") renderPlayerDashboard(res);
+  }
+
+  async function triggerSellItemBundle(itemId, bundleSize, pricePerBundle) {
+    if (!STATE.currentChar) return;
+    const bundles = prompt(`Sell how many bundles of ${bundleSize}? (Earns ${pricePerBundle} Crowns per bundle):`, "1");
+    if (!bundles || Number(bundles) <= 0) return;
     const res = await apiPost({
-      action: "convertCurrency",
-      direction,
-      quantity: qty
-    }, "Processing Currency Exchange...");
-
+      action: "sellInventoryBundle",
+      charId: STATE.currentChar.character.Char_ID,
+      itemId,
+      bundles
+    }, "Selling Item Bundle...");
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
       if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
-      if (res.economy) STATE.economy = res.economy;
-      renderBankAndEconomyUI();
+      if (res.profile) renderPlayerDashboard(res.profile);
+    }
+  }
+
+  /* ==============================================================
+     9. ADMIN CONSOLE ACTIONS & APPROVAL DROPDOWNS
+     ============================================================== */
+  function populateAdminApprovalDropdowns() {
+    const recSel = document.getElementById("admRecipeReviewSelect");
+    if (recSel) {
+      recSel.innerHTML = `<option value="">-- Select Crafter Recipe --</option>`;
+      (STATE.recipes || []).forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r.Recipe_ID;
+        opt.textContent = `[${r.Status}] ${r.Recipe_Name} (${r.Output_Rarity}) by ${r.Created_By}`;
+        recSel.appendChild(opt);
+      });
+    }
+
+    const trdSel = document.getElementById("admCharTradeVerifySelect");
+    if (trdSel) {
+      trdSel.innerHTML = `<option value="">-- Select Pending Character Trade --</option>`;
+      (STATE.trades || []).filter(t => String(t.Status) === "Pending_Admin").forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t.Trade_ID;
+        opt.textContent = `${t.Trade_ID}: @${t.From_Gamer_Tag} → @${t.To_Gamer_Tag} (${t.Offer_Summary})`;
+        trdSel.appendChild(opt);
+      });
+    }
+
+    const comSel = document.getElementById("admCommStrikeSelect");
+    if (comSel) {
+      comSel.innerHTML = `<option value="">-- Select Commission to Audit / Strike --</option>`;
+      (STATE.commissions || []).forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.Comm_ID;
+        opt.textContent = `[${c.Status}] ${c.Comm_ID}: @${c.Client_Gamer_Tag} ⇄ @${c.Accepted_By_Gamer_Tag || "None"} (${c.Title})`;
+        comSel.appendChild(opt);
+      });
+    }
+  }
+
+  async function submitUpdateTickerAds() {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const text = document.getElementById("admTickerInput").value;
+    const res = await apiPost({ action: "updateTickerAds", tickerText: text }, "Updating Moving Header Ads...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.tickerAds) {
+      document.getElementById("headerTickerText").textContent = res.tickerAds;
+    }
+  }
+
+  async function submitAdminAddShopItem() {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminAddShopItem",
+      itemName: document.getElementById("admItemName").value,
+      itemType: document.getElementById("admItemType").value,
+      rarity: document.getElementById("admItemRarity").value,
+      buffMult: document.getElementById("admItemBuff").value,
+      buyPrice: document.getElementById("admItemBuyPrice").value,
+      sellPrice: document.getElementById("admItemSellPrice").value,
+      bundleSize: document.getElementById("admItemBundleSize").value,
+      description: document.getElementById("admItemDesc").value
+    }, "Adding Item to Global Shop...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.shop) {
+      STATE.shop = res.shop;
+      renderGlobalShopAndCrafting();
+    }
+  }
+
+  async function submitAdminGrantDirectItem() {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const res = await apiPost({
+      action: "adminGrantItem",
+      charId: document.getElementById("admGrantItemCharId").value,
+      quantity: document.getElementById("admGrantItemQty").value,
+      itemName: document.getElementById("admItemName").value,
+      itemType: document.getElementById("admItemType").value,
+      rarity: document.getElementById("admItemRarity").value,
+      buffMult: document.getElementById("admItemBuff").value,
+      sellPrice: document.getElementById("admItemSellPrice").value,
+      bundleSize: document.getElementById("admItemBundleSize").value,
+      notes: document.getElementById("admItemDesc").value
+    }, "Granting Item to Character...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && STATE.currentChar) await selectMyCharacterFromDropdown();
+  }
+
+  async function submitAdminRecipeReview(status) {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const recipeId = document.getElementById("admRecipeReviewSelect").value;
+    if (!recipeId) return alert("Select a recipe first.");
+    const res = await apiPost({ action: "adminReviewRecipe", recipeId, status }, "Updating Recipe Status...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.recipes) {
+      STATE.recipes = res.recipes;
+      renderGlobalShopAndCrafting();
+      populateAdminApprovalDropdowns();
+    }
+  }
+
+  async function submitAdminCharTradeVerify(approve) {
+    if (!STATE.currentStaff) return alert("Log in with your Staff Code first.");
+    const tradeId = document.getElementById("admCharTradeVerifySelect").value;
+    if (!tradeId) return alert("Select a pending character trade first.");
+    const res = await apiPost({ action: "adminVerifyCharTrade", tradeId, approve }, "Verifying Character Trade...");
+    if (!res) return;
+    alert(res.message || res.status);
+    if (res.status === "ok" && res.trades) {
+      STATE.trades = res.trades;
+      renderTradesTable();
+      populateAdminApprovalDropdowns();
+      await refreshLeaderboardOnly();
     }
   }
 
@@ -2104,17 +3153,11 @@
       crowns: document.getElementById("admAddCrowns").value,
       reason: document.getElementById("admCurrReason").value
     }, "Granting Currency...");
-
     if (!res) return;
     alert(res.message || res.status);
-    if (res.status === "ok") {
-      await refreshGamerAccountData();
-    }
+    if (res.status === "ok") await refreshGamerAccountData();
   }
 
-  /* ==============================================================
-     6. ADMIN SLOTS, ACHIEVEMENTS & SKILL CREATOR
-     ============================================================== */
   async function submitAdminSlotAction(subAction) {
     if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
     const res = await apiPost({
@@ -2176,26 +3219,18 @@
     }, "Granting Achievement Title(s)...");
     if (!res) return;
     alert(res.message || res.status);
-    if (res.status === "ok") {
-      await refreshGamerAccountData();
-    }
+    if (res.status === "ok") await refreshGamerAccountData();
   }
 
   function updateAdminSkillCreatorUI() {
     const sType = document.getElementById("admSkillType").value;
     const sLevel = Number(document.getElementById("admSkillLevel").value) || 1;
-    const classWrap = document.getElementById("admSkillClassWrap");
-    const costPreview = document.getElementById("admSkillCostPreview");
-
-    classWrap.style.display = sType === "Class" ? "block" : "none";
+    document.getElementById("admSkillClassWrap").style.display = sType === "Class" ? "block" : "none";
     const meta = SKILL_LEVEL_META[sLevel] || { cost: 5, tier: "C1" };
-    if (sType === "Book") {
-      costPreview.value = `0 SP (Admin Skill Book — Lv ${sLevel})`;
-    } else if (sType === "Universal") {
-      costPreview.value = `${meta.cost} Base SP (+50% from 3rd Universal skill onward — Req ${meta.tier})`;
-    } else {
-      costPreview.value = `${meta.cost} SP (Requires Class Tier ${meta.tier})`;
-    }
+    const costPreview = document.getElementById("admSkillCostPreview");
+    if (sType === "Book") costPreview.value = `0 SP (Admin Skill Book — Lv ${sLevel})`;
+    else if (sType === "Universal") costPreview.value = `${meta.cost} Base SP (+50% from 3rd Universal — Req ${meta.tier})`;
+    else costPreview.value = `${meta.cost} SP (Requires Class Tier ${meta.tier})`;
   }
 
   async function submitAdminCreateSkill() {
@@ -2210,12 +3245,13 @@
       imageUrl: document.getElementById("admSkillImg").value,
       description: document.getElementById("admSkillDesc").value
     }, "Creating Skill in Database...");
-
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
       document.getElementById("admSkillName").value = "";
       document.getElementById("admSkillDesc").value = "";
+      if (res.skills) STATE.skills = res.skills;
+      renderOfficialSkillsCatalog();
       await refreshLeaderboardOnly();
     }
   }
@@ -2266,7 +3302,6 @@
       skillId: document.getElementById("admBookSkillSelect").value,
       replaceSkillId: document.getElementById("admBookReplaceSelect").value
     }, "Granting Skill Book...");
-
     if (!res) return;
     alert(res.message || res.status);
     if (res.status === "ok") {
@@ -2276,7 +3311,7 @@
   }
 
   /* ==============================================================
-     7. PLAYER SKILL SHOP, LOADOUT & CHARACTER DASHBOARD
+     10. PLAYER SKILLS, ARCHIVE & CORE ACTIONS
      ============================================================== */
   function renderPlayerSkillsAndLoadout() {
     if (!STATE.currentChar) return;
@@ -2381,11 +3416,7 @@
 
   async function purchaseSkillFromShop(skillId) {
     if (!STATE.currentChar) return;
-    const res = await apiPost({
-      action: "buySkill",
-      charId: STATE.currentChar.character.Char_ID,
-      skillId
-    }, "Purchasing Skill...");
+    const res = await apiPost({ action: "buySkill", charId: STATE.currentChar.character.Char_ID, skillId }, "Purchasing Skill...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
@@ -2394,20 +3425,14 @@
 
   async function togglePlayerSkillEquip(skillId) {
     if (!STATE.currentChar) return;
-    const res = await apiPost({
-      action: "toggleEquipSkill",
-      charId: STATE.currentChar.character.Char_ID,
-      skillId
-    }, "Updating Equipped Skills...");
+    const res = await apiPost({ action: "toggleEquipSkill", charId: STATE.currentChar.character.Char_ID, skillId }, "Updating Equipped Skills...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
     syncCharIntoLocalLeaderboard(res);
   }
 
-  /* ==============================================================
-     8. ENCLAVE ARCHIVE: PUBLIC READER + ADMIN WIKI MANAGER
-     ============================================================== */
+  /* Archive Functions */
   function getAllArchivePagesForCategory(category) {
     const list = [];
     DEFAULT_ARCHIVE_STRUCTURE.forEach(sec => {
@@ -2426,7 +3451,6 @@
   function renderArchiveSidebar() {
     const sb = document.getElementById("archiveSidebar");
     sb.innerHTML = "";
-
     const categoryMap = [
       { group: "Core Lore & World", cats: ["Lore", "Timeline"] },
       { group: "Races of the Enclave", cats: ["Race"] },
@@ -2479,7 +3503,6 @@
 
     const saved = STATE.archivePages.find(p => String(p.Page_Slug) === slug);
     const meta = findDefaultMeta(slug);
-
     const title = saved ? saved.Title : meta.title;
     const category = saved ? saved.Category : meta.category;
     const infoboxImg = saved ? saved.Infobox_Image : "";
@@ -2519,7 +3542,6 @@
     const category = secSelect.value;
     const pages = getAllArchivePagesForCategory(category);
     pageSelect.innerHTML = "";
-
     pages.forEach(p => {
       const opt = document.createElement("option");
       opt.value = p.slug;
@@ -2531,7 +3553,6 @@
     newOpt.value = "__NEW__";
     newOpt.textContent = "➕ Create New Page in this Section...";
     pageSelect.appendChild(newOpt);
-
     loadSelectedPageIntoAdminEditor();
   }
 
@@ -2544,10 +3565,8 @@
       document.getElementById("admArcHtml").value = "";
       return;
     }
-
     const saved = STATE.archivePages.find(p => String(p.Page_Slug) === slug);
     const meta = findDefaultMeta(slug);
-
     document.getElementById("admArcTitle").value = saved ? saved.Title : meta.title;
     document.getElementById("admArcImg").value = saved ? (saved.Infobox_Image || "") : "";
     document.getElementById("admArcSub").value = saved ? (saved.Infobox_Subtitle || "") : "";
@@ -2557,7 +3576,6 @@
   function handleAdminArchiveWordFile(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const ext = file.name.split(".").pop().toLowerCase();
     if (ext === "docx") {
       const reader = new FileReader();
@@ -2565,7 +3583,7 @@
         mammoth.convertToHtml({ arrayBuffer: e.target.result })
           .then(result => {
             document.getElementById("admArcHtml").value = result.value;
-            alert("Word (.docx) file loaded into editor! Click 'Publish / Update Archive Page' below.");
+            alert("Word (.docx) file loaded into editor!");
           })
           .catch(err => alert("Error reading .docx file: " + err.message));
       };
@@ -2577,7 +3595,7 @@
         const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
         if (bodyMatch) raw = bodyMatch[1];
         document.getElementById("admArcHtml").value = raw.trim();
-        alert("Word Template loaded into editor! Click 'Publish / Update Archive Page' below.");
+        alert("Word Template loaded into editor!");
       };
       reader.readAsText(file);
     }
@@ -2585,13 +3603,10 @@
 
   async function submitAdminArchivePage() {
     if (!STATE.currentStaff) return alert("Please log in with your Staff Code first.");
-
     const category = document.getElementById("admArcSection").value;
     let slug = document.getElementById("admArcPageSelect").value;
     const titleVal = document.getElementById("admArcTitle").value.trim();
-
     if (!titleVal) return alert("Please enter a Page Title.");
-
     if (slug === "__NEW__") {
       slug = category.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + titleVal.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     }
@@ -2624,12 +3639,10 @@
     const pageComments = STATE.archiveComments.filter(c => String(c.Page_Slug) === slug);
     document.getElementById("arcCommentCount").textContent = pageComments.length;
     list.innerHTML = "";
-
     if (pageComments.length === 0) {
       list.innerHTML = `<small style="color:var(--muted)">No comments yet. Be the first to leave a note on this page!</small>`;
       return;
     }
-
     pageComments.forEach(c => {
       const div = document.createElement("div");
       div.className = "stat-box";
@@ -2649,48 +3662,13 @@
   function downloadWordTemplate(type) {
     let content = "";
     let filename = "";
-
     if (type === "character") {
       filename = "Enclave_Fandom_Character_Wiki_Template.doc";
-      content = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><meta charset='utf-8'><title>Character Wiki Template</title></head>
-        <body style="font-family:'Times New Roman', Times, serif; font-size:12pt; line-height:1.6;">
-          <h1>[Character Full Name]</h1>
-          <p><em>"Insert an iconic character quote here."</em></p>
-          <p>[IMG-RIGHT: https://paste-your-character-portrait-url-here.png | Character Name &amp; ID (XX-XXX-XXX)]</p>
-          <h2>Overview</h2>
-          <p>Write a general overview of the character, their role in the Enclave, their guild affiliation, and their reputation.</p>
-          <h2>Appearance</h2>
-          <p>Describe their physical build, attire, weapons, and distinguishing marks. You can also wrap another image on the left side of the text using:</p>
-          <p>[IMG-LEFT: https://paste-secondary-image-url.png | Battle Attire]</p>
-          <h2>Personality</h2>
-          <p>Detail their temperament, ideals, flaws, and how they interact with allies and rivals.</p>
-          <h2>Abilities &amp; Combat Style</h2>
-          <p><strong>Class &amp; Race Synergy:</strong> Explain how their Race skills and Class skills combine in combat.</p>
-          <h2>History / Backstory</h2>
-          <p>Chronicle their past before and after joining the Enclave.</p>
-          <h2>Trivia</h2>
-          <ul>
-            <li>Favorite weapon or alchemy recipe.</li>
-            <li>Notable battles or rivalries.</li>
-          </ul>
-        </body></html>`;
+      content = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family:'Times New Roman',serif;font-size:12pt;"><h1>[Character Full Name]</h1><p>[IMG-RIGHT: https://paste-portrait-url.png | Character Name &amp; ID]</p><h2>Overview</h2><p>Write overview...</p><h2>Appearance</h2><p>Describe build and attire...</p><h2>Abilities</h2><p>Class &amp; Race synergy...</p><h2>History</h2><p>Backstory...</p></body></html>`;
     } else {
       filename = `Enclave_Archive_${STATE.activeSlug}_Template.doc`;
-      content = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><meta charset='utf-8'><title>Enclave Archive Template</title></head>
-        <body style="font-family:'Times New Roman', Times, serif; font-size:12pt; line-height:1.6;">
-          <h1>${document.getElementById("arcTitle").textContent}</h1>
-          <p>[IMG-RIGHT: https://paste-image-url-here.png | Figure 1: Image Caption]</p>
-          <h2>I. Introduction</h2>
-          <p>Write your lore, race, class, or mechanics article here in Times New Roman. Any image tag above will automatically float so your paragraphs wrap cleanly around the image.</p>
-          <h2>II. Key Details &amp; Records</h2>
-          <p>Add additional sections, tables, or left-aligned images using [IMG-LEFT: https://paste-image-url-here.png | Figure 2].</p>
-        </body></html>`;
+      content = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family:'Times New Roman',serif;font-size:12pt;"><h1>${document.getElementById("arcTitle").textContent}</h1><p>[IMG-RIGHT: https://paste-image-url.png | Figure 1]</p><h2>I. Introduction</h2><p>Write lore entry...</p></body></html>`;
     }
-
     const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -2705,14 +3683,7 @@
       (STATE.gamerSession ? `@${STATE.gamerSession.gamerTag}` : "Anonymous Traveler");
     const text = document.getElementById("arcCommentText").value.trim();
     if (!text) return alert("Please write a comment first.");
-
-    const res = await apiPost({
-      action: "addArchiveComment",
-      slug: STATE.activeSlug,
-      author,
-      text
-    }, "Posting Comment...");
-
+    const res = await apiPost({ action: "addArchiveComment", slug: STATE.activeSlug, author, text }, "Posting Comment...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     document.getElementById("arcCommentText").value = "";
@@ -2722,16 +3693,13 @@
     }
   }
 
-  /* ==============================================================
-     9. CHARACTER CREATION, PLAYER ACTIONS & ADMIN STAFF
-     ============================================================== */
   function renderRaces() {
     const container = document.getElementById("raceSelector");
     container.innerHTML = "";
     STATE.races.forEach((r, i) => {
       const chip = document.createElement("div");
       chip.className = "race-chip" + (i === 0 ? " selected" : "");
-      chip.setAttribute("data-race", r.Race); // Translate-safe attribute
+      chip.setAttribute("data-race", r.Race);
       chip.textContent = r.Race;
       chip.onmouseenter = () => showRaceSkills(r);
       chip.onclick = () => {
@@ -2769,6 +3737,8 @@
       gender: document.getElementById("crGender").value,
       race: document.getElementById("crRace").value,
       class: document.getElementById("crClass").value,
+      starterItemType: document.getElementById("crStarterType").value,
+      starterItemName: document.getElementById("crStarterName").value,
       avatarUrl: document.getElementById("crAvatar").value,
       aboutMe: document.getElementById("crAbout").value
     }, "Creating Character in " + slotType + "...");
@@ -2777,6 +3747,7 @@
     alert(res.message || res.status);
     if (res.status === "ok") {
       document.getElementById("crName").value = "";
+      document.getElementById("crStarterName").value = "";
       document.getElementById("crAbout").value = "";
       if (res.gamerPayload) applyGamerPayload(res.gamerPayload);
       if (res.profile) {
@@ -2786,59 +3757,6 @@
         syncCharIntoLocalLeaderboard(res.profile);
       }
     }
-  }
-
-  function renderPlayerDashboard(data) {
-    STATE.currentChar = data;
-    const c = data.character;
-    document.getElementById("playerArea").style.display = "block";
-    document.getElementById("pHeaderName").textContent = `${c.Name} [${c.Char_ID}]`;
-    document.getElementById("pSubHeader").textContent = `@${c.Gamer_Tag} | ${c.Slot_Type} | ${c.Race} ${c.Class} | Status: ${c.Status}`;
-    document.getElementById("pAvatarImg").src = c.Avatar_URL || "https://via.placeholder.com/60";
-    document.getElementById("pAvatarInput").value = c.Avatar_URL || "";
-    document.getElementById("pCharCrowns").textContent = c.Crown_Balance || 0;
-    document.getElementById("pDriveXP").textContent = `${c.XP_Drive_Available} / ${c.XP_Drive_Total}`;
-    document.getElementById("pSP").textContent = c.SP_Available;
-    document.getElementById("pCharLv").textContent = `${c.Char_Level} (${c.Char_XP_Progress}/200 XP) [${c.Rank_Tier}]`;
-    document.getElementById("pClassLv").textContent = `${c.Class_Level} (${c.Class_XP_Progress}/${(Number(c.Class_Level)+1)*50} XP) [${c.Class_Tier}]`;
-    document.getElementById("pAP").textContent = c.AP_Available;
-
-    document.getElementById("valPow").textContent = c.Power;
-    document.getElementById("valEnd").textContent = c.Endurance;
-    document.getElementById("valMob").textContent = c.Mobility;
-    document.getElementById("valVit").textContent = c.Vitality;
-    document.getElementById("valInt").textContent = c.Intelligence;
-    document.getElementById("valFate").value = c.Fate;
-
-    document.getElementById("pMight").textContent = data.subStats.might;
-    document.getElementById("pSpirit").textContent = data.subStats.spirit;
-    document.getElementById("pBuffStatus").textContent = `Active Multiplier: ${data.subStats.activeMultiplier}x (Slot 1: ${c.Buff1_Name} +${c.Buff1_Mult} | Slot 2: ${c.Buff2_Name} +${c.Buff2_Mult})`;
-
-    const gSel = document.getElementById("pGuildSelect");
-    gSel.innerHTML = `<option value="">-- No Guild --</option>`;
-    STATE.guilds.forEach(g => {
-      const opt = document.createElement("option");
-      opt.value = g.Guild_Name;
-      opt.textContent = g.Guild_Name;
-      if (c.Guild === g.Guild_Name) opt.selected = true;
-      gSel.appendChild(opt);
-    });
-
-    const invBody = document.getElementById("pInvTable");
-    invBody.innerHTML = "";
-    data.inventory.forEach(it => {
-      invBody.innerHTML += `<tr><td>${it.Item_Name}</td><td>${it.Quantity}</td><td>${it.Equip_Buff_Slot || "—"}</td><td>${it.Buff_Multiplier_Add || 0}</td></tr>`;
-    });
-
-    document.getElementById("pActivityCounts").textContent =
-      `Quests: ${c.Quests_Done} | Encounters: ${c.Encounters_Done} | Battles: ${c.Battles_Done} | Sparring: ${c.Sparring_Done} | Training: ${c.Training_Done} | Innovation: ${c.Innovation_Done}`;
-    const intBody = document.getElementById("pInteractionsTable");
-    intBody.innerHTML = "";
-    data.interactions.forEach(row => {
-      intBody.innerHTML += `<tr><td><strong>${row.otherCharId}</strong></td><td>${row.Battles}</td><td>${row.Sparring}</td><td>${row.Quests}</td><td>${row.Encounters}</td><td>${row.Total_Meetings}</td></tr>`;
-    });
-
-    renderPlayerSkillsAndLoadout();
   }
 
   async function savePlayerAvatar() {
@@ -2892,10 +3810,7 @@
 
   async function triggerAscend(actionName) {
     if (!STATE.currentChar) return;
-    const res = await apiPost({
-      action: actionName,
-      charId: STATE.currentChar.character.Char_ID
-    }, "Processing Ascension...");
+    const res = await apiPost({ action: actionName, charId: STATE.currentChar.character.Char_ID }, "Processing Ascension...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     renderPlayerDashboard(res);
@@ -2915,38 +3830,6 @@
     syncCharIntoLocalLeaderboard(res);
   }
 
-  function downloadInventoryExcel() {
-    const inv = (STATE.currentChar && STATE.currentChar.inventory && STATE.currentChar.inventory.length > 0)
-      ? STATE.currentChar.inventory
-      : [{ Item_Name: "Starter Blade", Category: "Weapon", Quantity: 1, Equip_Buff_Slot: "Left", Buff_Multiplier_Add: 1.0, Notes: "Buff" }];
-    const ws = XLSX.utils.json_to_sheet(inv);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Inventory");
-    XLSX.writeFile(wb, `${STATE.currentChar.character.Char_ID}_Inventory.xlsx`);
-  }
-
-  function uploadInventoryExcel(e) {
-    const file = e.target.files[0];
-    if (!file || !STATE.currentChar) return;
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      const wb = XLSX.read(evt.target.result, { type: "binary" });
-      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-      const res = await apiPost({
-        action: "uploadInventory",
-        charId: STATE.currentChar.character.Char_ID,
-        items: rows
-      }, "Uploading Inventory Sheet...");
-      if (!res) return;
-      if (res.status !== "ok") alert(res.message);
-      else {
-        renderPlayerDashboard(res);
-        syncCharIntoLocalLeaderboard(res);
-      }
-    };
-    reader.readAsBinaryString(file);
-  }
-
   async function loginStaff() {
     const res = await apiPost({
       action: "adminLogin",
@@ -2964,6 +3847,7 @@
     populateAdminBookSkillDropdown();
     populateAdminAchievementDropdown();
     populateAdminPrototypeDropdown();
+    populateAdminApprovalDropdowns();
   }
 
   async function registerStaff() {
@@ -2971,11 +3855,7 @@
     if (!name) return;
     const pass = document.getElementById("admStaffPass").value;
     if (!pass) return alert("Please enter your desired password in the Staff Password field first.");
-    const res = await apiPost({
-      action: "adminRegister",
-      name,
-      password: pass
-    }, "Generating Staff Code...");
+    const res = await apiPost({ action: "adminRegister", name, password: pass }, "Generating Staff Code...");
     if (!res) return;
     if (res.status !== "ok") return alert(res.message);
     alert(`Staff Registered! Your assigned Staff Code is: ${res.staff.Staff_ID}. Use it to log in.`);
