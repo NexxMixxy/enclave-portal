@@ -1894,6 +1894,113 @@
     renderBankAndEconomyUI();
   }
 
+  function renderPlayerAchievements() {
+    if (!STATE.gamerSession) return;
+    const achList = STATE.gamerSession.achievements || [];
+    const eqCount = achList.filter(a => a.Equipped === true || String(a.Equipped).toUpperCase() === "TRUE").length;
+    document.getElementById("pAchSummary").textContent = `Equipped Showcase: ${eqCount} / 3`;
+
+    const tbody = document.getElementById("pAchievementsTable");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    if (achList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted)">No Achievement Titles earned yet.</td></tr>`;
+      return;
+    }
+
+    achList.forEach(a => {
+      const isEq = a.Equipped === true || String(a.Equipped).toUpperCase() === "TRUE";
+      const imgHtml = a.Image_URL ? `<img class="skill-icon" src="${a.Image_URL}" alt="Badge" />` : "🏆 ";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${imgHtml}<strong>${a.Title_Name}</strong></td>
+        <td style="color:var(--muted)">${a.Description || "—"}</td>
+        <td><span class="status-pill ${isEq ? 'status-active' : 'status-limbo'}">${isEq ? "Showcased" : "Unequipped"}</span></td>
+        <td>
+          <button class="btn ${isEq ? 'btn-secondary' : ''}" style="margin:0; padding:6px 10px; font-size:0.8rem;"
+                  onclick="toggleEquipMyAchievement('${a.Ach_ID}')">
+            ${isEq ? "Unequip" : "Equip Title"}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function toggleEquipMyAchievement(achId) {
+    const res = await apiPost({ action: "toggleEquipAchievement", achId }, "Updating Title Showcase...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+
+    STATE.gamerSession.achievements = res.achievements || [];
+    renderPlayerAchievements();
+
+    const myEquippedTitles = STATE.gamerSession.achievements
+      .filter(a => a.Equipped === true || String(a.Equipped).toUpperCase() === "TRUE")
+      .map(a => ({ Ach_ID: a.Ach_ID, Title_Name: a.Title_Name, Image_URL: a.Image_URL || "" }));
+    const gtKey = STATE.gamerSession.gamerTag.toLowerCase();
+    STATE.leaderboard.forEach(c => {
+      if (String(c.Gamer_Tag).toLowerCase() === gtKey) c.Equipped_Titles = myEquippedTitles;
+    });
+    renderLeaderboard();
+  }
+
+  async function triggerConvertBoosterToLegacy() {
+    if (!STATE.gamerSession || !STATE.gamerSession.slotSummary.limboCommercialChars.length) return;
+    const limboChar = STATE.gamerSession.slotSummary.limboCommercialChars[0];
+    if (!confirm(`Convert '${limboChar.Name}' [${limboChar.Char_ID}] from your Limbo Commercial Slot into your permanent Legacy Slot?`)) return;
+
+    const res = await apiPost({ action: "convertBoosterToLegacy", charId: limboChar.Char_ID }, "Converting Slot...");
+    if (!res) return;
+    if (res.status !== "ok") return alert(res.message);
+    applyGamerPayload(res);
+    await refreshLeaderboardOnly();
+    await selectMyCharacterFromDropdown();
+    alert("Character successfully converted to your permanent Legacy Slot and restored to Active!");
+  }
+
+  async function selectMyCharacterFromDropdown() {
+    const drop = document.getElementById("myCharDropdown");
+    const cid = drop ? drop.value : "";
+    if (!cid) {
+      document.getElementById("playerArea").style.display = "none";
+      document.getElementById("noCharSelectedMsg").style.display = "block";
+      return;
+    }
+
+    // Immediately render basic character info from local session so the UI never feels stuck
+    const localChar = (STATE.gamerSession && STATE.gamerSession.characters || []).find(c => c.Char_ID === cid);
+    if (localChar) {
+      document.getElementById("noCharSelectedMsg").style.display = "none";
+      renderPlayerDashboard({
+        character: localChar,
+        subStats: {
+          might: localChar.Might || 1,
+          spirit: localChar.Spirit || 1,
+          activeMultiplier: 0.5 + (Number(localChar.Buff1_Mult) || 0) + (Number(localChar.Buff2_Mult) || 0)
+        },
+        skills: (STATE.currentChar && STATE.currentChar.character.Char_ID === cid) ? STATE.currentChar.skills : [],
+        inventory: (STATE.currentChar && STATE.currentChar.character.Char_ID === cid) ? STATE.currentChar.inventory : [],
+        interactions: (STATE.currentChar && STATE.currentChar.character.Char_ID === cid) ? STATE.currentChar.interactions : []
+      });
+    }
+
+    // Fetch full live inventory, skills & pairwise interactions from backend
+    showLoading("Loading Character Sheet...");
+    try {
+      const sep = API_URL.includes("?") ? "&" : "?";
+      const res = await fetch(API_URL + sep + "action=profile&charId=" + encodeURIComponent(cid)).then(r => r.json());
+      hideLoading();
+      if (res && res.status === "ok") {
+        document.getElementById("noCharSelectedMsg").style.display = "none";
+        renderPlayerDashboard(res);
+      }
+    } catch (e) {
+      hideLoading();
+      console.error("Failed to fetch full character sheet:", e);
+    }
+  }
+  
   function showTab(tab, btnEl) {
     document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
     document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
