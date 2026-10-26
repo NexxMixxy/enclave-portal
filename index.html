@@ -3872,13 +3872,22 @@
   /* Translate-Friendly Race Chips (Reads data-race attribute so visible text can translate into any language) */
   function renderRaces() {
     const container = document.getElementById("raceSelector");
+    if (!container) return;
     container.innerHTML = "";
     STATE.races.forEach((r, i) => {
       const chip = document.createElement("div");
       chip.className = "race-chip" + (i === 0 ? " selected" : "");
       chip.setAttribute("data-race", r.Race);
       chip.textContent = r.Race;
+
+      // Preview on hover, but snap back to the actually selected race when mouse leaves
       chip.onmouseenter = () => showRaceSkills(r);
+      chip.onmouseleave = () => {
+        const selectedRaceName = document.getElementById("crRace").value;
+        const selectedObj = STATE.races.find(x => String(x.Race) === String(selectedRaceName)) || STATE.races[0];
+        if (selectedObj) showRaceSkills(selectedObj);
+      };
+
       chip.onclick = () => {
         document.querySelectorAll(".race-chip").forEach(el => el.classList.remove("selected"));
         chip.classList.add("selected");
@@ -3886,20 +3895,43 @@
         showRaceSkills(r);
       };
       container.appendChild(chip);
-      if (i === 0) showRaceSkills(r);
+      if (i === 0) {
+        document.getElementById("crRace").value = r.Race;
+        showRaceSkills(r);
+      }
     });
   }
 
-  function showRaceSkills(r) {
-    document.getElementById("raceTooltip").innerHTML = `
-      <strong style="color:var(--gold)">${r.Race} Racial Skill Tree</strong><br/>
-      • <strong>Main:</strong> ${r.Main_Skill}<br/>
-      • <strong>Passives:</strong> I: ${r.Passive_I} | II: ${r.Passive_II}<br/>
-      • <strong>Ascensions:</strong> I: ${r.Ascension_I} | II: ${r.Ascension_II} | III: ${r.Ascension_III} | IV: ${r.Ascension_IV}<br/>
-      • <strong>Legendary:</strong> <span style="color:var(--accent)">${r.Legendary_Skill}</span>
-    `;
+  function cleanSkillText(val, labelRegex) {
+    return String(val || "—").replace(labelRegex, "").trim();
   }
 
+  function showRaceSkills(r) {
+    const items = [
+      { label: "Main Skill",      color: "var(--gold)",   val: cleanSkillText(r.Main_Skill, /^main(\s*skill)?\s*:\s*/i) },
+      { label: "Passive I",       color: "var(--accent)", val: cleanSkillText(r.Passive_I, /^passive\s*(i|1)\s*:\s*/i) },
+      { label: "Passive II",      color: "var(--accent)", val: cleanSkillText(r.Passive_II, /^passive\s*(ii|2)\s*:\s*/i) },
+      { label: "Ascension I",     color: "var(--text)",   val: cleanSkillText(r.Ascension_I, /^ascension\s*(i|1)\s*:\s*/i) },
+      { label: "Ascension II",    color: "var(--text)",   val: cleanSkillText(r.Ascension_II, /^ascension\s*(ii|2)\s*:\s*/i) },
+      { label: "Ascension III",   color: "var(--text)",   val: cleanSkillText(r.Ascension_III, /^ascension\s*(iii|3)\s*:\s*/i) },
+      { label: "Ascension IV",    color: "var(--text)",   val: cleanSkillText(r.Ascension_IV, /^ascension\s*(iv|4)\s*:\s*/i) },
+      { label: "Legendary Skill", color: "var(--purple)", val: cleanSkillText(r.Legendary_Skill, /^legendary(\s*skill)?\s*:\s*/i) }
+    ];
+
+    document.getElementById("raceTooltip").innerHTML = `
+      <div style="color:var(--gold); font-weight:800; font-size:1rem; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px;">
+        🧬 ${r.Race} Racial Skill Tree
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        ${items.map(it => `
+          <div style="background:#111827; border:1px solid var(--border); border-radius:6px; padding:8px 10px;">
+            <strong style="color:${it.color}; display:block; margin-bottom:2px;">• ${it.label}:</strong>
+            <span style="color:var(--text); line-height:1.45;">${it.val}</span>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
   async function submitCreateCharacter() {
     if (!STATE.gamerSession) return alert("Please log in with your Gamer Tag first.");
     const nameVal = document.getElementById("crName").value.trim();
