@@ -346,7 +346,7 @@
       <button onclick="showTab('dungeon', this)">Instant Dungeon (ID)</button>
       <button onclick="showTab('prototypes', this)">Prototype Skills</button>
       <button onclick="showTab('commissions', this)">Commissions</button>
-      <button onclick="showTab('bank', this)">Enclave Commercial Hub</button>
+      <button onclick="showTab('bank', this)">Enclave Bank</button>
       <button onclick="showTab('archive', this)">Enclave Archive</button>
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="background:#0f172a; border-color:var(--gold); color:var(--gold); flex:0 0 auto;">⚙️</button>
       <button onclick="logoutGamerTag()" title="Log Out" style="background:#1e293b; color:var(--muted); flex:0 0 auto;">Log Out</button>
@@ -392,13 +392,13 @@
     </div>
   </section>
 
-  <!-- 2. CREATE CHARACTER (STARTS AT 1 ALL STATS + FREE WHITE STARTER ITEM) -->
+  <!-- 2. CREATE CHARACTER (TRANSLATE-FRIENDLY + STARTS AT 1 ALL STATS + FREE WHITE STARTER ITEM) -->
   <section id="tab-create" class="panel">
-    <h2>Create New Character</h2>
+    <h2>Create New Character (Starts at 1 Base Stats + 5 Free AP = 10 Total AP, 5 SP, 100 XP & Free White Gear)</h2>
     <div class="stat-box" style="margin-bottom:16px; border-color:var(--gold);">
       <div class="flex-row" style="justify-content:space-between;">
         <div>
-          <strong style="color:var(--gold)">Your Character Slot Status:</strong>
+          <strong style="color:var(--gold)">🎟️ Your Character Slot Status:</strong>
           <div id="slotStatusExplanation" style="font-size:0.86rem; color:var(--text); margin-top:4px;"></div>
         </div>
         <div style="max-width:260px; width:100%;">
@@ -415,10 +415,17 @@
         <label>Gender</label>
         <input type="text" id="crGender" placeholder="Male / Female / Other" />
         <label>Character Class</label>
-        <select id="crClass" translate="no">
-          <option value="Warrior">Warrior</option><option value="Mage">Mage</option><option value="Rogue">Rogue</option>
-          <option value="Ranger">Ranger</option><option value="Alchemist">Alchemist</option><option value="Crafter">Crafter</option>
-          <option value="Scholar">Scholar</option><option value="Civil">Civil</option><option value="Jack">Jack</option>
+        <!-- Explicit value attributes keep database values in English while allowing Google Translate to translate visible labels -->
+        <select id="crClass">
+          <option value="Warrior">Warrior</option>
+          <option value="Mage">Mage</option>
+          <option value="Rogue">Rogue</option>
+          <option value="Ranger">Ranger</option>
+          <option value="Alchemist">Alchemist</option>
+          <option value="Crafter">Crafter</option>
+          <option value="Scholar">Scholar</option>
+          <option value="Civil">Civil</option>
+          <option value="Jack">Jack</option>
         </select>
 
         <hr style="border-color:var(--border); margin:12px 0;" />
@@ -444,12 +451,12 @@
         <input type="url" id="crAvatar" placeholder="https://..." oninput="document.getElementById('createAvatarPreview').src = this.value || 'https://via.placeholder.com/80'" />
         <input type="file" accept="image/*" onchange="compressImageFileToInput(event, 'crAvatar', 'createAvatarPreview')" />
         <img id="createAvatarPreview" class="avatar-preview" src="https://via.placeholder.com/80" alt="Preview" />
-        <label>About</label>
+        <label>About Me (Important Details)</label>
         <textarea id="crAbout" rows="2"></textarea>
       </div>
       <div class="stat-box">
         <label>Select Race (Tap or Hover to view Racial Skills)</label>
-        <div class="race-grid" id="raceSelector" translate="no"></div>
+        <div class="race-grid" id="raceSelector"></div>
         <input type="hidden" id="crRace" value="Human" />
         <div class="tooltip-box" id="raceTooltip">Hover or tap a Race above to inspect skills.</div>
         <button id="createCharBtn" class="btn" style="width:100%;" onclick="submitCreateCharacter()">Register Character & Claim Starter Gear</button>
@@ -470,7 +477,7 @@
     <div class="flex-row" style="justify-content:space-between; margin-bottom:16px;">
       <div>
         <h2 style="margin:0;">Player Portal</h2>
-        <small style="color:var(--muted)">Select your character, generate your Gamer Tag ID Card, or manage gear & skills.</small>
+        <small style="color:var(--muted)">Select your character, generate your PNG Gamer Tag ID Card, or manage gear & skills.</small>
       </div>
       <div class="flex-row" style="max-width:620px; width:100%;">
         <select id="myCharDropdown" onchange="selectMyCharacterFromDropdown()"></select>
@@ -652,8 +659,8 @@
     <div class="retro-2bit-box">
       <div class="flex-row" style="justify-content:space-between; border-bottom:2px solid #a3e635; padding-bottom:10px; margin-bottom:14px;">
         <div>
-          <h2 style="margin:0; color:#a3e635;">🕹️ [ID] INSTANT DUNGEON // DAILY FORAGER REALM</h2>
-          <small style="color:#bef264;">TURN-BASED RESOURCE EXPEDITION — LIMIT: 1 DUNGEON ENTRY PER DAY</small>
+          <h2 style="margin:0; color:#a3e635;">[ID] INSTANT DUNGEON</h2>
+          <small style="color:#bef264;">LIMIT: 1 DUNGEON ENTRY PER DAY</small>
         </div>
         <span id="idDailyStatusBadge" style="padding:6px 12px; border:1px solid #a3e635; font-weight:700;">STATUS: READY</span>
       </div>
@@ -676,8 +683,8 @@
       ||      ||       Rank scales Yield %!
           </pre>
 
-          <button class="btn" style="width:100%; background:#a3e635; color:#050805; font-size:1rem;" onclick="submitRunForagerDungeon()">
-            [ ENTER INSTANT DUNGEON & FORAGE ]
+          <button id="enterForagerBtn" class="btn" style="width:100%; background:#a3e635; color:#050805; font-size:1rem;" onclick="submitRunForagerDungeon()">
+            ⚔️ [ ENTER INSTANT DUNGEON & FORAGE ]
           </button>
         </div>
 
@@ -698,7 +705,7 @@
   <section id="tab-prototypes" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:12px;">
       <div>
-        <h2 style="margin:0;">Official Skills & Scholar Prototype Registry</h2>
+        <h2 style="margin:0;">Official Prototype Registry</h2>
         <small style="color:var(--muted)">
           Browse all Official Skills (tagged by <strong>ADMIN</strong> or Scholar <strong>@GamerTag</strong>) and inspect Scholar Prototype submissions!
         </small>
@@ -733,10 +740,16 @@
 
           <div id="prtClassWrap">
             <label>3. Target Class</label>
-            <select id="prtClass" translate="no">
-              <option value="Scholar">Scholar</option><option value="Warrior">Warrior</option><option value="Mage">Mage</option>
-              <option value="Rogue">Rogue</option><option value="Ranger">Ranger</option><option value="Alchemist">Alchemist</option>
-              <option value="Crafter">Crafter</option><option value="Civil">Civil</option><option value="Jack">Jack</option>
+            <select id="prtClass">
+              <option value="Scholar">Scholar</option>
+              <option value="Warrior">Warrior</option>
+              <option value="Mage">Mage</option>
+              <option value="Rogue">Rogue</option>
+              <option value="Ranger">Ranger</option>
+              <option value="Alchemist">Alchemist</option>
+              <option value="Crafter">Crafter</option>
+              <option value="Civil">Civil</option>
+              <option value="Jack">Jack</option>
             </select>
           </div>
 
@@ -819,7 +832,7 @@
   <section id="tab-commissions" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
       <div>
-        <h2 style="margin:0;">Enclave Commission Portal</h2>
+        <h2 style="margin:0;">📋 Enclave Commission Portal</h2>
         <small style="color:var(--muted)">
           Post up to 1 Commission per week (7-day expiry). Completion awards <strong>+30 XP to the Commissioner</strong> and <strong>+40 XP to the Accepter</strong> (plus <strong>+1 SP</strong> automatically if the character is a <strong>Civil</strong> Class!). Use the Trader Port in the Bank to hand over crafted/gathered items before confirming completion.
         </small>
@@ -847,11 +860,11 @@
 
         <label>Commission Details & Requirements</label>
         <textarea id="comDesc" rows="2" placeholder="Describe what you need forged, gathered, brewed, or hunted..."></textarea>
-        <button class="btn" style="width:100%;" onclick="submitCreateCommission()">📌 Post Commission (1 / Week)</button>
+        <button class="btn" style="width:100%;" onclick="submitCreateCommission()">Post Commission (1 / Week)</button>
       </div>
 
       <div class="stat-box">
-        <h3 style="margin-top:0; color:var(--accent);">⚔️ Accept Commissions as Character (+40 XP Reward)</h3>
+        <h3 style="margin-top:0; color:var(--accent);">Accept Commissions as Character (+40 XP Reward)</h3>
         <p style="font-size:0.84rem; color:var(--muted); margin-top:0;">
           Select which of your <strong>Active Characters</strong> will accept a commission below. Civil characters earn a bonus <strong>+1 SP</strong> on every completed commission!
         </p>
@@ -881,7 +894,7 @@
 
   <!-- 7. BANK, GLOBAL SHOP, CRAFTING WORKSHOP & TRADER PORT -->
   <section id="tab-bank" class="panel">
-    <h2>🏦 Enclave Bank,  Shop, Workshop & Trader Port</h2>
+    <h2>🏦 Enclave Bank, Global Shop, Crafting Workshop & Trader Port</h2>
 
     <!-- Row 1: Crown Vault + Per-GamerTag Scales/Crowns Conversion -->
     <div class="grid-2">
@@ -961,9 +974,9 @@
       <!-- Crafting Workshop (Crafter, Alchemist, Civil) -->
       <div class="stat-box">
         <div class="flex-row" style="justify-content:space-between;">
-          <h3 style="margin:0; color:var(--gold);">⚒️ Crafting Workshop</h3>
+          <h3 style="margin:0; color:var(--gold);">Crafting Workshop</h3>
           <button class="btn btn-secondary" style="margin:0; padding:5px 10px; font-size:0.78rem;" onclick="toggleCrafterRecipeForm()">
-            ➕ C2: Submit Recipe
+            ➕ C2 Crafter: Submit Recipe
           </button>
         </div>
         <p style="font-size:0.81rem; color:var(--muted); margin:4px 0 8px 0;">
@@ -994,9 +1007,9 @@
           </div>
           <label>Required Materials (Format: <code>Item Name:Qty, Item Name:Qty</code>)</label>
           <input type="text" id="recSubIngs" placeholder="e.g. Iron Ingot:2, Oak Log:1, Leather:2" />
-          <label>Description</label>
+          <label>Equipment / Item Description</label>
           <input type="text" id="recSubDesc" placeholder="Describe the crafted gear..." />
-          <button class="btn btn-gold" style="width:100%;" onclick="submitNewCrafterRecipe()">🚀 Submit Recipe for Admin Review</button>
+          <button class="btn btn-gold" style="width:100%;" onclick="submitNewCrafterRecipe()">Submit Recipe for Admin Review</button>
         </div>
 
         <div class="table-box" style="max-height:310px; overflow-y:auto;">
@@ -1044,11 +1057,11 @@
             <select id="trdCharToTradeSelect"></select>
           </div>
 
-          <button class="btn" style="width:100%;" onclick="submitCreateTradeOffer()">📨 Send Trade Offer</button>
+          <button class="btn" style="width:100%;" onclick="submitCreateTradeOffer()">Send Trade Offer</button>
         </div>
 
         <div>
-          <label style="margin-top:0;">Receive Traded Items On Character (When Accepting an Item Trade)</label>
+          <label style="margin-top:0;">Receive Traded Items On Character</label>
           <select id="trdReceiveCharSelect"></select>
 
           <div class="table-box" style="max-height:260px; overflow-y:auto;">
@@ -1068,7 +1081,7 @@
   <section id="tab-archive" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
       <div>
-        <h2 style="margin:0;">The Enclave Archive</h2>
+        <h2 style="margin:0;">Enclave Archive</h2>
         <small style="color:var(--muted)">Official Fandom Wiki Pages (Hover over page titles for last updated info)</small>
       </div>
       <div class="flex-row" style="flex:0 1 auto;">
@@ -1108,7 +1121,7 @@
   <!-- 9. ADMIN CONSOLE -->
   <section id="tab-admin" class="panel">
     <div class="flex-row" style="justify-content:space-between;">
-      <h2 style="margin:0;">Enclave Admin Console</h2>
+      <h2 style="margin:0;">Enclave Admin Console (v6.1)</h2>
       <span id="currentStaffBadge" style="color:var(--accent); font-size:0.9rem;"></span>
     </div>
 
@@ -1161,7 +1174,7 @@
 
         <!-- Box 2: Status, Guild Pull-Up & Scales/Crowns Granter -->
         <div class="stat-box">
-          <h3 style="margin-top:0;">2. Status, Guilds & Scales/Crowns Granter</h3>
+          <h3 style="margin-top:0;">Status, Guilds & Scales/Crowns Granter</h3>
           <div class="flex-row">
             <input type="text" id="admStatusCharId" placeholder="Char ID (00-000-001)" />
             <select id="admStatusVal">
@@ -1357,7 +1370,7 @@
             </div>
             <div id="admSkillClassWrap">
               <label>2. Class Restriction</label>
-              <select id="admSkillClass" translate="no">
+              <select id="admSkillClass">
                 <option value="Warrior">Warrior</option><option value="Mage">Mage</option><option value="Rogue">Rogue</option>
                 <option value="Ranger">Ranger</option><option value="Alchemist">Alchemist</option><option value="Crafter">Crafter</option>
                 <option value="Scholar">Scholar</option><option value="Civil">Civil</option><option value="Jack">Jack</option>
@@ -1393,7 +1406,7 @@
           <button class="btn" style="width:100%;" onclick="submitAdminCreateSkill()">➕ Create Skill in Database</button>
 
           <hr style="border-color:var(--border); margin:16px 0;" />
-          <h4 style="margin:0 0 6px 0; color:var(--gold);">Scholar Prototype Review (Accepting awards +1 SP & adds Skill)</h4>
+          <h4 style="margin:0 0 6px 0; color:var(--gold);">Scholar Prototype Review</h4>
           <select id="admProtoSelect" onchange="previewSelectedPrototypeForAdmin()"></select>
           <div id="admProtoPreviewBox" style="font-size:0.82rem; color:var(--muted); margin-top:6px; background:#111827; padding:8px; border-radius:6px;">
             Select a prototype above to inspect details.
@@ -1406,11 +1419,11 @@
             </select>
             <input type="text" id="admProtoFeedback" placeholder="Feedback note (shown on hover)..." />
           </div>
-          <button class="btn btn-gold" style="width:100%;" onclick="submitAdminPrototypeReview()">⚖️ Update Prototype Review</button>
+          <button class="btn btn-gold" style="width:100%;" onclick="submitAdminPrototypeReview()">Update Prototype Review</button>
         </div>
 
         <div class="stat-box">
-          <h3 style="margin-top:0; color:var(--purple);">Grant Skill Book to Character (Max 3 Owned)</h3>
+          <h3 style="margin-top:0; color:var(--purple);">Grant Skill Book to Character</h3>
           <label>Target Character ID</label>
           <div class="flex-row">
             <input type="text" id="admBookCharId" placeholder="00-000-001" />
@@ -1428,7 +1441,7 @@
 
       <!-- Box 9: Enclave Archive Wiki Manager -->
       <div class="stat-box" style="margin-top:18px;">
-        <h3 style="margin-top:0; color:var(--gold);">Enclave Archive Wiki Manager (Update or Add New Pages)</h3>
+        <h3 style="margin-top:0; color:var(--gold);">Enclave Archive Wiki Manager</h3>
         <div class="grid-2">
           <div>
             <label>1. Select Archive Section</label>
@@ -1452,7 +1465,7 @@
             <input type="file" id="admArcWordInput" accept=".docx,.doc,.html,.txt" onchange="handleAdminArchiveWordFile(event)" />
             <label>7. Page Content (HTML / Text)</label>
             <textarea id="admArcHtml" rows="8" placeholder="Upload a Word file above or write content here..."></textarea>
-            <button class="btn" style="width:100%;" onclick="submitAdminArchivePage()">💾 Publish / Update Archive Page</button>
+            <button class="btn" style="width:100%;" onclick="submitAdminArchivePage()">Publish / Update Archive Page</button>
           </div>
         </div>
       </div>
@@ -1568,6 +1581,7 @@
   };
 
   let isSubmitting = false;
+  let foragerTimerInterval = null;
 
   function applyLogoBranding() {
     if (PORTAL_LOGO_URL && !PORTAL_LOGO_URL.includes("PASTE_YOUR_LOGO")) {
@@ -1667,11 +1681,16 @@
       isSubmitting = false;
       hideLoading();
       buttons.forEach(b => b.disabled = false);
+      // Re-apply Daily Forager button lock if already completed today
+      if (STATE.gamerSession && STATE.gamerSession.account && STATE.gamerSession.account.Daily_Forager_Done) {
+        const enterBtn = document.getElementById("enterForagerBtn");
+        if (enterBtn) enterBtn.disabled = true;
+      }
     }
   }
 
   /* ==============================================================
-     1. GAMER TAG PORTAL LOGIN / SIGNUP
+     1. GAMER TAG PORTAL LOGIN / SIGNUP & PLAYER PORTAL SYNC
      ============================================================== */
   async function submitGamerAuth(actionType) {
     const gt = document.getElementById("gateGamerTag").value.trim();
@@ -1801,6 +1820,7 @@
   }
 
   function logoutGamerTag() {
+    if (foragerTimerInterval) clearInterval(foragerTimerInterval);
     STATE.gamerSession = null;
     STATE.currentChar = null;
     STATE.currentStaff = null;
@@ -1820,15 +1840,10 @@
     document.getElementById("headerScalesBadge").textContent = acc.Scales_Balance || 0;
     document.getElementById("pGamerCrownsInline").textContent = acc.Crown_Balance || 0;
 
-    // Daily Forager Reminder Banner in Player Portal & Status in ID Tab
+    // Daily Forager Reminder Banner, Button Lock & Live Midnight Countdown Timer
     const foragerDone = acc.Daily_Forager_Done === true;
     document.getElementById("foragerReminderBanner").style.display = foragerDone ? "none" : "block";
-    const idBadge = document.getElementById("idDailyStatusBadge");
-    if (idBadge) {
-      idBadge.textContent = foragerDone ? "DAILY ID: COMPLETED TODAY" : "DAILY ID: AVAILABLE NOW!";
-      idBadge.style.borderColor = foragerDone ? "#ef4444" : "#a3e635";
-      idBadge.style.color = foragerDone ? "#fca5a5" : "#a3e635";
-    }
+    startForagerCountdownTimer(foragerDone);
 
     // Create Character Slot Selector
     const slotSel = document.getElementById("crSlotType");
@@ -1892,6 +1907,65 @@
     document.getElementById("convertLimboBtn").style.display = s.canConvertLimboBoosterToLegacy ? "inline-block" : "none";
     renderPlayerAchievements();
     renderBankAndEconomyUI();
+  }
+
+  function startForagerCountdownTimer(foragerDone) {
+    if (foragerTimerInterval) clearInterval(foragerTimerInterval);
+
+    const idBadge = document.getElementById("idDailyStatusBadge");
+    const enterBtn = document.getElementById("enterForagerBtn");
+
+    function updateTick() {
+      const now = new Date();
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+      const diffMs = midnight - now;
+
+      if (diffMs <= 0) {
+        if (STATE.gamerSession && STATE.gamerSession.account) {
+          STATE.gamerSession.account.Daily_Forager_Done = false;
+        }
+        if (idBadge) {
+          idBadge.textContent = "STATUS: READY (AVAILABLE NOW)";
+          idBadge.style.borderColor = "#a3e635";
+          idBadge.style.color = "#a3e635";
+        }
+        if (enterBtn) {
+          enterBtn.disabled = false;
+          enterBtn.textContent = "⚔️ [ ENTER INSTANT DUNGEON & FORAGE ]";
+        }
+        clearInterval(foragerTimerInterval);
+        return;
+      }
+
+      const hrs = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, "0");
+      const mins = String(Math.floor((diffMs / (1000 * 60)) % 60)).padStart(2, "0");
+      const secs = String(Math.floor((diffMs / 1000) % 60)).padStart(2, "0");
+
+      if (foragerDone) {
+        if (idBadge) {
+          idBadge.textContent = `LOCKED // RESETS IN ${hrs}h ${mins}m ${secs}s`;
+          idBadge.style.borderColor = "#ef4444";
+          idBadge.style.color = "#fca5a5";
+        }
+        if (enterBtn) {
+          enterBtn.disabled = true;
+          enterBtn.textContent = `⏳ COMPLETED TODAY — NEXT ENTRY IN ${hrs}:${mins}:${secs}`;
+        }
+      } else {
+        if (idBadge) {
+          idBadge.textContent = `AVAILABLE NOW // WINDOW CLOSES IN ${hrs}h ${mins}m ${secs}s`;
+          idBadge.style.borderColor = "#a3e635";
+          idBadge.style.color = "#a3e635";
+        }
+        if (enterBtn && !isSubmitting) {
+          enterBtn.disabled = false;
+          enterBtn.textContent = "⚔️ [ ENTER INSTANT DUNGEON & FORAGE ]";
+        }
+      }
+    }
+
+    updateTick();
+    foragerTimerInterval = setInterval(updateTick, 1000);
   }
 
   function renderPlayerAchievements() {
@@ -2000,7 +2074,7 @@
       console.error("Failed to fetch full character sheet:", e);
     }
   }
-  
+
   function showTab(tab, btnEl) {
     document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
     document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
@@ -2027,12 +2101,13 @@
     }
     const c = STATE.currentChar.character;
     const sub = STATE.currentChar.subStats;
-    const titles = (STATE.gamerSession.achievements || []).filter(a => a.Equipped).map(a => a.Title_Name);
+    const titles = (STATE.gamerSession.achievements || [])
+      .filter(a => a.Equipped === true || String(a.Equipped).toUpperCase() === "TRUE")
+      .map(a => a.Title_Name);
 
     const canvas = document.getElementById("idCardCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Card Background & Gold Border
     const grad = ctx.createLinearGradient(0, 0, 760, 420);
     grad.addColorStop(0, "#0b1120");
     grad.addColorStop(1, "#1e293b");
@@ -2043,18 +2118,16 @@
     ctx.lineWidth = 4;
     ctx.strokeRect(8, 8, 744, 404);
 
-    // Header Bar
     ctx.fillStyle = "#070b14";
     ctx.fillRect(10, 10, 740, 58);
     ctx.fillStyle = "#38bdf8";
     ctx.font = "bold 22px sans-serif";
-    ctx.fillText("ENCLAVE PORTAL // OFFICIAL CITIZEN & HUNTER ID", 26, 46);
+    ctx.fillText("OFFICIAL CITIZEN & HUNTER ID", 26, 46);
 
     ctx.fillStyle = "#facc15";
     ctx.font = "bold 18px monospace";
     ctx.fillText("ID: " + c.Char_ID, 565, 46);
 
-    // Character & Gamer Tag Info
     ctx.fillStyle = "#f8fafc";
     ctx.font = "bold 28px sans-serif";
     ctx.fillText(c.Name, 26, 110);
@@ -2067,7 +2140,6 @@
     ctx.font = "16px sans-serif";
     ctx.fillText(`${c.Race} ${c.Class}  •  Guild: ${c.Guild || "Independent"}  •  Status: ${c.Status}`, 26, 168);
 
-    // Level & Rank Box
     ctx.fillStyle = "#111827";
     ctx.fillRect(26, 185, 460, 65);
     ctx.strokeStyle = "#334155";
@@ -2080,17 +2152,14 @@
     ctx.fillStyle = "#38bdf8";
     ctx.fillText(`Might: ${sub.might}   |   Spirit: ${sub.spirit}   |   Total AP Pool: ${c.Total_AP_Pool || 10}`, 40, 238);
 
-    // Attributes Grid
     ctx.fillStyle = "#f8fafc";
     ctx.font = "bold 15px monospace";
     ctx.fillText(`POW: ${c.Power}   END: ${c.Endurance}   MOB: ${c.Mobility}   VIT: ${c.Vitality}   INT: ${c.Intelligence}   FATE: ${c.Fate}`, 26, 282);
 
-    // Showcased Titles
     ctx.fillStyle = "#facc15";
     ctx.font = "bold 15px sans-serif";
     ctx.fillText("Showcased Titles: " + (titles.length ? titles.join("  ✦  ") : "None Equipped"), 26, 320);
 
-    // Equipped Skills Summary
     const eqSkills = (STATE.currentChar.skills || []).filter(s => s.Equipped).map(s => s.Skill_Name);
     ctx.fillStyle = "#94a3b8";
     ctx.font = "14px sans-serif";
@@ -2108,7 +2177,6 @@
       link.click();
     };
 
-    // Draw Avatar if DataURL or CORS-friendly
     if (c.Avatar_URL) {
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -2214,7 +2282,7 @@
             <strong>${c.Char_ID}</strong> — ${c.Name}
           </td>
           <td><small style="color:var(--muted)">${c.Slot_Type || "Starter Slot"}</small></td>
-          <td translate="no">
+          <td>
             <span class="hover-trigger"
                   onmouseenter="showClassSkillsTooltip(event, '${c.Char_ID}')"
                   onmousemove="moveFloatingTooltip(event)"
@@ -2334,6 +2402,9 @@
   }
 
   async function submitRunForagerDungeon() {
+    if (STATE.gamerSession && STATE.gamerSession.account && STATE.gamerSession.account.Daily_Forager_Done) {
+      return alert("Daily Limit Reached: You have already completed your Daily Forager Instant Dungeon today! Wait for the midnight reset.");
+    }
     const charId = document.getElementById("idCharSelect").value;
     const nodeId = document.getElementById("idNodeSelect").value;
     if (!charId) return alert("Select an Active character first.");
@@ -2718,7 +2789,6 @@
       • Scales → Crowns Pool: <strong>${cUsed} / 10,000 Crowns</strong> converted by you this month.
     `;
 
-    // Render Buy-Back Table
     const bbBody = document.getElementById("buyBackTableBody");
     if (bbBody) {
       bbBody.innerHTML = "";
@@ -3051,7 +3121,6 @@
       gSel.appendChild(opt);
     });
 
-    // Render 10-Tier Rarity Interactive Inventory
     const invBody = document.getElementById("pInvTable");
     invBody.innerHTML = "";
     if (!data.inventory || data.inventory.length === 0) {
@@ -3090,7 +3159,7 @@
       `Quests: ${c.Quests_Done} | Encounters: ${c.Encounters_Done} | Battles: ${c.Battles_Done} | Sparring: ${c.Sparring_Done} | Training: ${c.Training_Done} | Innovation: ${c.Innovation_Done}`;
     const intBody = document.getElementById("pInteractionsTable");
     intBody.innerHTML = "";
-    data.interactions.forEach(row => {
+    (data.interactions || []).forEach(row => {
       intBody.innerHTML += `<tr><td><strong>${row.otherCharId}</strong></td><td>${row.Battles}</td><td>${row.Sparring}</td><td>${row.Quests}</td><td>${row.Encounters}</td><td>${row.Total_Meetings}</td></tr>`;
     });
 
@@ -3800,6 +3869,7 @@
     }
   }
 
+  /* Translate-Friendly Race Chips (Reads data-race attribute so visible text can translate into any language) */
   function renderRaces() {
     const container = document.getElementById("raceSelector");
     container.innerHTML = "";
