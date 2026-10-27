@@ -3299,10 +3299,20 @@
 
     const res = await apiPost({ action: "convertCurrency", direction, quantity: qty }, "Exchanging Currency...");
     if (!res) return;
-    alert(res.message || res.status);
-    if (res.status === "ok" && res.gamerPayload) {
-      applyGamerPayload(res.gamerPayload);
+
+    if (res.status === "ok") {
+      if (res.gamerPayload) {
+        if (res.monthlyScalesBought !== undefined) {
+          res.gamerPayload.account.Monthly_Scales_Bought = res.monthlyScalesBought;
+        }
+        if (res.monthlyCrownsBought !== undefined) {
+          res.gamerPayload.account.Monthly_Crowns_Bought = res.monthlyCrownsBought;
+        }
+        applyGamerPayload(res.gamerPayload);
+      }
+      renderBankAndEconomyUI();
     }
+    alert(res.message || res.status);
   }
 
   /* ==============================================================
