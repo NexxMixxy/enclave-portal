@@ -756,7 +756,7 @@
       <button onclick="showTab('prototypes', this)">Skills &amp; Prototypes</button>
       <button onclick="showTab('commissions', this)">Commissions</button>
       <button onclick="showTab('bank', this)">Bank, Shop &amp; Craft</button>
-      <button onclick="showTab('archive', this)">Enclave Archive</button>
+      <button onclick="showTab('archive', this)">Archive</button>
       <button id="adminToggleBtn" onclick="unlockAdminGate()" title="Admin Console" style="border-color:var(--gold); color:var(--gold); flex:0 0 auto;">Admin</button>
       <button onclick="logoutGamerTag()" style="color:var(--muted); flex:0 0 auto;">Sign Out</button>
     </nav>
@@ -766,7 +766,7 @@
   <section id="tab-leaderboard" class="panel active">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:12px;">
       <div>
-        <h2>Public Leaderboard</h2>
+        <h2>Public Character Standings</h2>
         <small style="color:var(--muted)">
           Hover over a <strong>Gamer Tag</strong> for showcased titles, <strong>Race / Class</strong> for active skill loadouts, or <strong>Status</strong> for notes.
         </small>
@@ -1137,7 +1137,7 @@
       <div>
         <h2>Skill Compendium &amp; Scholar Prototype Registry</h2>
         <small style="color:var(--muted)">
-          Inspect official skills and Scholar-submitted prototypes. Active Scholars may submit up to 3 prototypes per week (resets Sunday at midnight).
+          Inspect official skills and Scholar-submitted prototypes. Active Scholars may submit up to 3 prototypes per week (requires Scholar Class Level &ge; Skill Level; awards 20% of Base SP Cost on approval).
         </small>
       </div>
       <button class="btn btn-gold" style="margin-top:0; flex:0 0 auto;" onclick="tryOpenScholarPrototypeForm()">
@@ -1146,7 +1146,7 @@
     </div>
 
     <div id="scholarProtoFormBox" class="stat-box" style="display:none; margin-bottom:18px; border-color:var(--gold);">
-      <h3 style="color:var(--gold);">Submit Skill Prototype (Max 3 / Week)</h3>
+      <h3 style="color:var(--gold);">Submit Skill Prototype (Max 3 / Week — Earns 20% Base SP Cost on Approval)</h3>
       <div class="grid-2">
         <div>
           <label>1. Submission Mode</label>
@@ -1194,14 +1194,20 @@
             <option value="Orc">Orc Only</option>
           </select>
 
-          <label>4. Skill Level Bracket</label>
+          <label>4. Skill Level Bracket (Requires Matching Scholar Class Level — Earns 20% SP on Approval)</label>
           <select id="prtLevel">
-            <option value="1">Level 1</option><option value="5">Level 5</option>
-            <option value="10">Level 10</option><option value="20">Level 20</option>
-            <option value="30">Level 30</option><option value="40">Level 40</option>
-            <option value="50">Level 50</option><option value="60">Level 60</option>
-            <option value="70">Level 70</option><option value="80">Level 80</option>
-            <option value="90">Level 90</option><option value="100">Level 100</option>
+            <option value="1">Level 1 (C1 — 5 SP | Approval Reward: +1 SP)</option>
+            <option value="5">Level 5 (C1 — 10 SP | Approval Reward: +2 SP)</option>
+            <option value="10">Level 10 (C2 — 20 SP | Approval Reward: +4 SP)</option>
+            <option value="20">Level 20 (C2 — 40 SP | Approval Reward: +8 SP)</option>
+            <option value="30">Level 30 (C3 — 50 SP | Approval Reward: +10 SP)</option>
+            <option value="40">Level 40 (C3 — 75 SP | Approval Reward: +15 SP)</option>
+            <option value="50">Level 50 (C4 — 100 SP | Approval Reward: +20 SP)</option>
+            <option value="60">Level 60 (C4 — 250 SP | Approval Reward: +50 SP)</option>
+            <option value="70">Level 70 (C5 — 500 SP | Approval Reward: +100 SP)</option>
+            <option value="80">Level 80 (C5 — 1000 SP | Approval Reward: +200 SP)</option>
+            <option value="90">Level 90 (C6 — 2500 SP | Approval Reward: +500 SP)</option>
+            <option value="100">Level 100 (C6 — 5000 SP | Approval Reward: +1000 SP)</option>
           </select>
         </div>
 
@@ -1266,7 +1272,6 @@
       </div>
     </div>
   </section>
-
   <!-- 6. COMMISSIONS -->
   <section id="tab-commissions" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
@@ -1610,7 +1615,7 @@
   <!-- 9. ADMIN CONSOLE -->
   <section id="tab-admin" class="panel">
     <div class="flex-row" style="justify-content:space-between;">
-      <h2>Administrative Console (v6.3)</h2>
+      <h2>Administrative Console (v6.4)</h2>
       <span id="currentStaffBadge" class="mono" style="color:var(--accent); font-size:0.82rem;"></span>
     </div>
 
@@ -1928,7 +1933,7 @@
           <button class="btn" style="width:100%;" onclick="submitAdminCreateSkill()">Register Official Skill</button>
 
           <hr style="border-color:var(--border); margin:16px 0;" />
-          <h4>Scholar Prototype Moderation</h4>
+          <h4>Scholar Prototype Moderation (20% Base SP Cost Awarded on Approval)</h4>
           <select id="admProtoSelect" onchange="previewSelectedPrototypeForAdmin()"></select>
           <div id="admProtoPreviewBox" style="font-size:0.8rem; color:var(--muted); margin-top:6px; background:#070a12; padding:8px; border-radius:4px;">
             Select a prototype above to inspect details.
@@ -1936,7 +1941,7 @@
           <div class="flex-row" style="margin-top:6px;">
             <select id="admProtoStatus">
               <option value="Pending">Pending</option>
-              <option value="Accepted">Accept (+1 SP to Scholar &amp; Register Skill)</option>
+              <option value="Accepted">Accept (+20% SP to Scholar &amp; Register Skill)</option>
               <option value="Rejected">Reject</option>
             </select>
             <input type="text" id="admProtoFeedback" placeholder="Reviewer note (shown on hover)..." />
@@ -2006,7 +2011,7 @@
   const LOADING_GIF_URL = "https://media.tenor.com/zTzHQQXcPh8AAAAM/anime-a-sign-of-affection.gif";
 
   // 3. PASTE YOUR PORTAL LOGO IMAGE LINK BELOW:
-  const PORTAL_LOGO_URL = "https://media.discordapp.net/attachments/848779985291968563/1566852293243179179/Screenshot_2026-10-23_112245.png?ex=6aea0c69&is=6ae8bae9&hm=cec9146258c9be4390c00e93616edd08cf06107dd022c703ba57a6d270e2e17d&=&format=webp&quality=lossless";
+  const PORTAL_LOGO_URL = "https://media.discordapp.net/attachments/1035865514225971291/1567136242653597776/Screenshot_2026-10-23_112245.png?ex=6aeb14dc&is=6ae9c35c&hm=a215f0a3870aa32d32fafdd95ff26a8a045e44ed0228b5e509f50f6cb36bb268&=&format=webp&quality=lossless";
 
   // 4. GATE KEY REQUIRED FOR ADMIN ACCESS:
   const ADMIN_GATE_KEY = "ADMIN_KEY_2026";
@@ -2131,6 +2136,17 @@
     const daysUntilSunday = day === 0 ? 0 : 7 - day;
     const sun = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday);
     return sun.getFullYear() + "-" + String(sun.getMonth() + 1).padStart(2, "0") + "-" + String(sun.getDate()).padStart(2, "0");
+  }
+
+  function normalizeClientDateKey(val) {
+    if (!val) return "";
+    const str = String(val).replace(/^'/, "").trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10);
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+    return str;
   }
 
   function showLoading(message = "Synchronizing...") {
@@ -2416,7 +2432,7 @@
         charsToUse.forEach(c => {
           const opt = document.createElement("option");
           opt.value = c.Char_ID;
-          opt.textContent = `[${c.Char_ID}] ${c.Name} — ${c.Class} Lv.${c.Char_Level} (INT: ${c.Intelligence || 1} | ${c.Status})`;
+          opt.textContent = `[${c.Char_ID}] ${c.Name} — ${c.Class} Lv.${c.Char_Level} (Cls Lv.${c.Class_Level || 0} | INT: ${c.Intelligence || 1} | ${c.Status})`;
           el.appendChild(opt);
         });
       }
@@ -2616,8 +2632,7 @@
     }
     showTab("admin", document.getElementById("adminToggleBtn"));
   }
-</script>
-<script>
+
   /* ==============================================================
      PNG GAMER TAG & CHARACTER ID CARD GENERATOR
      ============================================================== */
@@ -2648,7 +2663,7 @@
     ctx.fillRect(10, 10, 740, 58);
     ctx.fillStyle = "#38bdf8";
     ctx.font = "bold 20px Inter, sans-serif";
-    ctx.fillText("ENCLAVE REGISTRY / CITIZEN & HUNTER ID", 24, 46);
+    ctx.fillText("ENCLAVE REGISTRY // CITIZEN & HUNTER IDENTIFICATION", 24, 46);
 
     ctx.fillStyle = "#d4af37";
     ctx.font = "bold 16px 'JetBrains Mono', monospace";
@@ -2975,9 +2990,10 @@
       renderIdNodesUI();
     }
   }
-
+</script>
+<script>
   /* ==============================================================
-     SKILLS CATALOG & PROTOTYPES
+     SKILLS CATALOG & PROTOTYPES (CLASS LEVEL GATE + 20% SP REWARD)
      ============================================================== */
   function renderOfficialSkillsCatalog() {
     const tbody = document.getElementById("officialSkillsCatalogBody");
@@ -3020,11 +3036,17 @@
 
   function tryOpenScholarPrototypeForm() {
     if (!STATE.gamerSession) return alert("Sign in with your Gamer Tag first.");
-    const hasActiveScholar = (STATE.gamerSession.characters || []).some(
-      c => String(c.Status) === "Active" && String(c.Class) === "Scholar"
-    );
-    if (!hasActiveScholar) {
+    const activeScholars = (STATE.gamerSession.characters || [])
+      .filter(c => String(c.Status) === "Active" && String(c.Class) === "Scholar")
+      .sort((a, b) => (Number(b.Class_Level) || 0) - (Number(a.Class_Level) || 0));
+
+    if (activeScholars.length === 0) {
       return alert("Scholar Qualification Required: Only Gamer Tags with an active Scholar character may submit prototypes.");
+    }
+
+    const maxScholarClassLv = Number(activeScholars[0].Class_Level) || 0;
+    if (maxScholarClassLv < 1) {
+      return alert(`Class Level 1 Required: Your Scholar '${activeScholars[0].Name}' is currently Class Level 0. Allocate 50 XP into Class Level in the Player Portal to reach Class Level 1 and unlock Level 1 Prototype submissions!`);
     }
 
     const curWeekKey = getUserLocalSundayMidnightKey();
@@ -3036,6 +3058,18 @@
 
     if (usedThisWeek >= 3) {
       return alert(`Weekly Submission Limit Reached (${usedThisWeek}/3 used). Submissions reset Sunday at midnight.`);
+    }
+
+    // Lock any Skill Level option higher than the Scholar's current CLASS Level
+    const lvSelect = document.getElementById("prtLevel");
+    if (lvSelect) {
+      Array.from(lvSelect.options).forEach(opt => {
+        const reqLv = Number(opt.value) || 1;
+        opt.disabled = reqLv > maxScholarClassLv;
+      });
+      if (Number(lvSelect.value) > maxScholarClassLv) {
+        lvSelect.value = "1";
+      }
     }
 
     const box = document.getElementById("scholarProtoFormBox");
@@ -3141,7 +3175,7 @@
     (STATE.prototypes || []).forEach(p => {
       const opt = document.createElement("option");
       opt.value = p.Proto_ID;
-      opt.textContent = `[${p.Status}] ${p.Proto_ID} — ${p.Skill_Name} by @${p.Gamer_Tag}`;
+      opt.textContent = `[${p.Status}] ${p.Proto_ID} — ${p.Skill_Name} (Lv.${p.Skill_Level}) by @${p.Gamer_Tag}`;
       sel.appendChild(opt);
     });
   }
@@ -3154,11 +3188,16 @@
       box.textContent = "Select a prototype above to inspect details.";
       return;
     }
+    const sLv = Number(p.Skill_Level) || 1;
+    const meta = SKILL_LEVEL_META[sLv] || { cost: 5 };
+    const spReward = Math.max(1, Math.round(meta.cost * 0.20));
+
     document.getElementById("admProtoStatus").value = p.Status || "Pending";
     document.getElementById("admProtoFeedback").value = p.Admin_Feedback || "";
     box.innerHTML = `
-      <strong>${p.Skill_Name}</strong> [${p.Submission_Mode} | ${p.Type} | Class: ${p.Class_Restriction} | Race: ${p.Race_Restriction || "All"} | Lv.${p.Skill_Level}]<br/>
-      <em>Submitted by @${p.Gamer_Tag} (${p.Scholar_Name} [${p.Scholar_Char_ID}])</em><br/>
+      <strong>${p.Skill_Name}</strong> [${p.Submission_Mode} | ${p.Type} | Class: ${p.Class_Restriction} | Race: ${p.Race_Restriction || "All"} | Lv.${sLv}]<br/>
+      <span style="color:var(--gold); font-weight:600;">Approval Reward (20% of ${meta.cost} SP): +${spReward} SP to ${p.Scholar_Name} [${p.Scholar_Char_ID}]</span><br/>
+      <em>Submitted by @${p.Gamer_Tag}</em><br/>
       <strong>Description:</strong> ${p.Description}
     `;
   }
@@ -3185,6 +3224,7 @@
       renderOfficialSkillsCatalog();
       populateAdminPrototypeDropdown();
       await refreshLeaderboardOnly();
+      if (STATE.currentChar) await selectMyCharacterFromDropdown();
     }
   }
 
@@ -3387,11 +3427,11 @@
     const elSUsed = document.getElementById("cntScalesUsed");
     if (elSUsed) {
       elSUsed.textContent = sUsed;
-      document.getElementById("cntScalesLeft").textContent = `${sLeft} Remaining`;
+      document.getElementById("cntScalesLeft").textContent = `${sLeft} Scales`;
       document.getElementById("barScalesUsed").style.width = `${sPct}%`;
 
       document.getElementById("cntCrownsUsed").textContent = cUsed;
-      document.getElementById("cntCrownsLeft").textContent = `${cLeft} Remaining`;
+      document.getElementById("cntCrownsLeft").textContent = `${cLeft} Crowns`;
       document.getElementById("barCrownsUsed").style.width = `${cPct}%`;
     }
 
@@ -3687,10 +3727,20 @@
 
     const res = await apiPost({ action: "convertCurrency", direction, quantity: qty }, "Processing Currency Exchange...");
     if (!res) return;
-    alert(res.message || res.status);
-    if (res.status === "ok" && res.gamerPayload) {
-      applyGamerPayload(res.gamerPayload);
+
+    if (res.status === "ok") {
+      if (res.gamerPayload) {
+        if (res.monthlyScalesBought !== undefined) {
+          res.gamerPayload.account.Monthly_Scales_Bought = res.monthlyScalesBought;
+        }
+        if (res.monthlyCrownsBought !== undefined) {
+          res.gamerPayload.account.Monthly_Crowns_Bought = res.monthlyCrownsBought;
+        }
+        applyGamerPayload(res.gamerPayload);
+      }
+      renderBankAndEconomyUI();
     }
+    alert(res.message || res.status);
   }
 
   /* ==============================================================
@@ -4282,7 +4332,7 @@
   }
 
   /* ==============================================================
-     PLAYER SKILLS, REPOSITORY & ARCHIVE
+     PLAYER SKILLS, REPOSITORY, ARCHIVE & CORE ACTIONS
      ============================================================== */
   function renderPlayerSkillsAndLoadout() {
     if (!STATE.currentChar) return;
@@ -4445,7 +4495,7 @@
         pages.forEach(item => {
           const btn = document.createElement("button");
           btn.className = "archive-nav-btn" + (STATE.activeSlug === item.slug ? " active" : "");
-          btn.textContent = (cat === "Characters" && item.slug !== "char-directory" ? "👤 " : "") + item.title;
+          btn.textContent = item.title;
           btn.onclick = () => renderArchiveArticle(item.slug);
           sb.appendChild(btn);
         });
