@@ -711,7 +711,7 @@
 
 <div id="floatingHoverCard" class="floating-hover-card"></div>
 
-<!-- FIRST SCREEN: GAMER TAG AUTHENTICATION -->
+<!-- FIRST SCREEN: GAMER TAG AUTHENTICATION & GUEST ARCHIVE BUTTON -->
 <div id="gamerAuthScreen">
   <div class="auth-gate-card">
     <img id="gateLogoImg" class="portal-logo" src="https://via.placeholder.com/110?text=ENCLAVE" alt="Enclave Logo" />
@@ -730,6 +730,11 @@
       <button class="btn" style="margin-top:0;" onclick="submitGamerAuth('gamerLogin')">Sign In</button>
       <button class="btn btn-secondary" style="margin-top:0;" onclick="submitGamerAuth('gamerRegister')">Register Account</button>
     </div>
+
+    <hr style="border-color:var(--border); margin:20px 0 16px 0;" />
+    <button class="btn btn-gold" style="width:100%; margin-top:0;" onclick="openPublicArchive()">
+      Browse Enclave Archive
+    </button>
   </div>
 </div>
 
@@ -740,7 +745,7 @@
       <img id="headerLogoImg" class="header-logo" src="https://via.placeholder.com/44?text=E" alt="Logo" />
       <div>
         <h1>ENCLAVE REGISTRY</h1>
-        <small class="mono" style="color:var(--muted); font-size:0.75rem;">
+        <small id="headerUserStatsLine" class="mono" style="color:var(--muted); font-size:0.75rem;">
           USER: <strong id="activeGamerTagBadge" style="color:var(--gold)">@—</strong> &nbsp;|&nbsp;
           SLOTS: <strong id="activeSlotCountBadge" style="color:var(--accent)">0/3</strong> &nbsp;|&nbsp;
           CROWNS: <strong id="headerCrownsBadge" style="color:var(--gold)">0</strong> &nbsp;|&nbsp;
@@ -748,6 +753,11 @@
         </small>
       </div>
     </div>
+    
+    <button id="guestReturnLoginBtn" class="btn btn-gold" style="display:none; margin:0; flex:0 0 auto;" onclick="returnToLoginFromPublicArchive()">
+      ← Return to Sign In / Register
+    </button>
+
     <nav id="topNav">
       <button class="active" onclick="showTab('leaderboard', this)">Leaderboard</button>
       <button onclick="showTab('create', this)">Create Character</button>
@@ -803,7 +813,7 @@
 
   <!-- 2. CREATE CHARACTER -->
   <section id="tab-create" class="panel">
-    <h2>Character Registration (1 Base All-Stats + 6 Free AP = 12 Total AP, 5 SP, 100 XP &amp; Starter Gear)</h2>
+    <h2>Character Registration</h2>
     <div class="stat-box" style="margin-bottom:16px; border-color:var(--border-light);">
       <div class="flex-row" style="justify-content:space-between;">
         <div>
@@ -1082,7 +1092,6 @@
       </div>
     </div>
   </section>
-
   <!-- 4. INSTANT DUNGEON (ID) -->
   <section id="tab-dungeon" class="panel">
     <div class="retro-2bit-box">
@@ -1272,6 +1281,7 @@
       </div>
     </div>
   </section>
+
   <!-- 6. COMMISSIONS -->
   <section id="tab-commissions" class="panel">
     <div class="flex-row" style="justify-content:space-between; margin-bottom:14px;">
@@ -1800,6 +1810,7 @@
             <select id="admIdNodeCat">
               <option value="Mine">Mine</option><option value="Chop">Chop</option>
               <option value="Fish">Fish</option><option value="Hunt">Hunt</option>
+              <option value="Farm">Farm</option>
             </select>
           </div>
           <div class="flex-row" style="margin-top:4px;">
@@ -2005,13 +2016,13 @@
 
 <script>
   // 1. PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW:
-  const API_URL = "https://script.google.com/macros/s/AKfycbyS2Xe7pQ1ju2mfspSGPe5rysbJ_xh0jxCCjnSyYvvoSS4pL8YBPs3vOdZBD7M6AGYrKQ/exec";
+  const API_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
   // 2. PASTE YOUR CUSTOM LOADING GIF LINK BELOW:
-  const LOADING_GIF_URL = "https://media.tenor.com/zTzHQQXcPh8AAAAM/anime-a-sign-of-affection.gif";
+  const LOADING_GIF_URL = "PASTE_YOUR_GIF_LINK_HERE";
 
   // 3. PASTE YOUR PORTAL LOGO IMAGE LINK BELOW:
-  const PORTAL_LOGO_URL = "https://media.discordapp.net/attachments/1035865514225971291/1567136242653597776/Screenshot_2026-10-23_112245.png?ex=6aeb14dc&is=6ae9c35c&hm=a215f0a3870aa32d32fafdd95ff26a8a045e44ed0228b5e509f50f6cb36bb268&=&format=webp&quality=lossless";
+  const PORTAL_LOGO_URL = "PASTE_YOUR_LOGO_IMAGE_LINK_HERE";
 
   // 4. GATE KEY REQUIRED FOR ADMIN ACCESS:
   const ADMIN_GATE_KEY = "ADMIN_KEY_2026";
@@ -2065,7 +2076,12 @@
         (   )    (   )   [ TIMBER ]
        (     )  (     )   * CHOP *
         |   |    |   |
-       /_____\\  /_____\\`
+       /_____\\  /_____\\`,
+    "Farm": `
+        \\|/    \\|/    \\|/   [ FARMLAND ]
+        (@)    (*)    (@)   * HARVEST *
+       ~~~~~~~~~~~~~~~~~~~~~
+       [SEED] [BERRY] [VEG]`
   };
 
   const DEFAULT_ARCHIVE_STRUCTURE = [
@@ -2237,6 +2253,28 @@
   /* ==============================================================
      AUTHENTICATION & SESSION SYNC
      ============================================================== */
+  async function openPublicArchive() {
+    document.getElementById("gamerAuthScreen").style.display = "none";
+    document.getElementById("mainAppShell").style.display = "block";
+    document.getElementById("topNav").style.display = "none";
+    const statsLine = document.getElementById("headerUserStatsLine");
+    if (statsLine) statsLine.style.display = "none";
+    const retBtn = document.getElementById("guestReturnLoginBtn");
+    if (retBtn) retBtn.style.display = "inline-block";
+
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("tab-archive").classList.add("active");
+
+    showLoading("Loading Enclave Archive...");
+    await ensureArchiveLoaded();
+    hideLoading();
+  }
+
+  function returnToLoginFromPublicArchive() {
+    document.getElementById("mainAppShell").style.display = "none";
+    document.getElementById("gamerAuthScreen").style.display = "flex";
+  }
+
   async function submitGamerAuth(actionType) {
     const gt = document.getElementById("gateGamerTag").value.trim();
     const pass = document.getElementById("gateGamerPass").value.trim();
@@ -2270,6 +2308,13 @@
 
     document.getElementById("gamerAuthScreen").style.display = "none";
     document.getElementById("mainAppShell").style.display = "block";
+    document.getElementById("topNav").style.display = "flex";
+    const statsLine = document.getElementById("headerUserStatsLine");
+    if (statsLine) statsLine.style.display = "inline";
+    const retBtn = document.getElementById("guestReturnLoginBtn");
+    if (retBtn) retBtn.style.display = "none";
+    showTab("leaderboard", document.querySelector("#topNav button"));
+    
     document.getElementById("arcCommentAuthor").value = "@" + STATE.gamerSession.gamerTag;
 
     syncGamerSessionUI();
@@ -2388,7 +2433,6 @@
     const foragerDone = acc.Daily_Forager_Done === true;
     document.getElementById("foragerReminderBanner").style.display = foragerDone ? "none" : "block";
     startForagerCountdownTimer(foragerDone);
-
     const slotSel = document.getElementById("crSlotType");
     slotSel.innerHTML = "";
     if (s.creatableSlots.length === 0) {
@@ -2468,8 +2512,8 @@
         }
         if (idBadge) {
           idBadge.textContent = "STATUS: READY";
-          idBadge.style.borderColor = "#84cc16";
-          idBadge.style.color = "#84cc16";
+          idBadge.style.borderColor = "#10b981";
+          idBadge.style.color = "#10b981";
         }
         if (enterBtn) {
           enterBtn.disabled = false;
@@ -2486,8 +2530,8 @@
       if (foragerDone) {
         if (idBadge) {
           idBadge.textContent = `LOCKED // RESET IN ${hrs}:${mins}:${secs}`;
-          idBadge.style.borderColor = "#ef4444";
-          idBadge.style.color = "#f87171";
+          idBadge.style.borderColor = "var(--danger)";
+          idBadge.style.color = "#fca5a5";
         }
         if (enterBtn) {
           enterBtn.disabled = true;
@@ -2496,8 +2540,8 @@
       } else {
         if (idBadge) {
           idBadge.textContent = "STATUS: READY";
-          idBadge.style.borderColor = "#84cc16";
-          idBadge.style.color = "#84cc16";
+          idBadge.style.borderColor = "#10b981";
+          idBadge.style.color = "#10b981";
         }
         if (enterBtn && !isSubmitting) {
           enterBtn.disabled = false;
@@ -2990,8 +3034,7 @@
       renderIdNodesUI();
     }
   }
-</script>
-<script>
+
   /* ==============================================================
      SKILLS CATALOG & PROTOTYPES (CLASS LEVEL GATE + 20% SP REWARD)
      ============================================================== */
@@ -3060,7 +3103,6 @@
       return alert(`Weekly Submission Limit Reached (${usedThisWeek}/3 used). Submissions reset Sunday at midnight.`);
     }
 
-    // Lock any Skill Level option higher than the Scholar's current CLASS Level
     const lvSelect = document.getElementById("prtLevel");
     if (lvSelect) {
       Array.from(lvSelect.options).forEach(opt => {
@@ -3427,11 +3469,11 @@
     const elSUsed = document.getElementById("cntScalesUsed");
     if (elSUsed) {
       elSUsed.textContent = sUsed;
-      document.getElementById("cntScalesLeft").textContent = `${sLeft} Scales`;
+      document.getElementById("cntScalesLeft").textContent = `${sLeft} Remaining`;
       document.getElementById("barScalesUsed").style.width = `${sPct}%`;
 
       document.getElementById("cntCrownsUsed").textContent = cUsed;
-      document.getElementById("cntCrownsLeft").textContent = `${cLeft} Crowns`;
+      document.getElementById("cntCrownsLeft").textContent = `${cLeft} Remaining`;
       document.getElementById("barCrownsUsed").style.width = `${cPct}%`;
     }
 
